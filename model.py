@@ -33,6 +33,10 @@ class Model:
         while was_error:
             if verbose:
                 print(f'Epoch: {epoch}')
+            else:
+                print('.', end='', flush=True)
+                if not epoch % 100:
+                    print('')
             epoch += 1
 
             was_error = False
@@ -47,11 +51,13 @@ class Model:
                 # TODO update to backprop
                 self.layers[0].update_weight(error, learning_rate)
 
+        print('\nDONE')
+
     def test(self, data: List[Tuple[np.ndarray]]):
         for dp in data:
             x, y_hat = dp
             y = self.compute(x)
-            print(f'Input: {x}\nCorrect output: {y_hat}\nModel output: {y}')
+            print(f'{x} ==> {y} | {y_hat}')
 
 
 if __name__ == "__main__":
