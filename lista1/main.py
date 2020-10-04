@@ -1,9 +1,9 @@
 import numpy as np
 
-from activations import a_bipolar, a_unipolar
-from data_generator import ANDGenerator
-from layers import FCLayer
-from model import Model
+from .activations import a_bipolar, a_unipolar
+from .data_generator import ANDGenerator
+from .layers import FCLayer
+from .model import Model
 
 
 def print_sep() -> None:
