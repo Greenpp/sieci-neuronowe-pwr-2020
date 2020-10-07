@@ -1,6 +1,5 @@
 from typing import List, Tuple
 import numpy as np
-from numpy.lib.function_base import select
 
 from .layers import Layer
 
