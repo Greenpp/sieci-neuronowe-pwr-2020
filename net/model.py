@@ -1,16 +1,33 @@
+from abc import ABC, abstractmethod
+from net.loss_functions import LossFunction
 from typing import List, Tuple
+
 import numpy as np
 
-from .layers import Layer
+from net.data_loader import DataLoader
+from net.trainers import Trainer
+
+
+class Layer(ABC):
+    @abstractmethod
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        pass
+
+    @abstractmethod
+    def backward(self, delta: np.ndarray) -> np.ndarray:
+        pass
 
 
 class Model:
     """
-    Neural network model
+    Sequential neural network model
     """
 
     def __init__(self, *args: Layer) -> None:
         self.layers = args
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return self.compute(x)
 
     def compute(self, x: np.ndarray) -> np.ndarray:
         """
@@ -22,41 +39,50 @@ class Model:
 
         return x
 
-    def train(self, data: List[Tuple[np.ndarray]], learning_rate: float = .001, verbose: bool = False) -> None:
+    def _stack_batch(batch: List[Tuple[np.ndarray]]) -> Tuple[np.ndarray]:
+        """
+        Stack batch data into single tensor
+        """
+        input_list, output_list = zip(*batch)
+        input = np.vstack(input_list)
+        output = np.vstack(output_list)
+
+        return input, output
+
+    def train(
+        self,
+        training_data_loader: DataLoader,
+        validation_data_loader: DataLoader,
+        trainer: Trainer,
+        loss_function: LossFunction,
+        epsilon: float = 0.001,
+    ) -> None:
         """
         Train model
         """
-        was_error = True
-        epoch = 1
+        # Validation setup
+        val_batch = next(validation_data_loader.load())
+        val_x, val_y_hat = self._stack_batch(val_batch)
+        val_error = epsilon + 1
+        # Training loop
+        while val_error > epsilon:
+            for data_batch in training_data_loader.load():
+                x, y_hat = self._stack_batch(data_batch)
 
-        while was_error:
-            if verbose:
-                print(f'Epoch: {epoch}')
-            else:
-                print('.', end='', flush=True)
-                if not epoch % 100:
-                    print('')
-            epoch += 1
-
-            was_error = False
-            for dp in data:
-                x, y_hat = dp
                 y = self.compute(x)
-                error = y - y_hat
+                error = loss_function(y, y_hat)
 
-                if error > 0:
-                    was_error = True
+                trainer.train(error)
 
-                # TODO update to backprop
-                self.layers[0].update_weight(error, learning_rate)
-
-        print('\nDONE')
+                # Validation
+                val_y = self.compute(val_x)
+                val_error = loss_function(val_y, val_y_hat)
 
     def test(self, data: List[Tuple[np.ndarray]]):
         for dp in data:
             x, y_hat = dp
             y = self.compute(x)
-            print(f'{x} ==> {y} | {y_hat}')
+            print(f"{x} ==> {y} | {y_hat}")
 
 
 if __name__ == "__main__":
