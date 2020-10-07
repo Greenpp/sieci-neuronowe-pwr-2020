@@ -8,7 +8,13 @@ class DataLoader:
     Data loader
     """
 
-    def __init__(self, data: List, batch_size: int = 32, infinite: bool = True, random: bool = True) -> None:
+    def __init__(
+        self,
+        data: List,
+        batch_size: int = 32,
+        infinite: bool = True,
+        random: bool = True,
+    ) -> None:
         self.data = data
         self.batch_size = batch_size
         self.infinite = infinite
@@ -19,7 +25,7 @@ class DataLoader:
         Create batches of data
         """
         for i in range(0, len(self.data), self.batch_size):
-            yield self.data[i: i+self.batch_size]
+            yield self.data[i : i + self.batch_size]
 
     def _randomize(self) -> None:
         """
