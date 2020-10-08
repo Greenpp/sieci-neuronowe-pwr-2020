@@ -1,21 +1,13 @@
-from abc import ABC, abstractmethod
-from net.loss_functions import LossFunction
-from typing import List, Tuple
+from __future__ import annotations
+from typing import List, TYPE_CHECKING, Tuple
 
 import numpy as np
 
-from net.data_loader import DataLoader
-from net.trainers import Trainer
-
-
-class Layer(ABC):
-    @abstractmethod
-    def forward(self, x: np.ndarray) -> np.ndarray:
-        pass
-
-    @abstractmethod
-    def backward(self, delta: np.ndarray) -> np.ndarray:
-        pass
+if TYPE_CHECKING:
+    from net.data_loader import DataLoader
+    from net.layers import Layer
+    from net.loss_functions import LossFunction
+    from net.trainers import Trainer
 
 
 class Model:
@@ -35,11 +27,11 @@ class Model:
         """
 
         for layer in self.layers:
-            x = layer.forward(x)
+            x = layer(x)
 
         return x
 
-    def _stack_batch(batch: List[Tuple[np.ndarray]]) -> Tuple[np.ndarray]:
+    def _stack_batch(self, batch: List[Tuple[np.ndarray]]) -> Tuple[np.ndarray]:
         """
         Stack batch data into single tensor
         """
@@ -60,6 +52,9 @@ class Model:
         """
         Train model
         """
+        trainer.attach(self)
+        trainer.set_loss_function(loss_function)
+
         # Validation setup
         val_batch = next(validation_data_loader.load())
         val_x, val_y_hat = self._stack_batch(val_batch)
@@ -70,19 +65,11 @@ class Model:
                 x, y_hat = self._stack_batch(data_batch)
 
                 y = self.compute(x)
-                error = loss_function(y, y_hat)
-
-                trainer.train(error)
+                trainer.train(y, y_hat)
 
                 # Validation
                 val_y = self.compute(val_x)
                 val_error = loss_function(val_y, val_y_hat)
-
-    def test(self, data: List[Tuple[np.ndarray]]):
-        for dp in data:
-            x, y_hat = dp
-            y = self.compute(x)
-            print(f"{x} ==> {y} | {y_hat}")
 
 
 if __name__ == "__main__":

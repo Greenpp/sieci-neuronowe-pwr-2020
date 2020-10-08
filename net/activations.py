@@ -1,33 +1,34 @@
 from abc import ABC, abstractmethod
+
 import numpy as np
-
-
-def a_unipolar(x: np.ndarray) -> np.ndarray:
-    """
-    Unipolar activation
-    """
-    val = x.copy()
-    val[val < 0] = 0
-    val[val > 0] = 1
-
-    return val
-
-
-def a_bipolar(x: np.ndarray) -> np.ndarray:
-    """
-    Bipolar activation
-    """
-    val = x.copy()
-    val[val < 0] = -1
-    val[val > 0] = 1
-
-    return val
 
 
 class Activation(ABC):
     @abstractmethod
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        pass
+
+    @abstractmethod
     def derivative(self, x: np.ndarray) -> np.ndarray:
         pass
+
+
+class Linear(Activation):
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return x
+
+    def derivative(self, x: np.ndarray) -> np.ndarray:
+        return 1
+
+
+class Sigmoid(Activation):
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return 1 / (1 + np.exp(-x))
+
+    def derivative(self, x: np.ndarray) -> np.ndarray:
+        sig_x = self(x)
+
+        return sig_x * (1 - sig_x)
 
 
 class Unipolar(Activation):
@@ -43,7 +44,7 @@ class Unipolar(Activation):
         return x
 
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        return x
+        return 1
 
 
 class Bipolar(Activation):
@@ -59,7 +60,7 @@ class Bipolar(Activation):
         return x
 
     def derivative(self, x: np.ndarray) -> np.ndarray:
-        return x
+        return 1
 
 
 if __name__ == "__main__":
