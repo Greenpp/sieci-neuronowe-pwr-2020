@@ -5,6 +5,7 @@ if __name__ == "__main__" and __package__ is None:
     path.append(dir(path[0]))
     __package__ = "lista1"
 
+from lista1.adaline import Adaline
 from net.loss_functions import MSE
 from net.data_loader import DataLoader
 from net.trainers import SGDTrainer
@@ -53,6 +54,25 @@ def bipolar_test():
         print(f"{d} => {model(d)}")
 
 
+def adaline_test():
+    print_label("adaline")
+    data_gen = ANDGenerator(bipolar=True)
+    data = data_gen.get_all()
+    v_data = data_gen.get_all()
+    dl = DataLoader(data, 1, False)
+    vdl = DataLoader(v_data, 1, False)
+
+    model = Adaline(2, 1)
+    trainer = SGDTrainer(0.01)
+
+    epochs = model.train(dl, vdl, trainer, MSE(), .51)
+
+    print(f"Done in {epochs} epochs")
+    for d, _ in data:
+        print(f"{d} => {model(d)}")
+
+
 if __name__ == "__main__":
     unipolar_test()
     bipolar_test()
+    adaline_test()
