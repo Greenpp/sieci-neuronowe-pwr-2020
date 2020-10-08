@@ -48,17 +48,15 @@ class Model:
         trainer: Trainer,
         loss_function: LossFunction,
         epsilon: float = 0.001,
-    ) -> None:
+    ) -> int:
         """
         Train model
         """
         trainer.attach(self)
         trainer.set_loss_function(loss_function)
 
-        # Validation setup
-        val_batch = next(validation_data_loader.load())
-        val_x, val_y_hat = self._stack_batch(val_batch)
         val_error = epsilon + 1
+        epoch = 1
         # Training loop
         while val_error > epsilon:
             for data_batch in training_data_loader.load():
@@ -67,9 +65,17 @@ class Model:
                 y = self.compute(x)
                 trainer.train(y, y_hat)
 
-                # Validation
+            # Validation
+            val_error = 0
+            for val_data_batch in validation_data_loader.load():
+                val_x, val_y_hat = self._stack_batch(val_data_batch)
+
                 val_y = self.compute(val_x)
-                val_error = loss_function(val_y, val_y_hat)
+                val_error += loss_function(val_y, val_y_hat)
+
+            epoch += 1
+
+        return epoch
 
 
 if __name__ == "__main__":
