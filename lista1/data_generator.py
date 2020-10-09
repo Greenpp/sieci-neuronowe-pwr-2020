@@ -9,18 +9,41 @@ class ANDGenerator:
     """
 
     def __init__(self, bipolar: bool = False) -> None:
-        self.bipolar = bipolar
+        if bipolar:
+            x1 = (np.array([[1.0, 1.0]]), np.array([[1.0]]))
+            x2 = (np.array([[1.0, -1.0]]), np.array([[-1.0]]))
+            x3 = (np.array([[-1.0, -1.0]]), np.array([[-1.0]]))
+            x4 = (np.array([[-1.0, 1.0]]), np.array([[-1.0]]))
+        else:
+            x1 = (np.array([[1.0, 1.0]]), np.array([[1.0]]))
+            x2 = (np.array([[1.0, 0.0]]), np.array([[0.0]]))
+            x3 = (np.array([[0.0, 0.0]]), np.array([[0.0]]))
+            x4 = (np.array([[0.0, 1.0]]), np.array([[0.0]]))
+
+        self.data = [x1, x2, x3, x4]
 
     def get_all(self) -> List[Tuple[np.ndarray]]:
-        if self.bipolar:
-            x1 = (np.array([[1, 1]]), np.array([[1]]))
-            x2 = (np.array([[1, -1]]), np.array([[-1]]))
-            x3 = (np.array([[-1, -1]]), np.array([[-1]]))
-            x4 = (np.array([[-1, 1]]), np.array([[-1]]))
-        else:
-            x1 = (np.array([[1, 1]]), np.array([[1]]))
-            x2 = (np.array([[1, 0]]), np.array([[0]]))
-            x3 = (np.array([[0, 0]]), np.array([[0]]))
-            x4 = (np.array([[0, 1]]), np.array([[0]]))
+        return self.data
 
-        return [x1, x2, x3, x4]
+    def get_augmented(
+        self, num: int = 4, include_original: bool = False
+    ) -> List[Tuple[np.ndarray]]:
+        augmented_data = []
+        for x, y in self.data:
+            for _ in range(num):
+                a_x = x.copy()
+                a_x[0][0] = a_x[0][0] + (np.random.rand() - 0.5) / 100
+                a_x[0][1] = a_x[0][0] + (np.random.rand() - 0.5) / 100
+
+                augmented_data.append((a_x, y))
+
+        data = augmented_data
+        if include_original:
+            data += self.data
+
+        return data
+
+
+if __name__ == "__main__":
+    gen = ANDGenerator()
+    print(gen.get_augmented())
