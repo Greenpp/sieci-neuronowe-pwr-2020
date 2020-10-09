@@ -1,9 +1,9 @@
-if __name__ == "__main__" and __package__ is None:
+if __name__ == '__main__' and __package__ is None:
     from os.path import dirname as dir
     from sys import path
 
     path.append(dir(path[0]))
-    __package__ = "lista1"
+    __package__ = 'lista1'
 
 import numpy as np
 from net.activations import Linear, Bipolar

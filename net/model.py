@@ -74,12 +74,12 @@ class Model:
                 val_y = self.compute(val_x)
                 val_error += loss_function(val_y, val_y_hat)
                 data_num += 1
-            val_error /= data_num # TODO update MSE for batch size
+            val_error /= data_num  # TODO update MSE for batch size
 
             epoch += 1
 
         return epoch
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass

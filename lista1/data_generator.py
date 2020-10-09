@@ -44,6 +44,6 @@ class ANDGenerator:
         return data
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     gen = ANDGenerator()
     print(gen.get_augmented())

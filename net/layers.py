@@ -62,5 +62,5 @@ class FCLayer(Layer):
         return d_b, d_w, new_grad
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass
