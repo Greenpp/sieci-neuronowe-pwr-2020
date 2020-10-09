@@ -67,11 +67,14 @@ class Model:
 
             # Validation
             val_error = 0
+            data_num = 0
             for val_data_batch in validation_data_loader.load():
                 val_x, val_y_hat = self._stack_batch(val_data_batch)
 
                 val_y = self.compute(val_x)
                 val_error += loss_function(val_y, val_y_hat)
+                data_num += 1
+            val_error /= data_num # TODO update MSE for batch size
 
             epoch += 1
 
