@@ -114,8 +114,8 @@ class AdaGradTrainer(Trainer):
 
             d_b, d_w, grad = layer.backward(grad)
             # Update accumulators
-            layer_dict['b_grad_accumulator'] += d_w ** 2
-            layer_dict['w_grad_accumulator'] += d_b ** 2
+            layer_dict['b_grad_accumulator'] += d_b ** 2
+            layer_dict['w_grad_accumulator'] += d_w ** 2
 
             b_accumulator = layer_dict['b_grad_accumulator']
             w_accumulator = layer_dict['w_grad_accumulator']
