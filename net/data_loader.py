@@ -1,4 +1,4 @@
-from typing import Iterator, List, Tuple
+from typing import Iterator, List
 import numpy as np
 import random
 
@@ -12,12 +12,10 @@ class DataLoader:
         self,
         data: List,
         batch_size: int = 32,
-        infinite: bool = True,
         random: bool = True,
     ) -> None:
         self.data = data
-        self.batch_size = batch_size
-        self.infinite = infinite
+        self.batch_size = batch_size if batch_size is not None else len(data)
         self.random = random
 
     def _batchify(self) -> Iterator[List]:
@@ -37,17 +35,14 @@ class DataLoader:
         """
         Load data batches as iterator
         """
-        while True:
-            if self.random:
-                self._randomize()
-            for batch in self._batchify():
-                yield batch
+        if self.random:
+            self._randomize()
 
-            if not self.infinite:
-                break
+        for batch in self._batchify():
+            yield batch
 
 
 if __name__ == "__main__":
-    dl = DataLoader(np.array(range(10)), infinite=False)
+    dl = DataLoader(np.array(range(10)))
     for d in dl.load():
         print(d)

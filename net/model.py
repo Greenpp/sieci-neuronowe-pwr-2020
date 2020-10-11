@@ -56,30 +56,34 @@ class Model:
         trainer.set_loss_function(loss_function)
 
         val_error = epsilon + 1
-        epoch = 1
+        epoch = 0
         # Training loop
         while val_error > epsilon:
+            epoch += 1
             for data_batch in training_data_loader.load():
                 x, y_hat = self._stack_batch(data_batch)
 
                 y = self.compute(x)
                 trainer.train(y, y_hat)
 
-            # Validation
-            # TODO extract to function
-            val_error = 0
-            data_num = 0
-            for val_data_batch in validation_data_loader.load():
-                val_x, val_y_hat = self._stack_batch(val_data_batch)
-
-                val_y = self.compute(val_x)
-                val_error += loss_function(val_y, val_y_hat)
-                data_num += 1
-            val_error /= data_num
-
-            epoch += 1
+            val_error = self.validate(validation_data_loader, loss_function)
 
         return epoch
+
+    def validate(
+        self, validation_data_loader: DataLoader, loss_function: LossFunction
+    ) -> float:
+        # Validation data loader should be initialized with size None and return all data at once
+        val_data = next(validation_data_loader.load())
+        x, y_hat = self._stack_batch(val_data)
+
+        y = self.compute(x)
+        error = loss_function(y, y_hat)
+
+        # Mean error for all outputs
+        m_error = error.mean()
+
+        return m_error
 
 
 if __name__ == '__main__':

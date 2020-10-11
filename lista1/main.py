@@ -20,11 +20,10 @@ def print_label(label: str) -> None:
 
 def unipolar_test() -> None:
     print_label('unipolar')
-    data_gen = ANDGenerator()
-    data = data_gen.get_augmented(include_original=True)
-    v_data = data_gen.get_all()
-    dl = DataLoader(data, 1, False)
-    vdl = DataLoader(v_data, 1, False, random=False)
+    data = ANDGenerator().get_augmented(include_original=True)
+    v_data = ANDGenerator().get_all()
+    dl = DataLoader(data, batch_size=4)
+    vdl = DataLoader(v_data, batch_size=None)
 
     model = Perceptron(2, 1)
     trainer = SGDTrainer(0.01)
@@ -38,11 +37,10 @@ def unipolar_test() -> None:
 
 def bipolar_test() -> None:
     print_label('bipolar')
-    data_gen = ANDGenerator(bipolar=True)
-    data = data_gen.get_augmented(include_original=True)
-    v_data = data_gen.get_all()
-    dl = DataLoader(data, 1, False)
-    vdl = DataLoader(v_data, 1, False, random=False)
+    data = ANDGenerator(bipolar=True).get_augmented(include_original=True)
+    v_data = ANDGenerator(bipolar=True).get_all()
+    dl = DataLoader(data, batch_size=4)
+    vdl = DataLoader(v_data, batch_size=None)
 
     model = Perceptron(2, 1, bipolar=True)
     trainer = SGDTrainer(0.01)
@@ -52,15 +50,14 @@ def bipolar_test() -> None:
     print(f'Done in {epochs} epochs')
     for d, _ in v_data:
         print(f'{d} => {model(d)}')
-        
+
 
 def adaline_test() -> None:
     print_label('adaline')
-    data_gen = ANDGenerator(bipolar=True)
-    data = data_gen.get_augmented(include_original=True)
-    v_data = data_gen.get_all()
-    dl = DataLoader(data, 1, False)
-    vdl = DataLoader(v_data, 1, False, random=False)
+    data = ANDGenerator(bipolar=True).get_augmented(include_original=True)
+    v_data = ANDGenerator(bipolar=True).get_all()
+    dl = DataLoader(data, batch_size=4)
+    vdl = DataLoader(v_data, batch_size=None)
 
     model = Adaline(2, 1)
     trainer = SGDTrainer(0.01)
