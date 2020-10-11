@@ -9,7 +9,7 @@ class LossFunction(ABC):
         pass
 
     @abstractmethod
-    def backward(self, output: np.ndarray, label: np.ndarray):
+    def backward(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
         pass
 
 
@@ -19,11 +19,13 @@ class MSE(LossFunction):
     """
 
     def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
-        # error = ((label - output) ** 2).mean(axis=1) / 2
-        # TODO check for more batch
         error = ((output - label) ** 2) / 2
+        # mean error for batch input
+        m_error = error.mean(axis=0)
 
-        return error
+        return m_error
 
-    def backward(self, output: np.ndarray, label: np.ndarray):
-        return output - label
+    def backward(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+        delta = output - label
+
+        return delta

@@ -41,4 +41,6 @@ class SGDTrainer(Trainer):
         layer.weights = layer.weights - self.alpha * d_w
 
         if layer.bias:
-            layer.b_weights = layer.b_weights - self.alpha * d_b
+            # Accumulate bias delta for batch input
+            acc_d_b = d_b.sum(axis=0)
+            layer.b_weights = layer.b_weights - self.alpha * acc_d_b
