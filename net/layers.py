@@ -59,7 +59,10 @@ class FCLayer(Layer):
         # Gradient for next layer scaled with weights
         new_grad = d_b @ self.weights.T
 
-        return d_b, d_w, new_grad
+        # Accumulate bias delta for batch input
+        acc_d_b = d_b.sum(axis=0)
+
+        return acc_d_b, d_w, new_grad
 
 
 if __name__ == '__main__':
