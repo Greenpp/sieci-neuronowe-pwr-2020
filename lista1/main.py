@@ -23,7 +23,7 @@ def unipolar_test() -> None:
     data = ANDGenerator().get_augmented(include_original=True)
     v_data = ANDGenerator().get_all()
     dl = DataLoader(data, batch_size=4)
-    vdl = DataLoader(v_data, batch_size=None)
+    vdl = DataLoader(v_data, batch_size=None, random=False)
 
     model = Perceptron(2, 1)
     trainer = SGDTrainer(0.01)
@@ -40,7 +40,7 @@ def bipolar_test() -> None:
     data = ANDGenerator(bipolar=True).get_augmented(include_original=True)
     v_data = ANDGenerator(bipolar=True).get_all()
     dl = DataLoader(data, batch_size=4)
-    vdl = DataLoader(v_data, batch_size=None)
+    vdl = DataLoader(v_data, batch_size=None, random=False)
 
     model = Perceptron(2, 1, bipolar=True)
     trainer = SGDTrainer(0.01)
@@ -57,7 +57,7 @@ def adaline_test() -> None:
     data = ANDGenerator(bipolar=True).get_augmented(include_original=True)
     v_data = ANDGenerator(bipolar=True).get_all()
     dl = DataLoader(data, batch_size=4)
-    vdl = DataLoader(v_data, batch_size=None)
+    vdl = DataLoader(v_data, batch_size=None, random=False)
 
     model = Adaline(2, 1)
     trainer = SGDTrainer(0.01)
