@@ -5,7 +5,7 @@ import numpy as np
 
 class ANDGenerator:
     """
-    NAD logical gate data generator
+    AND logical gate data generator
     """
 
     def __init__(self, bipolar: bool = False) -> None:
