@@ -59,8 +59,8 @@ class MomentumTrainer(Trainer):
         self.layers = [
             {
                 'layer': l,
-                'prev_w_grad': np.zeros_like(l.weights),
-                'prev_b_grad': np.zeros_like(l.b_weights) if l.bias else None,
+                'prev_w_grad': 0,
+                'prev_b_grad': 0,
             }
             for l in reversed(model.layers)
         ]
@@ -94,3 +94,45 @@ class MomentumTrainer(Trainer):
         if layer.bias:
             b_update_gradient = self.beta * b_momentum + (1 - self.beta) * d_b
             layer.b_weights = layer.b_weights - self.alpha * b_update_gradient
+
+
+class AdaGradTrainer(Trainer):
+    def attach(self, model: Model) -> None:
+        self.layers = [
+            {
+                'layer': l,
+                'w_grad_accumulator': 0,
+                'b_grad_accumulator': 0,
+            }
+            for l in reversed(model.layers)
+        ]
+
+    def train(self, output: np.ndarray, label: np.ndarray) -> None:
+        grad = self.loss_function.backward(output, label)
+        for layer_dict in self.layers:
+            layer = layer_dict['layer']
+
+            d_b, d_w, grad = layer.backward(grad)
+            # Update accumulators
+            layer_dict['b_grad_accumulator'] += d_w ** 2
+            layer_dict['w_grad_accumulator'] += d_b ** 2
+
+            b_accumulator = layer_dict['b_grad_accumulator']
+            w_accumulator = layer_dict['w_grad_accumulator']
+
+            self._update_layer_weights(layer, d_b, d_w, b_accumulator, w_accumulator)
+
+    def _update_layer_weights(
+        self,
+        layer: Layer,
+        d_b: np.ndarray,
+        d_w: np.ndarray,
+        b_accumulator: np.ndarray,
+        w_accumulator: np.ndarray,
+    ) -> None:
+        adagrad_alpha = self.alpha / np.sqrt(w_accumulator + 1e-9)
+        layer.weights = layer.weights - adagrad_alpha * d_w
+
+        if layer.bias:
+            b_adagrad_alpha = self.alpha / np.sqrt(b_accumulator + 1e-9)
+            layer.b_weights = layer.b_weights - b_adagrad_alpha * d_b
