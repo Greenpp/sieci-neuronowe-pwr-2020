@@ -48,10 +48,12 @@ class Model:
         trainer: Trainer,
         loss_function: LossFunction,
         epsilon: float = 0.001,
+        max_epochs: int = None,
     ) -> int:
         """
         Train model
         """
+        # TODO Typing.Optional for all None default arguments
         trainer.attach(self)
         trainer.set_loss_function(loss_function)
 
@@ -67,6 +69,10 @@ class Model:
                 trainer.train(y, y_hat)
 
             val_error = self.validate(validation_data_loader, loss_function)
+
+            if max_epochs is not None and max_epochs < epoch:
+                # Break if exceeded training epoch limit
+                break
 
         return epoch
 
