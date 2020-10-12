@@ -11,6 +11,9 @@ from net.model import Model
 
 
 class Perceptron(Model):
-    def __init__(self, in_: int, out: int, bipolar: bool = False) -> None:
-        activaton = Unipolar() if not bipolar else Bipolar()
-        self.layers = [FCLayer(in_, out, activaton)]
+    def __init__(
+        self, in_: int, out: int, bipolar: bool = False, theta: float = 0
+    ) -> None:
+        activaton = Unipolar(theta=theta) if not bipolar else Bipolar(theta=theta)
+        bias = theta == 0
+        self.layers = [FCLayer(in_, out, activaton, bias=bias)]

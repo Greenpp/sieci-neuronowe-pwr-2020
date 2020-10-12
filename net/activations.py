@@ -36,12 +36,13 @@ class Unipolar(Activation):
     Unipolar activation
     """
 
-    # TODO custom theta
+    def __init__(self, theta: float = 0):
+        self.theta = theta
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         x = x.copy()
-        x[x > 0] = 1
-        x[x < 0] = 0
+        x[x > self.theta] = 1
+        x[x < self.theta] = 0
 
         return x
 
@@ -54,12 +55,13 @@ class Bipolar(Activation):
     Bipolar activation
     """
 
-    # TODO custom theta
+    def __init__(self, theta: float = 0):
+        self.theta = theta
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         x = x.copy()
-        x[x > 0] = 1
-        x[x < 0] = -1
+        x[x > self.theta] = 1
+        x[x < self.theta] = -1
 
         return x
 
