@@ -24,16 +24,21 @@ class FCLayer(Layer):
     """
 
     def __init__(
-        self, in_: int, out: int, activation: Activation, bias: bool = True
+        self,
+        in_: int,
+        out: int,
+        activation: Activation,
+        bias: bool = True,
+        weight_range: Tuple[float, float] = (-0.5, 0.5),
     ) -> None:
-        self.weights = np.random.rand(in_, out) - 0.5  #  TODO weights range
+        self.weights = self._init_weights((in_, out), weight_range)
         self.input_signal = None
         self.pre_activation_signal = None
         self.activation = activation
 
         self.bias = bias
         if bias:
-            self.b_weights = np.random.rand(1, out) - 0.5  #  TODO bias weights range
+            self.b_weights = self._init_weights((1, out), weight_range)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         """
@@ -48,6 +53,17 @@ class FCLayer(Layer):
         f_x = self.activation(f_x)
 
         return f_x
+
+    def _init_weights(
+        self, shape: Tuple[int, int], range_: Tuple[float, float]
+    ) -> np.ndarray:
+        # Random 0 - 1
+        weights = np.random.rand(*shape)
+        # Shift to range
+        min_, max_ = range_
+        size = max_ - min_
+
+        return weights * size + min_
 
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         d_activation = self.activation.derivative(self.pre_activation_signal)
