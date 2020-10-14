@@ -32,7 +32,7 @@ if __name__ == "__main__":
     )
     lab.add_experiment(perceptron_theta_uni)
     perceptron_theta_bi = Experiment(
-        title='Perceptron, wpływ theta, uni',
+        title='Perceptron, wpływ theta, bi',
         repetitions=REPS,
         model=ANDPerceptron,
         test_parameter=('theta', [-1, -0.5, 0, 0.5, 1]),
