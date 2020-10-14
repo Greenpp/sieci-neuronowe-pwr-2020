@@ -48,7 +48,7 @@ class Experiment:
             first_times_failed = 0
             for i in range(self.repetitions):
                 print(
-                    f'Tested value: {str(test_val):{self.max_test_val_len}} | {i+1}/{self.repetitions}',
+                    f'Tested value: {str(test_val):>{self.max_test_val_len}} | {i+1}/{self.repetitions}',
                     end='\r',
                 )
                 model = self.model(**self.parameters, **test_param)
@@ -67,11 +67,11 @@ class Experiment:
             done_fill_size = len(f'{self.repetitions}/{self.repetitions}')
             if first_times_failed > 0:
                 print(
-                    f'Tested value: {test_val:{self.max_test_val_len}} | {"Skipped":<{done_fill_size}}'
+                    f'Tested value: {str(test_val):>{self.max_test_val_len}} | {"Skipped":<{done_fill_size}}'
                 )
             else:
                 print(
-                    f'Tested value: {test_val:{self.max_test_val_len}} | {"Done":<{done_fill_size}}'
+                    f'Tested value: {str(test_val):>{self.max_test_val_len}} | {"Done":<{done_fill_size}}'
                 )
 
         self._save_result()
