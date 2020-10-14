@@ -69,5 +69,17 @@ class Bipolar(Activation):
         return 1
 
 
+ACTIVATIONS = {
+    'linear': Linear,
+    'unipolar': Unipolar,
+    'bipolar': Bipolar,
+    'sigmoid': Sigmoid,
+}
+
+
+def get_activation_by_name(name: str) -> type:
+    return ACTIVATIONS[name]
+
+
 if __name__ == '__main__':
     pass
