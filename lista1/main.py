@@ -1,75 +1,47 @@
 if __name__ == '__main__' and __package__ is None:
-    from sys import path
     from os.path import dirname as dir
+    from sys import path
 
     path.append(dir(path[0]))
     __package__ = 'lista1'
 
-from lista1.adaline import Adaline
-from net.loss_functions import MSE
-from net.data_loader import DataLoader
-from net.trainers import SGDTrainer
 
-from .data_generator import ANDGenerator
-from .perceptron import Perceptron
+from lista1.adaline import ANDAdaline
+from lista1.perceptron import ANDPerceptron
 
 
 def print_label(label: str) -> None:
     print(f'{10*"="}{label.upper()}{10*"="}')
 
 
-def unipolar_test() -> None:
-    print_label('unipolar')
-    data = ANDGenerator().get_augmented(include_original=True)
-    v_data = ANDGenerator().get_all()
-    dl = DataLoader(data, batch_size=4)
-    vdl = DataLoader(v_data, batch_size=None, random=False)
-
-    model = Perceptron(2, 1)
-    trainer = SGDTrainer(0.01)
-
-    epochs = model.train(dl, vdl, trainer, MSE(), 0)
-
-    print(f'Done in {epochs} epochs')
-    for d, _ in v_data:
-        print(f'{d} => {model(d)}')
-
-
-def bipolar_test() -> None:
-    print_label('bipolar')
-    data = ANDGenerator(bipolar=True).get_augmented(include_original=True)
-    v_data = ANDGenerator(bipolar=True).get_all()
-    dl = DataLoader(data, batch_size=4)
-    vdl = DataLoader(v_data, batch_size=None, random=False)
-
-    model = Perceptron(2, 1, bipolar=True)
-    trainer = SGDTrainer(0.01)
-
-    epochs = model.train(dl, vdl, trainer, MSE(), 0)
-
-    print(f'Done in {epochs} epochs')
-    for d, _ in v_data:
-        print(f'{d} => {model(d)}')
-
-
 def adaline_test() -> None:
     print_label('adaline')
-    data = ANDGenerator(bipolar=True).get_augmented(include_original=True)
-    v_data = ANDGenerator(bipolar=True).get_all()
-    dl = DataLoader(data, batch_size=4)
-    vdl = DataLoader(v_data, batch_size=None, random=False)
+    model = ANDAdaline(
+        theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01, epsilon=0.2
+    )
+    logger = model.train()
+    print(f'Epochs: {logger.get_logs()["epochs"]}')
 
-    model = Adaline(2, 1)
-    trainer = SGDTrainer(0.01)
 
-    epochs = model.train(dl, vdl, trainer, MSE(), 0.2)
+def perceptron_unipolar_test():
+    print_label('perceptron unipolar')
+    model = ANDPerceptron(
+        bipolar=False, theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01
+    )
+    logger = model.train()
+    print(f'Epochs: {logger.get_logs()["epochs"]}')
 
-    print(f'Done in {epochs} epochs')
-    for d, _ in v_data:
-        print(f'{d} => {model(d)}')
+
+def perceptron_bipolar_test():
+    print_label('perceptron bipolar')
+    model = ANDPerceptron(
+        bipolar=True, theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01
+    )
+    logger = model.train()
+    print(f'Epochs: {logger.get_logs()["epochs"]}')
 
 
 if __name__ == '__main__':
-    unipolar_test()
-    bipolar_test()
+    perceptron_unipolar_test()
+    perceptron_bipolar_test()
     adaline_test()
