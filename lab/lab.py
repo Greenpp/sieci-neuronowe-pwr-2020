@@ -13,7 +13,10 @@ class Lab:
             print(15 * '=')
             print(f'Testing: {experiment.title}')
             print(15 * '-')
-            experiment.run()
+            try:
+                experiment.run()
+            except Exception:
+                print('\n>>>Failed<<<\n')
         print(15 * '=')
         print(15 * '=')
         print('All done')
