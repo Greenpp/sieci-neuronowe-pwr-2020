@@ -26,7 +26,7 @@ class ANDGenerator:
         return self.data
 
     def get_augmented(
-        self, num: int = 4, include_original: bool = False
+        self, num: int = 4, include_original: bool = True
     ) -> List[Tuple[np.ndarray]]:
         augmented_data = []
         for x, y in self.data:
