@@ -18,9 +18,9 @@ from net.model import Model, ModelLogger, ModelModule
 
 
 class Adaline(Model):
-    def __init__(self, *args: Layer) -> None:
+    def __init__(self, theta: float, *args: Layer) -> None:
         super().__init__(*args),
-        self.final_activation = get_activation_by_name('bipolar')()
+        self.final_activation = get_activation_by_name('bipolar')(theta)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         forward = self.compute(x)
@@ -42,7 +42,7 @@ class ANDAdaline(ModelModule):
 
         activation = get_activation_by_name('linear')()
 
-        self.model = Adaline(FCLayer(2, 1, activation, bias, weight_range))
+        self.model = Adaline(theta, FCLayer(2, 1, activation, bias, weight_range))
         self.trainer = SGDTrainer(alpha)
 
         data = ANDGenerator(bipolar=True).get_augmented()
@@ -58,6 +58,7 @@ class ANDAdaline(ModelModule):
             MSE(),
             self.epsilon,
             max_epochs=1000,
+            fail_after_max_epochs=True,
         )
 
         return logger

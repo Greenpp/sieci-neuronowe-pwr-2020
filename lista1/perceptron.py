@@ -45,6 +45,7 @@ class ANDPerceptron(ModelModule):
             MSE(),
             epsilon=0,
             max_epochs=1000,
+            fail_after_max_epochs=True,
         )
 
         return logger

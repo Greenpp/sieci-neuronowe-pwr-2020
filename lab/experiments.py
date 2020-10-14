@@ -5,6 +5,8 @@ from typing import Any, List, Tuple, Union
 
 import numpy as np
 
+FIRST_FAILS_SKIP = 5
+
 
 class Experiment:
     def __init__(
@@ -41,6 +43,7 @@ class Experiment:
         for test_val in self.test_param_values:
             test_param = {self.test_param_name: test_val}
             self.results['results'][test_val] = []
+            first_times_failed = 0
             for i in range(self.repetitions):
                 print(
                     f'Tested value: {test_val:{self.max_test_val_len}} | {i+1}/{self.repetitions}',
@@ -50,11 +53,24 @@ class Experiment:
                 logger = model.train()
 
                 self.results['results'][test_val].append(logger.get_logs())
+                # Skip if failed to train model FIRST_FAILS_SKIP times
+                if first_times_failed >= 0:
+                    if logger.get_logs()['failed']:
+                        first_times_failed += 1
+                        if first_times_failed > FIRST_FAILS_SKIP:
+                            break
+                    else:
+                        first_times_failed = -1
             # Done need to override whole count
             done_fill_size = len(f'{self.repetitions}/{self.repetitions}')
-            print(
-                f'Tested value: {test_val:{self.max_test_val_len}} | {"Done":<{done_fill_size}}'
-            )
+            if first_times_failed > 0:
+                print(
+                    f'Tested value: {test_val:{self.max_test_val_len}} | {"Skipped":<{done_fill_size}}'
+                )
+            else:
+                print(
+                    f'Tested value: {test_val:{self.max_test_val_len}} | {"Done":<{done_fill_size}}'
+                )
 
         self._save_result()
 

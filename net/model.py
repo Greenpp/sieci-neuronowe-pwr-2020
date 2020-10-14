@@ -14,15 +14,20 @@ if TYPE_CHECKING:
 class ModelLogger:
     def __init__(self) -> None:
         self.errors = []
+        self.failed = False
 
     def log_error(self, error: np.ndarray) -> None:
         error_val = float(error)
         self.errors.append(error_val)
 
+    def fail(self) -> None:
+        self.failed = True
+
     def get_logs(self) -> dict:
         return {
             'errors': self.errors,
-            'epochs': len(self.errors) - 1,  # first error is logged before training
+            'epochs': len(self.errors) - 1,
+            'failed': self.failed,  # first error is logged before training
         }
 
 
@@ -65,6 +70,7 @@ class Model:
         loss_function: LossFunction,
         epsilon: float = 0.001,
         max_epochs: int = None,
+        fail_after_max_epochs=False,
     ) -> ModelLogger:
         """
         Train model
@@ -93,6 +99,8 @@ class Model:
 
             if max_epochs is not None and max_epochs < epoch:
                 # Break if exceeded training epoch limit
+                if fail_after_max_epochs:
+                    logger.fail()
                 break
 
         return logger
