@@ -32,8 +32,9 @@ class ANDGenerator:
         for x, y in self.data:
             for _ in range(num):
                 a_x = x.copy()
-                a_x[0][0] = a_x[0][0] + (np.random.rand() - 0.5) / 100
-                a_x[0][1] = a_x[0][0] + (np.random.rand() - 0.5) / 100
+                # +- [0, 0.1]
+                a_x[0][0] = a_x[0][0] + (np.random.rand() - 0.5) / 50
+                a_x[0][1] = a_x[0][0] + (np.random.rand() - 0.5) / 50
 
                 augmented_data.append((a_x, y))
 
