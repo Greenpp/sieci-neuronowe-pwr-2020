@@ -9,9 +9,9 @@ import numpy as np
 class Experiment:
     def __init__(
         self,
-        model: type,
         title: str,
         repetitions: int,
+        model: type,
         test_parameter: Tuple[str, Union[List, Tuple[Any, Any, Any]]],
         results_dir: str = 'wyniki',
         f_name: str = None,
