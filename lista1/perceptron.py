@@ -37,7 +37,7 @@ class ANDPerceptron(ModelModule):
         self.training_data_loader = DataLoader(data, batch_size=1)
         self.validation_data_loader = DataLoader(val_data, batch_size=None)
 
-    def train(self) -> ModelLogger:
+    def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
         logger = self.model.train(
             self.training_data_loader,
             self.validation_data_loader,
@@ -45,7 +45,7 @@ class ANDPerceptron(ModelModule):
             MSE(),
             epsilon=0,
             max_epochs=1000,
-            fail_after_max_epochs=True,
+            fail_after_max_epochs=fail_after_max_epochs,
         )
 
         return logger

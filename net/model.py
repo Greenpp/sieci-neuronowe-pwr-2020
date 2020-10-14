@@ -112,8 +112,7 @@ class Model:
         val_data = next(validation_data_loader.load())
         x, y_hat = self._stack_batch(val_data)
 
-        # Call can be overwritten, ex Adanline
-        y = self(x)
+        y = self.compute(x)
         error = loss_function(y, y_hat)
 
         # Mean error for all outputs
@@ -127,7 +126,7 @@ class ModelModule(ABC):
         pass
 
     @abstractmethod
-    def train(self) -> ModelLogger:
+    def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
         pass
 
 

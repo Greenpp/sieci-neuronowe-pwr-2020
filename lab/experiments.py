@@ -17,11 +17,13 @@ class Experiment:
         test_parameter: Tuple[str, Union[List, Tuple[Any, Any, Any]]],
         results_dir: str = 'wyniki',
         f_name: str = None,
+        fail_after_max_epochs: bool = True,
         **kwargs,
     ) -> None:
         self.title = title
         self.model = model
         self.repetitions = repetitions
+        self.fail_after_max_epochs = fail_after_max_epochs
 
         f_name = f'{datetime.now():%Y%m%d%H%M%S}' if f_name is None else f_name
         self.result_path = f'{os.getcwd()}/{results_dir}/{f_name}.pkl'
@@ -46,11 +48,11 @@ class Experiment:
             first_times_failed = 0
             for i in range(self.repetitions):
                 print(
-                    f'Tested value: {test_val:{self.max_test_val_len}} | {i+1}/{self.repetitions}',
+                    f'Tested value: {str(test_val):{self.max_test_val_len}} | {i+1}/{self.repetitions}',
                     end='\r',
                 )
                 model = self.model(**self.parameters, **test_param)
-                logger = model.train()
+                logger = model.train(fail_after_max_epochs=self.fail_after_max_epochs)
 
                 self.results['results'][test_val].append(logger.get_logs())
                 # Skip if failed to train model FIRST_FAILS_SKIP times
