@@ -36,7 +36,7 @@ class ANDAdaline(ModelModule):
         bias: bool,
         weight_range: Tuple[float, float],
         alpha: float,
-        epsilon: float,
+        epsilon: float = None,
     ) -> None:
         self.epsilon = epsilon
 

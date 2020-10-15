@@ -43,7 +43,6 @@ class ANDPerceptron(ModelModule):
             self.validation_data_loader,
             self.trainer,
             MSE(),
-            epsilon=0,
             max_epochs=1000,
             fail_after_max_epochs=fail_after_max_epochs,
         )

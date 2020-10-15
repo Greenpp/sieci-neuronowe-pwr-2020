@@ -13,14 +13,17 @@ if TYPE_CHECKING:
 
 class ModelLogger:
     def __init__(self) -> None:
-        self.errors = []
+        self.val_errors = []
+        self.test_errors = []
         self.failed = False
         self.weights = []
         self.biases = []
 
-    def log_error(self, error: np.ndarray) -> None:
-        error_val = float(error)
-        self.errors.append(error_val)
+    def log_val_error(self, error: np.ndarray) -> None:
+        self.val_errors.append(error)
+
+    def log_test_error(self, error: np.ndarray) -> None:
+        self.test_errors.append(error)
 
     def fail(self) -> None:
         self.failed = True
@@ -33,8 +36,10 @@ class ModelLogger:
 
     def get_logs(self) -> dict:
         return {
-            'errors': self.errors,
-            'epochs': len(self.errors) - 1,  # first error is logged before training
+            'val_errors': self.val_errors,
+            'test_errors': self.test_errors,
+            'epochs': len(self.val_errors)
+            - 1,  # first error log is before training loop
             'failed': self.failed,
             'weights': self.weights,
             'biases': self.biases,
@@ -90,25 +95,32 @@ class Model:
         validation_data_loader: DataLoader,
         trainer: Trainer,
         loss_function: LossFunction,
-        epsilon: float = 0.001,
+        epsilon: float = None,
         max_epochs: int = None,
         fail_after_max_epochs=False,
+        test_data_loader: DataLoader = None,
     ) -> ModelLogger:
         """
         Train model
         """
         logger = ModelLogger()
 
+        test_data_loader = (
+            test_data_loader if test_data_loader is not None else validation_data_loader
+        )
+
         # TODO Typing.Optional for all None default arguments
         trainer.attach(self)
         trainer.set_loss_function(loss_function)
 
         val_error = self.validate(validation_data_loader, loss_function)
-        logger.log_error(val_error)
+        test_error = self.test(test_data_loader, loss_function)
+        logger.log_test_error(test_error)
+        logger.log_val_error(val_error)
 
         epoch = 0
         # Training loop
-        while val_error > epsilon:
+        while (test_error > 0) if epsilon is None else (val_error > epsilon):
             epoch += 1
             for data_batch in training_data_loader.load():
                 x, y_hat = self._stack_batch(data_batch)
@@ -117,17 +129,33 @@ class Model:
                 trainer.train(y, y_hat)
 
             val_error = self.validate(validation_data_loader, loss_function)
+            test_error = self.test(test_data_loader, loss_function)
             # Log model state
-            logger.log_error(val_error)
+            logger.log_val_error(val_error)
+            logger.log_test_error(test_error)
             self._log_layers(logger)
 
-            if max_epochs is not None and max_epochs < epoch:
+            if max_epochs is not None and max_epochs <= epoch:
                 # Break if exceeded training epoch limit
                 if fail_after_max_epochs:
                     logger.fail()
                 break
 
         return logger
+
+    def test(self, test_data_loader: DataLoader, loss_function: LossFunction) -> float:
+        # Validation data loader should be initialized with size None and return all data at once
+        val_data = next(test_data_loader.load())
+        x, y_hat = self._stack_batch(val_data)
+
+        # Call can be overloaded, ex. Adaline
+        y = self(x)
+        error = loss_function(y, y_hat)
+
+        # Mean error for all outputs
+        m_error = error.mean()
+
+        return m_error
 
     def validate(
         self, validation_data_loader: DataLoader, loss_function: LossFunction
