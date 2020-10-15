@@ -7,6 +7,7 @@ if __name__ == '__main__' and __package__ is None:
 
 from typing import Tuple
 
+import numpy as np
 from net.activations import get_activation_by_name
 from net.data_loader import DataLoader
 from net.layers import FCLayer
@@ -36,6 +37,9 @@ class ANDPerceptron(ModelModule):
         val_data = ANDGenerator(bipolar).get_all()
         self.training_data_loader = DataLoader(data, batch_size=1)
         self.validation_data_loader = DataLoader(val_data, batch_size=None)
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return self.model(x)
 
     def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
         logger = self.model.train(

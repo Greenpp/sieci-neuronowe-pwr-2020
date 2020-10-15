@@ -50,6 +50,9 @@ class ANDAdaline(ModelModule):
         self.training_data_loader = DataLoader(data, batch_size=1)
         self.validation_data_loader = DataLoader(val_data, batch_size=None)
 
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        return self.model(x)
+
     def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
         logger = self.model.train(
             self.training_data_loader,

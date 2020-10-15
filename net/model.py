@@ -178,6 +178,10 @@ class ModelModule(ABC):
         pass
 
     @abstractmethod
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        pass
+
+    @abstractmethod
     def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
         pass
 
