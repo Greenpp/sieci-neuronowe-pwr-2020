@@ -42,7 +42,7 @@ class Unipolar(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         x = x.copy()
         x[x > self.theta] = 1
-        x[x < self.theta] = 0
+        x[x <= self.theta] = 0
 
         return x
 
@@ -61,7 +61,7 @@ class Bipolar(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         x = x.copy()
         x[x > self.theta] = 1
-        x[x < self.theta] = -1
+        x[x <= self.theta] = -1
 
         return x
 
