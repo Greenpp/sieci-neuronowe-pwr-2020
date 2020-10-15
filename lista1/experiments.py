@@ -12,7 +12,8 @@ from lab.lab import Lab
 from lista1.adaline import ANDAdaline
 from lista1.perceptron import ANDPerceptron
 
-if __name__ == "__main__":
+
+def experiments():
     REPS = 100
 
     lab = Lab()
@@ -116,7 +117,6 @@ if __name__ == "__main__":
         bias=True,
         theta=0,
         alpha=0.01,
-        epsilon=0.2,
     )
     lab.add_experiment(adaline_weight)
 
@@ -130,14 +130,13 @@ if __name__ == "__main__":
         bias=True,
         weight_range=(-0.5, 0.5),
         theta=0,
-        epsilon=0.2,
     )
     lab.add_experiment(adaline_alpha)
 
     # Epsilon
     adaline_epsilon = Experiment(
         title='Adaline, epsilon',
-        repetitions=1,
+        repetitions=REPS,
         model=ANDAdaline,
         test_parameter=('epsilon', [0]),
         f_name='ada_epsilon',
@@ -150,3 +149,7 @@ if __name__ == "__main__":
     lab.add_experiment(adaline_epsilon)
 
     lab.run()
+
+
+if __name__ == "__main__":
+    experiments()
