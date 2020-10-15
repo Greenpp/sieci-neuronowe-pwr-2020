@@ -40,11 +40,10 @@ class Unipolar(Activation):
         self.theta = theta
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        x = x.copy()
-        x[x > self.theta] = 1
-        x[x <= self.theta] = 0
+        activated = np.zeros_like(x)
+        activated[x > self.theta] = 1
 
-        return x
+        return activated
 
     def derivative(self, x: np.ndarray) -> np.ndarray:
         return 1
@@ -59,11 +58,10 @@ class Bipolar(Activation):
         self.theta = theta
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        x = x.copy()
-        x[x > self.theta] = 1
-        x[x <= self.theta] = -1
+        activated = np.full_like(x, -1)
+        activated[x > self.theta] = 1
 
-        return x
+        return activated
 
     def derivative(self, x: np.ndarray) -> np.ndarray:
         return 1
