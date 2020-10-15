@@ -50,7 +50,7 @@ Wszystkie eksperymenty zostały przeprowadzone 100 razy. Losowość przy inicjal
 
 Dane użyte w zadaniu są reprezentacją logicznej funkcji AND
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Wartości funkcji AND}
 	\label{tabela-and}
 	\centering
@@ -77,7 +77,7 @@ W trakcie eksperymentów wykorzystano 2 zbiory, uczący oraz walidujący.
 
 \subsection{Wpływ wartości progu theta na szybkość uczenia Perceptronu}
 \subsubsection*{Założenia}
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Stałe dla eksperymentu 1}
 	\label{tabela-const-1}
 	\centering
@@ -98,14 +98,14 @@ Zmienną w tym eksperymencie była wartość theta dla funkcji aktywacji. Przyjm
 Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badanie przeprowadzono dla funkcji aktywacyjnej unipolarnej jak i bipolarnej. Przebadane zostały też wartości dynamicznego progu.
 
 \subsubsection*{Wyniki}
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Zależność szybkości uczenia od parametru theta}
 	\includegraphics[width=\textwidth]{per_theta.png}
 	\label{fig:res11}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od parametru theta}
 	\label{tabela-res-11}
 	\centering
@@ -123,14 +123,14 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\end{tabular}
 \end{table}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Wartości dynamicznego progu}
 	\includegraphics[width=\textwidth]{per_bias.png}
 	\label{fig:res12}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Średnia wartość progu po wyuczeniu (- bias) }
 	\label{tabela-res-12}
 	\centering
@@ -146,12 +146,13 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
-% TODO
+% TODO why theta <= 0
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{tabela-res-11}, wynika ze wyuczenie modelu nie było możliwe dla progu \(theta \leq  0 \). Kolejną obserwacją jest mniejsza ilość epok potrzebna do wyuczenia przy mniejszym, dodatnim progu. Dodatkowe badanie wartości wyuczanego progu potwierdza tą obserwację - wyuczone wartości były małymi dodatnimi wartościami jak widać w tabeli \ref{tabela-res-12}.
 
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na szybkość uczenia Perceptronu}
 \subsubsection*{Założenia}
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Stałe dla eksperymentu 2}
 	\label{tabela-const-2}
 	\centering
@@ -172,14 +173,14 @@ Zmienną w tym eksperymencie była wartość początkowego zakresu wag. Przyjmow
 Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badanie przeprowadzono dla funkcji aktywacyjnej unipolarnej jak i bipolarnej.
 
 \subsubsection*{Wyniki}
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Zależność szybkości uczenia od początkowego zakresu wag}
 	\includegraphics[width=\textwidth]{per_w.png}
 	\label{fig:res2}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od początkowego zakresu wag}
 	\label{tabela-res-2}
 	\centering
@@ -200,13 +201,13 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
-% TODO
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res3} oraz tabeli~\ref{tabela-res-3}, wynika że uczenie następowało dużo szybciej dla początkowych wartości wag bliższych 0. Takie wyniki są zastanawiające, ponieważ inicjalizacja na 0 może spowodować ujednolicenie wag i pogorszyć możliwości generalizacji. Kolejny  minusem takiego ustawienia jest zerowanie gradientu podczas procesu uczenia, jednak nie dotyczy to jednowarstwowej architektury przyjętej w tym zadaniu. 
 
 \newpage
 \subsection{Wpływ wartości współczynnika uczenia alpha na szybkość uczenia Perceptronu}
 \subsubsection*{Założenia}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Stałe dla eksperymentu 3}
 	\label{tabela-const-3}
 	\centering
@@ -229,16 +230,16 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wyniki}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Zależność szybkości uczenia od parametru alpha}
 	\includegraphics[width=\textwidth]{per_alpha.png}
-	\label{fig:res3}
+	\label{fig:res4}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od parametru alpha}
-	\label{tabela-res-3}
+	\label{tabela-res-4}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
@@ -256,7 +257,7 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
-% TODO
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res4} oraz tabeli~\ref{tabela-res-4}, wynika że mniejsze wartości współczynnika uczenia spowalniają ten proces. Z jednej strony takie wyniki.
 
 \newpage
 \subsection{Wpływ funkcji aktywacyjnej (unipolarna, bipolarna) na szybkość uczenia Perceptronu}
@@ -265,7 +266,7 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na szybkość uczenia Adaline}
 \subsubsection*{Założenia}
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Stałe dla eksperymentu 5}
 	\label{tabela-const-5}
 	\centering
@@ -288,14 +289,14 @@ Zmienną w tym eksperymencie była wartość początkowego zakresu wag. Przyjmow
 Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
 \subsubsection*{Wyniki}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Zależność szybkości uczenia od początkowego zakresu wag}
 	\includegraphics[width=.5\textwidth]{ada_w.png}
 	\label{fig:res5}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od początkowego zakresu wag}
 	\label{tabela-res-5}
 	\centering
@@ -319,7 +320,7 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 \subsection{Wpływ wartości współczynnika uczenia alpha na szybkość uczenia Adaline}
 \subsubsection*{Założenia}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Stałe dla eksperymentu 6}
 	\label{tabela-const-6}
 	\centering
@@ -343,14 +344,14 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wyniki}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Zależność szybkości uczenia od parametru alpha}
 	\includegraphics[width=.5\textwidth]{ada_alpha.png}
 	\label{fig:res6}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od parametru alpha}
 	\label{tabela-res-6}
 	\centering
@@ -372,7 +373,7 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 \newpage
 \subsection{Wpływ przyjętego dopuszczalnego błędu na wynik uczenia w Adaline}
 \subsubsection*{Założenia}
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Stałe dla eksperymentu 7}
 	\label{tabela-const-7}
 	\centering
@@ -394,7 +395,7 @@ Podczas eksperymentu model został zainicjalizowany 100 raz, po czym zostało sp
 
 \subsubsection*{Wyniki}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Zachowanie błędu w trakcie uczenia Adaline}
 	\includegraphics[width=.5\textwidth]{ada_epsilon.png}
@@ -413,14 +414,14 @@ Uzyskane wyniki zostały ograniczone do 20 epok z powodu zerowego błędu testow
 \subsubsection*{Przebieg}
 \subsubsection*{Wyniki}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Porównanie szybkości uczenia Perceptronu i Adaline w zależności od początkowego zakresu wag}
 	\includegraphics[width=\textwidth]{ada_per_w.png}
 	\label{fig:res81}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Porównanie średniej ilości epok potrzebnych do wyuczenia Perceptronu i Adaline w zależności od początkowego zakresu wag}
 	\label{tabela-res-81}
 	\centering
@@ -440,14 +441,14 @@ Uzyskane wyniki zostały ograniczone do 20 epok z powodu zerowego błędu testow
 \end{table}
 
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\centering
 	\caption{Porównanie szybkości uczenia Perceptronu i Adaline w zależności od parametru alpha}
 	\includegraphics[width=\textwidth]{ada_per_alpha.png}
 	\label{fig:res82}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[!h]
 	\caption{Porównanie średniej ilości epok potrzebnych do wyuczenia Perceptronu i Adaline w zależności od parametru alpha}
 	\label{tabela-res-82}
 	\centering
