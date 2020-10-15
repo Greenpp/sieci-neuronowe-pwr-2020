@@ -15,6 +15,8 @@ class ModelLogger:
     def __init__(self) -> None:
         self.errors = []
         self.failed = False
+        self.weights = []
+        self.biases = []
 
     def log_error(self, error: np.ndarray) -> None:
         error_val = float(error)
@@ -23,11 +25,19 @@ class ModelLogger:
     def fail(self) -> None:
         self.failed = True
 
+    def log_weights_and_biases(
+        self, weights: List[np.ndarray], biases: List[np.ndarray]
+    ) -> None:
+        self.weights.append(weights)
+        self.biases.append(biases)
+
     def get_logs(self) -> dict:
         return {
             'errors': self.errors,
-            'epochs': len(self.errors) - 1,
-            'failed': self.failed,  # first error is logged before training
+            'epochs': len(self.errors) - 1,  # first error is logged before training
+            'failed': self.failed,
+            'weights': self.weights,
+            'biases': self.biases,
         }
 
 
@@ -62,6 +72,18 @@ class Model:
 
         return input, output
 
+    def _log_layers(self, logger: ModelLogger) -> None:
+        weights = []
+        biases = []
+        for l in self.layers:
+            w = l.weights.copy()
+            b = l.b_weights.copy() if l.bias else 0
+
+            weights.append(w)
+            biases.append(b)
+
+        logger.log_weights_and_biases(weights, biases)
+
     def train(
         self,
         training_data_loader: DataLoader,
@@ -95,7 +117,9 @@ class Model:
                 trainer.train(y, y_hat)
 
             val_error = self.validate(validation_data_loader, loss_function)
+            # Log model state
             logger.log_error(val_error)
+            self._log_layers(logger)
 
             if max_epochs is not None and max_epochs < epoch:
                 # Break if exceeded training epoch limit
