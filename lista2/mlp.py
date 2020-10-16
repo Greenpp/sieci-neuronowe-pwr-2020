@@ -5,6 +5,7 @@ if __name__ == '__main__' and __package__ is None:
     path.append(dir(path[0]))
     __package__ = 'lista2'
 
+from net.data_loader import DataLoader
 from net.activations import get_activation_by_name
 from net.layers import FCLayer
 from typing import List, Tuple
@@ -12,6 +13,7 @@ from net.model import Model, ModelLogger, ModelModule
 import numpy as np
 from net.trainers import SGDTrainer
 from net.loss_functions import MSE
+from .mnist_loader import MNISTLoader
 
 
 class MNISTMLP(ModelModule):
@@ -37,10 +39,12 @@ class MNISTMLP(ModelModule):
         self.model = Model(*layers)
         self.trainer = SGDTrainer(alpha)
 
-        # TODO load data
-        self.training_data_loader = None
-        self.validation_data_loader = None
-        self.test_data_loader = None
+
+        tr_data, v_data, te_data = MNISTLoader().get_sets()
+
+        self.training_data_loader = DataLoader(tr_data)
+        self.validation_data_loader = DataLoader(v_data, batch_size=None, random=False)
+        self.test_data_loader = DataLoader(te_data, batch_size=None, random=False)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return self.model(x)
