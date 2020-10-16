@@ -9,7 +9,7 @@ class Activation(ABC):
         pass
 
     @abstractmethod
-    def derivative(self, x: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         pass
 
 
@@ -17,18 +17,20 @@ class Linear(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return x
 
-    def derivative(self, x: np.ndarray) -> np.ndarray:
-        return 1
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        return grad
 
 
 class Sigmoid(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
+        self.signal = x
         return 1 / (1 + np.exp(-x))
 
-    def derivative(self, x: np.ndarray) -> np.ndarray:
-        sig_x = self(x)
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        sig_signal = self(self.signal)
+        d_sig = sig_signal * (1 - sig_signal)
 
-        return sig_x * (1 - sig_x)
+        return d_sig * grad
 
 
 class Unipolar(Activation):
@@ -45,8 +47,8 @@ class Unipolar(Activation):
 
         return activated
 
-    def derivative(self, x: np.ndarray) -> np.ndarray:
-        return 1
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        return grad
 
 
 class Bipolar(Activation):
@@ -63,33 +65,39 @@ class Bipolar(Activation):
 
         return activated
 
-    def derivative(self, x: np.ndarray) -> np.ndarray:
-        return 1
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        return grad
 
 
 class Softmax(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        stable_x = x - x.max()
+        # Axis 1 for batch input
+        stable_x = x - x.max(axis=1)
         exp_x = np.exp(stable_x)
+        # [:, None] to divide rows not columns
+        d_soft = exp_x / exp_x.sum(axis=1)[:, None]
 
-        return exp_x / exp_x.sum()
+        self.signal = d_soft
 
-    def derivative(self, x: np.ndarray) -> np.ndarray:
-        # TODO (only with cross-entropy ?)
-        return 1
+        return d_soft
+
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
 
 
 class ReLU(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
+        # TODO check if copy is needed
+        self.signal = x
         activated = np.clip(x, 0, None)
 
         return activated
 
-    def derivative(self, x: np.ndarray) -> np.ndarray:
-        activated = np.zeros_like(x)
-        activated[x > 0] = 1.0
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        # TODO for optimization grad can replace 1
+        d_rel = np.where(self.signal > 0, 1, 0)
 
-        return activated
+        return d_rel * grad
 
 
 ACTIVATIONS = {
