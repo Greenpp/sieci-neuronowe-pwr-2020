@@ -79,12 +79,26 @@ class Softmax(Activation):
         return 1
 
 
+class ReLU(Activation):
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        activated = np.clip(x, 0, None)
+
+        return activated
+
+    def derivative(self, x: np.ndarray) -> np.ndarray:
+        activated = np.zeros_like(x)
+        activated[x > 0] = 1.0
+
+        return activated
+
+
 ACTIVATIONS = {
     'linear': Linear,
     'unipolar': Unipolar,
     'bipolar': Bipolar,
     'sigmoid': Sigmoid,
     'softmax': Softmax,
+    'relu': ReLU,
 }
 
 
