@@ -35,8 +35,6 @@ class SGDTrainer(Trainer):
     def train(self, loss_function: LossFunction) -> None:
         grad = loss_function.backward()
         for layer in self.layers:
-            # Clip gradient
-            grad = np.clip(grad, -5, 5)
             d_b, d_w, grad = layer.backward(grad)
             self._update_layer_weights(layer, d_b, d_w)
 
