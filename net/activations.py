@@ -72,7 +72,7 @@ class Bipolar(Activation):
 class Softmax(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         # Axis 1 for batch input
-        stable_x = x - x.max(axis=1)
+        stable_x = x - x.max(axis=1)[:, None]
         exp_x = np.exp(stable_x)
         # [:, None] to divide rows not columns
         d_soft = exp_x / exp_x.sum(axis=1)[:, None]
