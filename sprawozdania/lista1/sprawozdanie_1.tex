@@ -81,7 +81,7 @@ W trakcie eksperymentów wykorzystano 2 zbiory, uczący oraz walidujący.
 	\caption{Stałe dla eksperymentu 1}
 	\label{tabela-const-1}
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lr}
 		\toprule
 		Parametr               & Wartość         \\
 		\midrule
@@ -92,7 +92,7 @@ W trakcie eksperymentów wykorzystano 2 zbiory, uczący oraz walidujący.
 	\end{tabular}
 \end{table}
 
-Zmienną w tym eksperymencie była wartość theta dla funkcji aktywacji. Przyjmowała wartości ze zbioru \(\{$-1, -0.5, 0, 0.5, 1$\}\)
+Zmienną w tym eksperymencie była wartość theta dla funkcji aktywacji. Przyjmowała wartości ze zbioru \(\{$-1.0, -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8, 1.0$\}\)
 \subsubsection*{Przebieg}
 
 Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badanie przeprowadzono dla funkcji aktywacyjnej unipolarnej jak i bipolarnej. Przebadane zostały też wartości dynamicznego progu.
@@ -112,42 +112,25 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\begin{tabular}{rrr}
 		\toprule
 		\multirow{2}{*}{Theta}   & \multicolumn{2}{c}{Epoki} \\
-		     & bipolarna & unipolarna \\
+		     & bipolarna     & unipolarna    \\
 		\midrule
-		-1.0 & -         & -          \\
-		-0.5 & -         & -          \\
-		0.0  & -         & -          \\
-		0.5  & 3.85      & 6.46       \\
-		1.0  & 6.4       & 11.46      \\
-		\bottomrule
-	\end{tabular}
-\end{table}
-
-\begin{figure}[!h]
-	\centering
-	\caption{Wartości dynamicznego progu}
-	\includegraphics[width=\textwidth]{per_bias.png}
-	\label{fig:res12}
-\end{figure}
-
-\begin{table}[!h]
-	\caption{Średnia wartość progu po wyuczeniu (- bias) }
-	\label{tabela-res-12}
-	\centering
-	\begin{tabular}{lrr}
-		\toprule
-		Aktywacja  & Próg  \\
-		\midrule
-		bipolarna  & 0.0507 \\
-		unipolarna & 0.0230 \\
+		-1.0 & -             & -             \\
+		-0.8 & -             & -             \\
+		-0.5 & -             & -             \\
+		-0.2 & -             & -             \\
+		0.0  & -             & -             \\
+		0.2  & \textbf{2.27} & \textbf{5.47} \\
+		0.5  & 3.88          & 6.77          \\
+		0.8  & 5.64          & 9.46          \\
+		1.0  & 6.36          & 11.57         \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \subsubsection*{Wnioski}
 
-% TODO why theta <= 0
-Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{tabela-res-11}, wynika ze wyuczenie modelu nie było możliwe dla progu \(theta \leq  0 \). Kolejną obserwacją jest mniejsza ilość epok potrzebna do wyuczenia przy mniejszym, dodatnim progu. Dodatkowe badanie wartości wyuczanego progu potwierdza tą obserwację - wyuczone wartości były małymi dodatnimi wartościami jak widać w tabeli \ref{tabela-res-12}.
+% TODO theta = 0 stuck in the origin, theta < 0 function inverted
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{tabela-res-11}, wynika ze wyuczenie modelu nie było możliwe dla progu \(theta \leq  0 \). Kolejną obserwacją jest mniejsza ilość epok potrzebna do wyuczenia przy mniejszym, dodatnim progu.
 
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na szybkość uczenia Perceptronu}
@@ -156,18 +139,18 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{
 	\caption{Stałe dla eksperymentu 2}
 	\label{tabela-const-2}
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lr}
 		\toprule
 		Parametr               & Wartość \\
 		\midrule
 		Bias                   & Tak       \\
-		Theta                  & 0         \\
+		Theta                  & 0.0       \\
 		Współczynnik uczenia & 0.01      \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Zmienną w tym eksperymencie była wartość początkowego zakresu wag. Przyjmowała wartości ze zbioru \(\{$0, -0.1 - 0.1, -0.2 - 0.2, -0.5 - 0.5, -0.8 - 0.8, -1 - 1$\}\)
+Zmienną w tym eksperymencie była wartość początkowego zakresu wag. Przyjmowała wartości ze zbioru \(\{$0.0, -0.1 -- 0.1, -0.2 -- 0.2, -0.5 -- 0.5, -0.8 -- 0.8, -1.0 -- 1.0$\}\)
 \subsubsection*{Przebieg}
 
 Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badanie przeprowadzono dla funkcji aktywacyjnej unipolarnej jak i bipolarnej.
@@ -187,21 +170,21 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\begin{tabular}{rrr}
 		\toprule
 		\multirow{2}{*}{Zakres wag}   & \multicolumn{2}{c}{Epoki} \\
-		                  & bipolarna & unipolarna \\
+		                  & bipolarna     & unipolarna    \\
 		\midrule
-		0                 & 2.07      & 4.31       \\
-		\($-0.1 -- 0.1$\) & 2.99      & 9.03       \\
-		\($-0.2 -- 0.2$\) & 3.88      & 13.64      \\
-		\($-0.5 -- 0.5$\) & 6.99      & 23.53      \\
-		\($-0.8 -- 0.8$\) & 10.59     & 40.50      \\
-		\($-1.0 -- 1.0$\) & 12.26     & 47.52      \\
+		0.0               & \textbf{1.79} & \textbf{4.62} \\
+		\($-0.1 -- 0.1$\) & 2.83          & 8.44          \\
+		\($-0.2 -- 0.2$\) & 3.62          & 13.00         \\
+		\($-0.5 -- 0.5$\) & 7.14          & 24.01         \\
+		\($-0.8 -- 0.8$\) & 9.29          & 41.41         \\
+		\($-1.0 -- 1.0$\) & 13.00         & 52.40         \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res3} oraz tabeli~\ref{tabela-res-3}, wynika że uczenie następowało dużo szybciej dla początkowych wartości wag bliższych 0. Takie wyniki są zastanawiające, ponieważ inicjalizacja na 0 może spowodować ujednolicenie wag i pogorszyć możliwości generalizacji. Kolejny  minusem takiego ustawienia jest zerowanie gradientu podczas procesu uczenia, jednak nie dotyczy to jednowarstwowej architektury przyjętej w tym zadaniu. 
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res2} oraz tabeli~\ref{tabela-res-2}, wynika że uczenie następowało dużo szybciej dla początkowych wartości wag bliższych 0. Takie wyniki są zastanawiające, ponieważ inicjalizacja na 0 może spowodować ujednolicenie wag i pogorszyć możliwości generalizacji. Kolejny  minusem takiego ustawienia jest zerowanie gradientu podczas procesu uczenia, jednak nie dotyczy to jednowarstwowej architektury przyjętej w tym zadaniu. 
 
 \newpage
 \subsection{Wpływ wartości współczynnika uczenia alpha na szybkość uczenia Perceptronu}
@@ -211,18 +194,18 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res3} oraz tabeli~\ref{t
 	\caption{Stałe dla eksperymentu 3}
 	\label{tabela-const-3}
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lr}
 		\toprule
 		Parametr   & Wartość         \\
 		\midrule
 		Bias       & Tak               \\
-		Theta      & 0                 \\
+		Theta      & 0.0               \\
 		Zakres wag & \($-0.5 -- 0.5$\) \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Zmienną w tym eksperymencie była wartość współczynnika uczenia. Przyjmowała wartości ze zbioru \(\{$0.0001, 0.001, 0.01, 0.1, 1$\}\)
+Zmienną w tym eksperymencie była wartość współczynnika uczenia. Przyjmowała wartości ze zbioru \(\{$0.0001, 0.001, 0.01, 0.1, 1.0$\}\)
 
 \subsubsection*{Przebieg}
 
@@ -234,30 +217,30 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\centering
 	\caption{Zależność szybkości uczenia od parametru alpha}
 	\includegraphics[width=\textwidth]{per_alpha.png}
-	\label{fig:res4}
+	\label{fig:res3}
 \end{figure}
 
 \begin{table}[!h]
 	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od parametru alpha}
-	\label{tabela-res-4}
+	\label{tabela-res-3}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
 		\multirow{2}{*}{Alpha}   & \multicolumn{2}{c}{Epoki} \\
-		       & bipolarna & unipolarna \\
+		       & bipolarna     & unipolarna    \\
 		\midrule
-		0.0001 & 515.41    & 848.95     \\
-		0.0010 & 53.58     & 216.23     \\
-		0.0100 & 7.77      & 23.15      \\
-		0.1000 & 2.17      & 7.03       \\
-		1.0000 & 1.75      & 5.41       \\
+		0.0001 & 495.44        & 836.04        \\
+		0.0010 & 57.52         & 223.90        \\
+		0.0100 & 6.88          & 22.60         \\
+		0.1000 & 2.33          & 6.80          \\
+		1.0000 & \textbf{1.86} & \textbf{5.68} \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res4} oraz tabeli~\ref{tabela-res-4}, wynika że mniejsze wartości współczynnika uczenia spowalniają ten proces. Z jednej strony takie wyniki.
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res3} oraz tabeli~\ref{tabela-res-3}, wynika że mniejsze wartości współczynnika uczenia spowalniają ten proces. Z jednej strony takie wyniki.
 
 \newpage
 \subsection{Wpływ funkcji aktywacyjnej (unipolarna, bipolarna) na szybkość uczenia Perceptronu}
@@ -270,19 +253,19 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res4} oraz tabeli~\ref{t
 	\caption{Stałe dla eksperymentu 5}
 	\label{tabela-const-5}
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lr}
 		\toprule
 		Parametr               & Wartość \\
 		\midrule
 		Bias                   & Tak       \\
-		Theta                  & 0         \\
+		Theta                  & 0.0       \\
 		Współczynnik uczenia & 0.01      \\
 		Epsilon                & 0.2       \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Zmienną w tym eksperymencie była wartość początkowego zakresu wag. Przyjmowała wartości ze zbioru \(\{$0, -0.1 - 0.1, -0.2 - 0.2, -0.5 - 0.5, -0.8 - 0.8, -1 - 1$\}\)
+Zmienną w tym eksperymencie była wartość początkowego zakresu wag. Przyjmowała wartości ze zbioru \(\{$0.0, -0.1 -- 0.1, -0.2 -- 0.2, -0.5 -- 0.5, -0.8 -- 0.8, -1.0 -- 1.0$\}\)
 
 \subsubsection*{Przebieg}
 
@@ -302,14 +285,14 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Zakres wag        & Epoki \\
+		Zakres wag        & Epoki         \\
 		\midrule
-		0                 & 1.00  \\
-		\($-0.1 -- 0.1$\) & 1.52  \\
-		\($-0.2 -- 0.2$\) & 2.55  \\
-		\($-0.5 -- 0.5$\) & 6.51  \\
-		\($-0.8 -- 0.8$\) & 9.70  \\
-		\($-1.0 -- 1.0$\) & 11.97 \\
+		0.0               & \textbf{1.00} \\
+		\($-0.1 -- 0.1$\) & 1.61          \\
+		\($-0.2 -- 0.2$\) & 2.51          \\
+		\($-0.5 -- 0.5$\) & 5.93          \\
+		\($-0.8 -- 0.8$\) & 11.54         \\
+		\($-1.0 -- 1.0$\) & 11.95         \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -324,19 +307,19 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\caption{Stałe dla eksperymentu 6}
 	\label{tabela-const-6}
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lr}
 		\toprule
 		Parametr   & Wartość         \\
 		\midrule
 		Bias       & Tak               \\
-		Theta      & 0                 \\
+		Theta      & 0.0               \\
 		Zakres wag & \($-0.5 -- 0.5$\) \\
 		Epsilon    & 0.2               \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Zmienną w tym eksperymencie była wartość współczynnika uczenia. Przyjmowała wartości ze zbioru \(\{$0.0001, 0.001, 0.01, 0.1, 1$\}\)
+Zmienną w tym eksperymencie była wartość współczynnika uczenia. Przyjmowała wartości ze zbioru \(\{$0.0001, 0.001, 0.01, 0.1, 1.0$\}\)
 
 \subsubsection*{Przebieg}
 
@@ -357,13 +340,13 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Alpha  & Epoki  \\
+		Alpha  & Epoki         \\
 		\midrule
-		0.0001 & 553.30 \\
-		0.0010 & 55.47  \\
-		0.0100 & 5.43   \\
-		0.1000 & 1.68   \\
-		1.0000 & 21.41  \\
+		0.0001 & 567.96        \\
+		0.0010 & 55.87         \\
+		0.0100 & 5.56          \\
+		0.1000 & \textbf{1.64} \\
+		1.0000 & 20.81         \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -377,15 +360,15 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 	\caption{Stałe dla eksperymentu 7}
 	\label{tabela-const-7}
 	\centering
-	\begin{tabular}{ll}
+	\begin{tabular}{lr}
 		\toprule
 		Parametr               & Wartość         \\
 		\midrule
 		Bias                   & Tak               \\
-		Theta                  & 0                 \\
+		Theta                  & 0.0               \\
 		Zakres wag             & \($-0.5 -- 0.5$\) \\
 		Współczynnik uczenia & 0.01              \\
-		Epsilon                & 0                 \\
+		Epsilon                & 0.0               \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -402,7 +385,7 @@ Podczas eksperymentu model został zainicjalizowany 100 raz, po czym zostało sp
 	\label{fig:res7}
 \end{figure}
 
-Minimalna zaobserwowana wartość błędu walidacji: \($0.1307$\)
+Minimalna zaobserwowana wartość błędu walidacji: \($0.1303$\)
 
 \subsubsection*{Wnioski}
 
@@ -430,12 +413,12 @@ Uzyskane wyniki zostały ograniczone do 20 epok z powodu zerowego błędu testow
 		\multirow{2}{*}{Zakres wag}   & \multicolumn{2}{c}{Epoki} \\
 		                  & Perceptron & Adaline        \\
 		\midrule
-		0                 & 2.07       & \textbf{1.00}  \\
-		\($-0.1 -- 0.1$\) & 2.99       & \textbf{1.52}  \\
-		\($-0.2 -- 0.2$\) & 3.88       & \textbf{2.55}  \\
-		\($-0.5 -- 0.5$\) & 6.99       & \textbf{6.51}  \\
-		\($-0.8 -- 0.8$\) & 10.59      & \textbf{9.70}  \\
-		\($-1.0 -- 1.0$\) & 12.26      & \textbf{11.97} \\
+		0.0               & 1.79       & \textbf{1.00}  \\
+		\($-0.1 -- 0.1$\) & 2.83       & \textbf{1.61}  \\
+		\($-0.2 -- 0.2$\) & 3.62       & \textbf{2.51}  \\
+		\($-0.5 -- 0.5$\) & 7.14       & \textbf{5.93}  \\
+		\($-0.8 -- 0.8$\) & 9.29       & \textbf{11.54} \\
+		\($-1.0 -- 1.0$\) & 13.00      & \textbf{11.95} \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -455,13 +438,13 @@ Uzyskane wyniki zostały ograniczone do 20 epok z powodu zerowego błędu testow
 	\begin{tabular}{rrr}
 		\toprule
 		\multirow{2}{*}{Alpha}   & \multicolumn{2}{c}{Epoki} \\
-		       & Perceptron      & Adaline       \\
+		       & Perceptron      & Adaline        \\
 		\midrule
-		0.0001 & \textbf{515.41} & 553.30        \\
-		0.0010 & \textbf{53.58}  & 55.47         \\
-		0.0100 & 7.77            & \textbf{5.43} \\
-		0.1000 & 2.17            & \textbf{1.68} \\
-		1.0000 & \textbf{1.75}   & 21.41         \\
+		0.0001 & \textbf{495.44} & 567.96         \\
+		0.0010 & 57.52           & \textbf{55.87} \\
+		0.0100 & 6.88            & \textbf{5.56}  \\
+		0.1000 & 2.33            & \textbf{1.64}  \\
+		1.0000 & \textbf{1.86}   & 20.81          \\
 		\bottomrule
 	\end{tabular}
 \end{table}
