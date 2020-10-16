@@ -12,7 +12,7 @@ from typing import List, Tuple
 from net.model import Model, ModelLogger, ModelModule
 import numpy as np
 from net.trainers import SGDTrainer
-from net.loss_functions import MSE
+from net.loss_functions import MSE, get_loss_by_name
 from .mnist_loader import MNISTLoader
 
 
@@ -23,10 +23,10 @@ class MNISTMLP(ModelModule):
         activations: List[str],
         weight_range: Tuple[float, float],
         alpha: float,
+        loss: str,
         epsilon: float = None,
         max_epochs: int = None,
     ) -> None:
-        # TODO param for loss function
         self.epsilon = epsilon
         self.max_epochs = max_epochs
 
@@ -38,7 +38,7 @@ class MNISTMLP(ModelModule):
 
         self.model = Model(*layers)
         self.trainer = SGDTrainer(alpha)
-
+        self.loss_function = get_loss_by_name(loss)()
 
         tr_data, v_data, te_data = MNISTLoader().get_sets()
 
@@ -54,7 +54,7 @@ class MNISTMLP(ModelModule):
             self.training_data_loader,
             self.validation_data_loader,
             self.trainer,
-            MSE(),
+            self.loss_function,
             epsilon=self.epsilon,
             max_epochs=self.max_epochs,
             fail_after_max_epochs=fail_after_max_epochs,
