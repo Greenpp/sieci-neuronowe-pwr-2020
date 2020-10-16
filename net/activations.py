@@ -67,11 +67,24 @@ class Bipolar(Activation):
         return 1
 
 
+class Softmax(Activation):
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        stable_x = x - x.max()
+        exp_x = np.exp(stable_x)
+
+        return exp_x / exp_x.sum()
+
+    def derivative(self, x: np.ndarray) -> np.ndarray:
+        # TODO (only with cross-entropy ?)
+        return 1
+
+
 ACTIVATIONS = {
     'linear': Linear,
     'unipolar': Unipolar,
     'bipolar': Bipolar,
     'sigmoid': Sigmoid,
+    'softmax': Softmax,
 }
 
 
