@@ -29,3 +29,17 @@ class MSE(LossFunction):
         delta = output - label
 
         return delta
+
+
+class CrossEntropy(LossFunction):
+    pass
+
+
+LOSSES = {
+    'mse': MSE,
+    'cross-entropy': CrossEntropy,
+}
+
+
+def get_loss_by_name(name: str):
+    return LOSSES[name]
