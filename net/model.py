@@ -111,7 +111,6 @@ class Model:
 
         # TODO Typing.Optional for all None default arguments
         trainer.attach(self)
-        trainer.set_loss_function(loss_function)
 
         val_error = self.validate(validation_data_loader, loss_function)
         test_error = self.test(test_data_loader, loss_function)
@@ -126,11 +125,13 @@ class Model:
                 x, y_hat = self._stack_batch(data_batch)
 
                 y = self.compute(x)
-                trainer.train(y, y_hat)
+                loss = loss_function(y, y_hat)
+                trainer.train(loss_function)
 
             val_error = self.validate(validation_data_loader, loss_function)
             test_error = self.test(test_data_loader, loss_function)
             # Log model state
+            # TODO log mean train error
             logger.log_val_error(val_error)
             logger.log_test_error(test_error)
             self._log_layers(logger)

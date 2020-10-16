@@ -20,11 +20,8 @@ class Trainer(ABC):
         """
         self.layers = list(reversed(model.layers))
 
-    def set_loss_function(self, loss_function: LossFunction) -> None:
-        self.loss_function = loss_function
-
     @abstractmethod
-    def train(self, output: np.ndarray, label: np.ndarray) -> None:
+    def train(self, loss_function: LossFunction) -> None:
         pass
 
     @abstractmethod
@@ -35,8 +32,8 @@ class Trainer(ABC):
 
 
 class SGDTrainer(Trainer):
-    def train(self, output: np.ndarray, label: np.ndarray) -> None:
-        grad = self.loss_function.backward(output, label)
+    def train(self, loss_function: LossFunction) -> None:
+        grad = loss_function.backward()
         for layer in self.layers:
             # Clip gradient
             grad = np.clip(grad, -5, 5)
@@ -67,8 +64,8 @@ class MomentumTrainer(Trainer):
             for l in reversed(model.layers)
         ]
 
-    def train(self, output: np.ndarray, label: np.ndarray) -> None:
-        grad = self.loss_function.backward(output, label)
+    def train(self, loss_function: LossFunction) -> None:
+        grad = loss_function.backward()
         for layer_dict in self.layers:
             layer = layer_dict['layer']
 
@@ -109,8 +106,8 @@ class AdaGradTrainer(Trainer):
             for l in reversed(model.layers)
         ]
 
-    def train(self, output: np.ndarray, label: np.ndarray) -> None:
-        grad = self.loss_function.backward(output, label)
+    def train(self, loss_function: LossFunction) -> None:
+        grad = loss_function.backward()
         for layer_dict in self.layers:
             layer = layer_dict['layer']
 

@@ -9,7 +9,7 @@ class LossFunction(ABC):
         pass
 
     @abstractmethod
-    def backward(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+    def backward(self) -> np.ndarray:
         pass
 
 
@@ -19,14 +19,17 @@ class MSE(LossFunction):
     """
 
     def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+        self.y = output
+        self.y_hat = label
+
         error = ((output - label) ** 2) / 2
         # mean error for batch input
         m_error = error.mean(axis=0)
 
         return m_error
 
-    def backward(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
-        delta = output - label
+    def backward(self) -> np.ndarray:
+        delta = self.y - self.y_hat
 
         return delta
 
@@ -41,7 +44,7 @@ class CrossEntropy(LossFunction):
         return cross_e
 
     def backward(self) -> np.ndarray:
-    pass
+        pass
 
 
 LOSSES = {
