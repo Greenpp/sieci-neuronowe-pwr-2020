@@ -15,6 +15,7 @@ class ModelLogger:
     def __init__(self) -> None:
         self.val_errors = []
         self.test_errors = []
+        self.train_errors = []
         self.failed = False
         self.weights = []
         self.biases = []
@@ -24,6 +25,9 @@ class ModelLogger:
 
     def log_test_error(self, error: np.ndarray) -> None:
         self.test_errors.append(error)
+
+    def log_train_error(self, error: np.ndarray) -> None:
+        self.train_errors.append(error)
 
     def fail(self) -> None:
         self.failed = True
@@ -38,6 +42,7 @@ class ModelLogger:
         return {
             'val_errors': self.val_errors,
             'test_errors': self.test_errors,
+            'train_errors': self.train_errors,
             'epochs': len(self.val_errors)
             - 1,  # first error log is before training loop
             'failed': self.failed,
@@ -121,6 +126,7 @@ class Model:
         # Training loop
         while (test_error > 0) if epsilon is None else (val_error > epsilon):
             epoch += 1
+            epoch_loses = []
             for data_batch in training_data_loader.load():
                 x, y_hat = self._stack_batch(data_batch)
 
@@ -128,10 +134,14 @@ class Model:
                 loss = loss_function(y, y_hat)
                 trainer.train(loss_function)
 
+                epoch_loses.append(loss)
+            train_error = np.mean(epoch_loses)
+            epoch_loses.clear()
+
             val_error = self.validate(validation_data_loader, loss_function)
             test_error = self.test(test_data_loader, loss_function)
             # Log model state
-            # TODO log mean train error
+            logger.log_train_error(train_error)
             logger.log_val_error(val_error)
             logger.log_test_error(test_error)
             self._log_layers(logger)
