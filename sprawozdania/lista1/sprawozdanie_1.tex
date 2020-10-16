@@ -36,7 +36,7 @@ Cały kod wykorzystany w zadaniu znajduje się pod adresem: \url{https://github.
 \section{Opis badań}
 \subsection{Plan eksperymentów}
 
-Wszystkie eksperymenty zostały przeprowadzone 100 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 1000 epok, po przekroczeniu której, przy pierwszych 6 wyuczeniach, model zostawał klasyfikowany jako niezdolny do wyuczenia. Zgodnie z instrukcją zostały przeprowadzone następujące badania:
+Wszystkie eksperymenty zostały przeprowadzone 100 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 1000 epok, po przekroczeniu której, uczenie zostawało przerywane. Jeśli  model przekroczył tą granice przy pierwszych 6 wyuczeniach, zostawał klasyfikowany jako niezdolny do wyuczenia i pomijany. Zgodnie z instrukcją zostały przeprowadzone następujące badania:
 \begin{itemize}
 	\item Wpływ wartości progu theta na szybkość uczenia Perceptronu
 	\item Wpływ zakresu inicjalizacji wag na szybkość uczenia Perceptronu
@@ -68,10 +68,11 @@ Dane użyte w zadaniu są reprezentacją logicznej funkcji AND
 	\end{tabular}
 \end{table}
 
-W trakcie eksperymentów wykorzystano 2 zbiory, uczący oraz walidujący.
+W trakcie eksperymentów wykorzystano następujące zbiory:
 \begin{itemize}
 	\item Zbiór uczący: 4 podstawowe wzorce oraz 4-krotna kopia każdego z nich z przesuniętymi wartościami wejściowymi o \(\pm\ $-0.01 -- 0.01$\)
 	\item Zbiór walidujący: 4 podstawowe wzorce
+	\item Zbiór testowy: 4 podstawowe wzorce
 \end{itemize}
 
 \newpage
@@ -97,7 +98,7 @@ W trakcie eksperymentów wykorzystano 2 zbiory, uczący oraz walidujący.
 Zmienną w tym eksperymencie była wartość theta dla funkcji aktywacji. Przyjmowała wartości ze zbioru \(\{$-1.0, -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8, 1.0$\}\)
 \subsubsection*{Przebieg}
 
-Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badanie przeprowadzono dla funkcji aktywacyjnej unipolarnej jak i bipolarnej. Przebadane zostały też wartości dynamicznego progu.
+Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badanie przeprowadzono dla funkcji aktywacyjnej unipolarnej jak i bipolarnej.
 
 \subsubsection*{Wyniki}
 \begin{figure}[!h]
@@ -131,8 +132,7 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
-% TODO theta = 0 stuck in the origin, theta < 0 function inverted
-Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{tabela-res-11}, wynika ze wyuczenie modelu nie było możliwe dla progu \(theta \leq  0 \). Kolejną obserwacją jest mniejsza ilość epok potrzebna do wyuczenia przy mniejszym, dodatnim progu.
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{tabela-res-11}, wynika ze wyuczenie modelu nie było możliwe dla progu \(theta \leq  0 \). Jest to zgodne z jego matematyczna interpretacją jako funkcji liniowej. Przy progu równym zero nie jest możliwe oderwanie od początka układu współrzędnych co uniemożliwia rozdzielenie zadanych punktów. Podczas gdy ujemne wartości sprawiają, że dla wymaganej orientacji prostej suma ujemnych wag jest większa od wartości progu co powoduje odwrócenie otrzymywanych klas. Kolejną obserwacją jest mniejsza ilość epok potrzebna do wyuczenia przy mniejszym, dodatnim progu. Ta zależność także wynika z charakterystyki równania liniowego, które do zmiany orientacji potrzebuje znacznie mniejszych współczynników a i b dla małego c, co powoduje zmniejszenie liczby kroków, a z tym epok.
 
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na szybkość uczenia Perceptronu}
@@ -186,7 +186,7 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res2} oraz tabeli~\ref{tabela-res-2}, wynika że uczenie następowało dużo szybciej dla początkowych wartości wag bliższych 0. Takie wyniki są zastanawiające, ponieważ inicjalizacja na 0 może spowodować ujednolicenie wag i pogorszyć możliwości generalizacji. Kolejny  minusem takiego ustawienia jest zerowanie gradientu podczas procesu uczenia, jednak nie dotyczy to jednowarstwowej architektury przyjętej w tym zadaniu. 
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res2} oraz tabeli~\ref{tabela-res-2}, wynika że uczenie następowało dużo szybciej dla początkowych wartości wag bliższych 0. Te wyniki zgadzają się z zachowaniem modelu jako równania liniowego - przy mniejszych wartościach potrzebne są mniejsze zmiany aby odpowiednio zorientować prostą. Takie wyniki jednak nie powinny wystąpić podczas badania głębszych modeli gdzie początkowe wartości równe 0 mogą prowadzić do jednakowych zmian wszystkich wag w modelu i upośledzenia jego możliwości uczenia.
 
 \newpage
 \subsection{Wpływ wartości współczynnika uczenia alpha na szybkość uczenia Perceptronu}
@@ -242,11 +242,74 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res3} oraz tabeli~\ref{tabela-res-3}, wynika że mniejsze wartości współczynnika uczenia spowalniają ten proces. Z jednej strony takie wyniki.
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res3} oraz tabeli~\ref{tabela-res-3}, wynika że mniejsze wartości współczynnika uczenia spowalniają ten proces. Z jednej strony takie wyniki są poprawne, ponieważ mniejszy współczynnik przyczynia się do mniejszy zmian wag, jednak z drugiej wysoka wartość nie pozwala na tak dobre wyuczenie modelu. W tym przypadku dokładność nie była potrzebna, co powoduje że najlepsze efekty osiągnął wysoki współczynnik alpha.
 
 \newpage
 \subsection{Wpływ funkcji aktywacyjnej (unipolarna, bipolarna) na szybkość uczenia Perceptronu}
+\subsubsection*{Wyniki}
+
+\begin{table}[!h]
+	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od parametru theta}
+	\label{tabela-res-41}
+	\centering
+	\begin{tabular}{rrr}
+		\toprule
+		\multirow{2}{*}{Theta}   & \multicolumn{2}{c}{Epoki} \\
+		     & bipolarna     & unipolarna \\
+		\midrule
+		-1.0 & -             & -          \\
+		-0.8 & -             & -          \\
+		-0.5 & -             & -          \\
+		-0.2 & -             & -          \\
+		0.0  & -             & -          \\
+		0.2  & \textbf{2.27} & 5.47       \\
+		0.5  & \textbf{3.88} & 6.77       \\
+		0.8  & \textbf{5.64} & 9.46       \\
+		1.0  & \textbf{6.36} & 11.57      \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\begin{table}[!h]
+	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od początkowego zakresu wag}
+	\label{tabela-res-42}
+	\centering
+	\begin{tabular}{rrr}
+		\toprule
+		\multirow{2}{*}{Zakres wag}   & \multicolumn{2}{c}{Epoki} \\
+		                  & bipolarna      & unipolarna \\
+		\midrule
+		0.0               & \textbf{1.79}  & 4.62       \\
+		\($-0.1 -- 0.1$\) & \textbf{2.83}  & 8.44       \\
+		\($-0.2 -- 0.2$\) & \textbf{3.62}  & 13.00      \\
+		\($-0.5 -- 0.5$\) & \textbf{7.14}  & 24.01      \\
+		\($-0.8 -- 0.8$\) & \textbf{9.29}  & 41.41      \\
+		\($-1.0 -- 1.0$\) & \textbf{13.00} & 52.40      \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\begin{table}[!h]
+	\caption{Średnia ilość epok potrzebna do wyuczenia w zależności od parametru alpha}
+	\label{tabela-res-43}
+	\centering
+	\begin{tabular}{rrr}
+		\toprule
+		\multirow{2}{*}{Alpha}   & \multicolumn{2}{c}{Epoki} \\
+		       & bipolarna       & unipolarna \\
+		\midrule
+		0.0001 & \textbf{495.44} & 836.04     \\
+		0.0010 & \textbf{57.52}  & 223.90     \\
+		0.0100 & \textbf{6.88}   & 22.60      \\
+		0.1000 & \textbf{2.33}   & 6.80       \\
+		1.0000 & \textbf{1.86}   & 5.68       \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
 \subsubsection*{Wnioski}
+
+Z wyników otrzymanych w poprzednich badaniach, widocznych w tabelach~\ref{tabela-res-41},~\ref{tabela-res-42} i~\ref{tabela-res-43}, wynika jednoznacznie, że lepsze efekty otrzymuje się przy użyciu funkcji bipolarnej. Powodem tego jest o wiele mniejsza odległość od początku układu współrzędnych do obszaru w którym powinna znaleźć się separująca dane linia, co zmniejsza liczbę potrzebnych na przesunięcie jej tam epok. 
 
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na szybkość uczenia Adaline}
@@ -300,6 +363,8 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 \end{table}
 
 \subsubsection*{Wnioski}
+
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res5} oraz tabeli~\ref{tabela-res-5}, wynika że uczenie następowało dużo szybciej dla początkowych wartości wag bliższych 0. Te wyniki zgadzają się z zachowaniem modelu jako równania liniowego - przy mniejszych wartościach potrzebne są mniejsze zmiany aby odpowiednio zorientować prostą. Takie wyniki jednak nie powinny wystąpić podczas badania głębszych modeli gdzie początkowe wartości równe 0 mogą prowadzić do jednakowych zmian wszystkich wag w modelu i upośledzenia jego możliwości uczenia.
 
 \newpage
 \subsection{Wpływ wartości współczynnika uczenia alpha na szybkość uczenia Adaline}
@@ -355,6 +420,8 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 
 \subsubsection*{Wnioski}
 
+Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res6} oraz tabeli~\ref{tabela-res-6}, wynika że optymalnym współczynnikiem w przypadku Adaline jest 0.1. Jest to zapewne spowodowane możliwością otrzymania większych błędów niż w przypadku Perceptronu, gdzie ich zeskalowanie w dół pozwala na szybsze osiągnięcie, bardzo bliskiego środka układu, obszaru umożliwiającego podział danych.
+
 \newpage
 \subsection{Wpływ przyjętego dopuszczalnego błędu na wynik uczenia w Adaline}
 \subsubsection*{Założenia}
@@ -376,7 +443,11 @@ Podczas eksperymentu model został zainicjalizowany 100 razy dla każdej z badan
 \end{table}
 \subsubsection*{Przebieg}
 
-Podczas eksperymentu model został zainicjalizowany 100 raz, po czym zostało sprawdzone zachowanie błędu. uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
+Podczas eksperymentu model został zainicjalizowany 100 raz, po czym zostało sprawdzone zachowanie błędu. uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Zapisane zostały błędy:
+\begin{itemize}
+	\item walidacyjny - obliczany w tym samym miejscu co błąd treningowy
+	\item testowy - obliczany już po progowaniu
+\end{itemize}
 
 \subsubsection*{Wyniki}
 
@@ -391,12 +462,10 @@ Minimalna zaobserwowana wartość błędu walidacji: \($0.1303$\)
 
 \subsubsection*{Wnioski}
 
-Uzyskane wyniki zostały ograniczone do 20 epok z powodu zerowego błędu testowego podczas dalszego uczenia.
+Uzyskane wyniki, widoczne na wykresie~\ref{fig:res7} zostały ograniczone do 20 epok z powodu zerowego błędu testowego podczas dalszego uczenia. Minimalny otrzymany błąd po odwróceniu funkcji błędu daje wartość \(\simeq\ $1$\). Natomiast na wspomnianym wykresie widać, że błąd testowy przyjmuje zero w miarę zbliżania się błędu walidacyjnego do 0.2, co po takim samym przeliczeniu daje wartość błędu \(\simeq\ $1.27$\) na punkt. Wartości te można by zapewne otrzymać znajdując minimalne oraz optymalne ustawienie linii rozwiązując układ równań, ale z powodu braku czasu ten etap został pominięty.
 
 \newpage
 \subsection{Porównanie Perceptronu i Adaline}
-\subsubsection*{Założenia}
-\subsubsection*{Przebieg}
 \subsubsection*{Wyniki}
 
 \begin{figure}[!h]
@@ -453,7 +522,16 @@ Uzyskane wyniki zostały ograniczone do 20 epok z powodu zerowego błędu testow
 
 \subsubsection*{Wnioski}
 
+Z wyników otrzymanych w poprzednich badaniach, widocznych na wykresach~\ref{tabela-res-81} i~\ref{tabela-res-82} oraz w tabelach~\ref{fig:res81} i~\ref{fig:res82}, wynika, że lepiej radzi sobie Adaline. Powodem tego jest najprawdopodobniej bardziej plastyczny sygnał zwrotny w tym modelu, który nie przyjmuje wartości dyskretnych jak w przypadku Perceptronu.
+
 \newpage
 \section{Wnioski}
+
+\begin{itemize}
+	\item Perceptron tak jak i Adaline umożliwiają klasyfikację w problemach rozdzielnych liniowo.
+	\item Możliwość uczenia względem ciągłego błędu oraz użycie logiki bipolarnej pozwala Adaline na uzyskanie lepszych wyników w tym zadaniu.
+	\item Odpowiednia konfiguracja hiperparametrów może znacząco przyspieszyć proces uczenia, lub w ogóle go umożliwić.
+	\item Odpowiednia reprezentacja danych ma duży wpływ na proces uczenia.
+\end{itemize}
 
 \end{document}
