@@ -94,7 +94,7 @@ class ReLU(Activation):
         return activated
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        # TODO for optimization grad can replace 1
+        # NOTE for optimization grad can replace 1
         d_rel = np.where(self.signal > 0, 1, 0)
 
         return d_rel * grad
