@@ -49,8 +49,11 @@ class CrossEntropy(LossFunction):
 
     def backward(self) -> np.ndarray:
         # For labels 0, multiplication with 0 -> skipping
-        # TODO mean or sum ? facebook paper batch_size * m -> alpha * m
-        return np.where(self.y_hat == 1, -1 / self.y, 0).mean(axis=0)[None, :]
+        # mean or sum ? facebook paper batch_size * m -> alpha * m
+        # return np.where(self.y_hat == 1, -1 / self.y, 0).mean(axis=0)[None, :]
+
+        # Gradient only for combination with softmax
+        return self.y - self.y_hat
 
 
 LOSSES = {

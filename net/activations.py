@@ -90,6 +90,11 @@ class Softmax(Activation):
         return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
 
 
+class SoftmaxCE(Softmax):
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        return grad
+
+
 class ReLU(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         self.signal = x
@@ -109,6 +114,7 @@ ACTIVATIONS = {
     'bipolar': Bipolar,
     'sigmoid': Sigmoid,
     'softmax': Softmax,
+    'softmax_ce': SoftmaxCE,
     'relu': ReLU,
 }
 
