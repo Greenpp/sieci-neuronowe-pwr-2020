@@ -9,16 +9,29 @@ class Activation(ABC):
         pass
 
     @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+    @abstractmethod
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         pass
+
+
+LINEAR = 'linear'
 
 
 class Linear(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return x
 
+    def __str__(self) -> str:
+        return LINEAR
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
+
+
+SIGMOID = 'sigmoid'
 
 
 class Sigmoid(Activation):
@@ -26,11 +39,17 @@ class Sigmoid(Activation):
         self.signal = x
         return 1 / (1 + np.exp(-x))
 
+    def __str__(self) -> str:
+        return SIGMOID
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         sig_signal = self(self.signal)
         d_sig = sig_signal * (1 - sig_signal)
 
         return d_sig * grad
+
+
+UNIPOLAR = 'unipolar'
 
 
 class Unipolar(Activation):
@@ -47,8 +66,14 @@ class Unipolar(Activation):
 
         return activated
 
+    def __str__(self) -> str:
+        return UNIPOLAR
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
+
+
+BIPOLAR = 'bipolar'
 
 
 class Bipolar(Activation):
@@ -65,8 +90,14 @@ class Bipolar(Activation):
 
         return activated
 
+    def __str__(self) -> str:
+        return BIPOLAR
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
+
+
+SOFTMAX = 'softmax'
 
 
 class Softmax(Activation):
@@ -81,6 +112,9 @@ class Softmax(Activation):
 
         return soft
 
+    def __str__(self) -> str:
+        return SOFTMAX
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         # diagonal = self.signal * np.identity(self.signal.size)
         # d_softmax = diagonal - (self.signal.T @ self.signal)
@@ -90,9 +124,18 @@ class Softmax(Activation):
         return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
 
 
+SOFTMAX_CE = 'softmax_ce'
+
+
 class SoftmaxCE(Softmax):
+    def __str__(self) -> str:
+        return SOFTMAX_CE
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
+
+
+RELU = 'relu'
 
 
 class ReLU(Activation):
@@ -102,6 +145,9 @@ class ReLU(Activation):
 
         return activated
 
+    def __str__(self) -> str:
+        return RELU
+
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         d_rel = np.where(self.signal > 0, grad, 0)
 
@@ -109,13 +155,13 @@ class ReLU(Activation):
 
 
 ACTIVATIONS = {
-    'linear': Linear,
-    'unipolar': Unipolar,
-    'bipolar': Bipolar,
-    'sigmoid': Sigmoid,
-    'softmax': Softmax,
-    'softmax_ce': SoftmaxCE,
-    'relu': ReLU,
+    LINEAR: Linear,
+    UNIPOLAR: Unipolar,
+    BIPOLAR: Bipolar,
+    SIGMOID: Sigmoid,
+    SOFTMAX: Softmax,
+    SOFTMAX_CE: SoftmaxCE,
+    RELU: ReLU,
 }
 
 
