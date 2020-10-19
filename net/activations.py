@@ -36,15 +36,16 @@ SIGMOID = 'sigmoid'
 
 class Sigmoid(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        self.signal = x
-        return 1 / (1 + np.exp(-x))
+        sig = 1 / (1 + np.exp(-x))
+        self.signal = sig
+
+        return sig
 
     def __str__(self) -> str:
         return SIGMOID
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        sig_signal = self(self.signal)
-        d_sig = sig_signal * (1 - sig_signal)
+        d_sig = self.signal * (1 - self.signal)
 
         return d_sig * grad
 
