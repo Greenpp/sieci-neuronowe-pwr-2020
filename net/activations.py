@@ -75,14 +75,19 @@ class Softmax(Activation):
         stable_x = x - x.max(axis=1)[:, None]
         exp_x = np.exp(stable_x)
         # [:, None] to divide rows not columns
-        d_soft = exp_x / exp_x.sum(axis=1)[:, None]
+        soft = exp_x / exp_x.sum(axis=1)[:, None]
 
-        self.signal = d_soft
+        self.signal = soft
 
-        return d_soft
+        return soft
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
+        # NOTE possible optimization
+        # return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
+        diagonal = self.signal * np.identity(self.signal.size)
+        d_softmax = diagonal - (self.signal.T @ self.signal)
+
+        return grad @ d_softmax
 
 
 class ReLU(Activation):
