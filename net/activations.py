@@ -87,17 +87,15 @@ class Softmax(Activation):
 
 class ReLU(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        # TODO check if copy is needed
         self.signal = x
         activated = np.clip(x, 0, None)
 
         return activated
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        # NOTE for optimization grad can replace 1
-        d_rel = np.where(self.signal > 0, 1, 0)
+        d_rel = np.where(self.signal > 0, grad, 0)
 
-        return d_rel * grad
+        return d_rel
 
 
 ACTIVATIONS = {
