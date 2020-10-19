@@ -5,14 +5,16 @@ if __name__ == '__main__' and __package__ is None:
     path.append(dir(path[0]))
     __package__ = 'lista2'
 
-from net.data_loader import DataLoader
-from net.activations import get_activation_by_name
-from net.layers import FCLayer
 from typing import List, Tuple
-from net.model import Model, ModelLogger, ModelModule
+
 import numpy as np
-from net.trainers import SGDTrainer
+from net.activations import get_activation_by_name
+from net.data_loader import DataLoader
+from net.layers import FCLayer
 from net.loss_functions import MSE, get_loss_by_name
+from net.model import Model, ModelLogger, ModelModule
+from net.trainers import SGDTrainer
+
 from .mnist_loader import MNISTLoader
 
 
@@ -24,6 +26,7 @@ class MNISTMLP(ModelModule):
         weight_range: Tuple[float, float],
         alpha: float,
         loss: str,
+        batch_size: int,
         epsilon: float = None,
         max_epochs: int = None,
     ) -> None:
@@ -42,7 +45,7 @@ class MNISTMLP(ModelModule):
 
         tr_data, v_data, te_data = MNISTLoader().get_sets()
 
-        self.training_data_loader = DataLoader(tr_data)
+        self.training_data_loader = DataLoader(tr_data, batch_size=batch_size)
         self.validation_data_loader = DataLoader(v_data, batch_size=None, random=False)
         self.test_data_loader = DataLoader(te_data, batch_size=None, random=False)
 
