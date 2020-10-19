@@ -1,5 +1,6 @@
 import gzip
 import pickle
+import random
 from typing import List, Tuple
 
 import numpy as np
@@ -10,6 +11,9 @@ class MNISTLoader:
         self.training_data = None
         self.validation_data = None
         self.test_data = None
+
+        self._load_from_gzip()
+        self._transform()
 
     def _load_from_gzip(self):
         with gzip.open('./mnist.pkl.gz', 'rb') as f:
@@ -39,10 +43,10 @@ class MNISTLoader:
         self.test_data = list(zip(test_inputs, test_labels))
 
     def get_sets(self) -> Tuple[List, List, List]:
-        self._load_from_gzip()
-        self._transform()
-
         return self.training_data, self.validation_data, self.test_data
+
+    def get_random_test_example(self) -> Tuple[np.ndarray, np.ndarray]:
+        return random.choice(self.test_data)
 
 
 if __name__ == "__main__":
