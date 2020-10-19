@@ -82,12 +82,12 @@ class Softmax(Activation):
         return soft
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        # NOTE possible optimization
-        # return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
-        diagonal = self.signal * np.identity(self.signal.size)
-        d_softmax = diagonal - (self.signal.T @ self.signal)
+        # diagonal = self.signal * np.identity(self.signal.size)
+        # d_softmax = diagonal - (self.signal.T @ self.signal)
+        # grad @ d_softmax
+        # for every batch, optimized
 
-        return grad @ d_softmax
+        return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
 
 
 class ReLU(Activation):
