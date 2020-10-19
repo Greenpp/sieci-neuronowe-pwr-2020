@@ -155,6 +155,23 @@ class ReLU(Activation):
         return d_rel
 
 
+TANH = 'tanh'
+
+
+class TanH(Activation):
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        sig = (2 / (np.exp(-2 * x) + 1)) - 1
+        self.signal = sig
+
+        return sig
+
+    def __str__(self) -> str:
+        return TANH
+
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        return 1 - (self.signal ** 2)
+
+
 ACTIVATIONS = {
     LINEAR: Linear,
     UNIPOLAR: Unipolar,
@@ -163,6 +180,7 @@ ACTIVATIONS = {
     SOFTMAX: Softmax,
     SOFTMAX_CE: SoftmaxCE,
     RELU: ReLU,
+    TANH: TanH,
 }
 
 
