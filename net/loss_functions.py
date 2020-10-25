@@ -19,28 +19,32 @@ class MSE(LossFunction):
     """
 
     def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
-        self.y = output
-        self.y_hat = label
+        self.y = label
+        self.y_hat = output
 
         error = ((output - label) ** 2) / 2
-        # mean error for batch input
-        m_error = error.mean(axis=0)
+        mean_err = error.mean()
 
-        return m_error.mean()
+        return mean_err
 
     def backward(self) -> np.ndarray:
-        delta = self.y - self.y_hat
+        delta = self.y_hat - self.y
 
         return delta
 
 
 class CrossEntropy(LossFunction):
+    """
+    Cross-Entropy loss function
+    """
+
     def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+        # Prevent log of 0
         EPSILON = 1e-12
         stable_output = np.clip(output, EPSILON, None)
 
-        self.y = stable_output
-        self.y_hat = label
+        self.y = label
+        self.y_hat = stable_output
 
         # For labels 0, multiplication with 0 -> skipping
         cross_e = (np.where(label == 1, -np.log(stable_output), 0)).sum(axis=1)
@@ -53,7 +57,8 @@ class CrossEntropy(LossFunction):
         # return np.where(self.y_hat == 1, -1 / self.y, 0).mean(axis=0)[None, :]
 
         # Gradient only for combination with softmax
-        return self.y - self.y_hat
+        delta = self.y_hat - self.y
+        return delta
 
 
 LOSSES = {
