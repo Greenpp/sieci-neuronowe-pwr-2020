@@ -1,6 +1,6 @@
 import math
 import random
-from typing import Iterator, List
+from typing import Iterator, List, Tuple
 
 import numpy as np
 
@@ -33,6 +33,16 @@ class DataLoader:
         """
         random.shuffle(self.data)
 
+    def _stack_batch(self, batch: List[Tuple[np.ndarray]]) -> Tuple[np.ndarray]:
+        """
+        Stack batch data into single tensor
+        """
+        input_list, output_list = zip(*batch)
+        input = np.vstack(input_list)
+        output = np.vstack(output_list)
+
+        return input, output
+
     def load(self) -> Iterator[List]:
         """
         Load data batches as iterator
@@ -41,7 +51,8 @@ class DataLoader:
             self._randomize()
 
         for batch in self._batchify():
-            yield batch
+            stacked_batch = self._stack_batch(batch)
+            yield stacked_batch
 
     def get_batch_num(self) -> int:
         batch_num = len(self.data) / self.batch_size
