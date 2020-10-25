@@ -13,7 +13,7 @@ class Activation(ABC):
         pass
 
     @abstractmethod
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         pass
 
 
@@ -27,7 +27,7 @@ class Linear(Activation):
     def __str__(self) -> str:
         return LINEAR
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -44,7 +44,7 @@ class Sigmoid(Activation):
     def __str__(self) -> str:
         return SIGMOID
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         d_sig = self.cache * (1 - self.cache)
 
         return d_sig * grad
@@ -70,7 +70,7 @@ class Unipolar(Activation):
     def __str__(self) -> str:
         return UNIPOLAR
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -94,7 +94,7 @@ class Bipolar(Activation):
     def __str__(self) -> str:
         return BIPOLAR
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -116,7 +116,7 @@ class Softmax(Activation):
     def __str__(self) -> str:
         return SOFTMAX
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         # diagonal = self.cache * np.identity(self.cache.size)
         # d_softmax = diagonal - (self.cache.T @ self.cache)
         # grad @ d_softmax
@@ -132,7 +132,7 @@ class SoftmaxCE(Softmax):
     def __str__(self) -> str:
         return SOFTMAX_CE
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -149,7 +149,7 @@ class ReLU(Activation):
     def __str__(self) -> str:
         return RELU
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         d_rel = np.where(self.cache > 0, grad, 0)
 
         return d_rel
@@ -168,7 +168,7 @@ class TanH(Activation):
     def __str__(self) -> str:
         return TANH
 
-    def derivative(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> np.ndarray:
         return 1 - (self.cache ** 2)
 
 

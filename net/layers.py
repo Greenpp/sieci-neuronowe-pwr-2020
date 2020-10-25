@@ -76,7 +76,7 @@ class FCLayer(Layer):
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         # d_b = activation delta * grad
         # TODO rename to backward
-        d_b = self.activation.derivative(grad)
+        d_b = self.activation.backward(grad)
 
         # Weights delta equal to incoming gradint * activaton derivative * previous layer
         d_w = self.input_signal.T @ d_b
