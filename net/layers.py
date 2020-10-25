@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Iterable, Tuple
 
 import numpy as np
 
@@ -21,6 +22,20 @@ class Layer(ABC):
     def backward(self, grad: np.ndarray) -> np.ndarray:
         pass
 
+    def _init_weights(
+        self, shape: Iterable[int], range_: Tuple[float, float]
+    ) -> np.ndarray:
+        """
+        Creates random weights with <shape> in <range_> using normal distribution
+        """
+        # Random 0 - 1
+        weights = np.random.rand(*shape)
+        # Shift to range
+        min_, max_ = range_
+        size = max_ - min_
+
+        return weights * size + min_
+
 
 FC = 'fc'
 
@@ -39,12 +54,12 @@ class FCLayer(Layer):
         weight_range: Tuple[float, float] = (-0.5, 0.5),
     ) -> None:
         self.weights = self._init_weights((in_, out), weight_range)
-        self.input_signal = None
-        self.activation = activation
-
         self.bias = bias
         if bias:
             self.b_weights = self._init_weights((1, out), weight_range)
+
+        self.activation = activation
+        self.input_signal = None
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         """
@@ -55,6 +70,7 @@ class FCLayer(Layer):
         f_x = x @ self.weights
         if self.bias:
             f_x = f_x + self.b_weights
+
         f_x = self.activation(f_x)
 
         return f_x
@@ -62,20 +78,8 @@ class FCLayer(Layer):
     def __str__(self) -> str:
         return FC
 
-    def _init_weights(
-        self, shape: Tuple[int, int], range_: Tuple[float, float]
-    ) -> np.ndarray:
-        # Random 0 - 1
-        weights = np.random.rand(*shape)
-        # Shift to range
-        min_, max_ = range_
-        size = max_ - min_
-
-        return weights * size + min_
-
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         # d_b = activation delta * grad
-        # TODO rename to backward
         d_b = self.activation.backward(grad)
 
         # Weights delta equal to incoming gradint * activaton derivative * previous layer
