@@ -19,10 +19,10 @@ if __name__ == "__main__":
         alpha=0.01,
         loss='cross-entropy',
         batch_size=32,
-        max_epochs=1,
+        max_batches=200,
     )
 
-    logger = model.train()
+    logger = model.train(verbose=True)
     logs = logger.get_logs()
 
     mnist_data = MNISTLoader()
@@ -35,4 +35,6 @@ if __name__ == "__main__":
     acc = logs['accuracies']
     print(f'Best accuracy: {round(max(acc) * 100, 2)}%')
     plt.plot(acc)
+    plt.xlabel('Batch')
+    plt.ylabel('Accuracy')
     plt.show()
