@@ -6,28 +6,33 @@ if __name__ == '__main__' and __package__ is None:
     __package__ = 'lista2'
 
 
-from net.data_loader import DataLoader
 from lista2.mnist_loader import MNISTLoader
 from .mlp import MNISTMLP
+from matplotlib import pyplot as plt
 import numpy as np
 
 if __name__ == "__main__":
     model = MNISTMLP(
         layers_shapes=[(784, 128), (128, 10)],
-        activations=['sigmoid', 'softmax'],
+        activations=['relu', 'softmax_ce'],
         weight_range=(-0.5, 0.5),
         alpha=0.01,
-        loss='mse',
-        max_epochs=1000,
+        loss='cross-entropy',
+        batch_size=32,
+        max_epochs=1,
     )
 
-    data, _, _ = MNISTLoader().get_sets()
-    loader = DataLoader(data, batch_size=1)
+    logger = model.train()
+    logs = logger.get_logs()
 
-    test_point = next(loader.load())[0][0]
+    mnist_data = MNISTLoader()
+    for _ in range(10):
+        x, y_hat = mnist_data.get_random_test_example()
+        y = model(x)
 
-    res = model(test_point)
-    c = np.argmax(res)
+        print(f'{np.argmax(y)} || {np.argmax(y_hat)}')
 
-    print(f'Out: {res}')
-    print(f'Class: {c}')
+    acc = logs['accuracies']
+    print(f'Best accuracy: {round(max(acc) * 100, 2)}%')
+    plt.plot(acc)
+    plt.show()
