@@ -37,7 +37,7 @@ SIGMOID = 'sigmoid'
 class Sigmoid(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         sig = 1 / (1 + np.exp(-x))
-        self.signal = sig
+        self.cache = sig
 
         return sig
 
@@ -45,7 +45,7 @@ class Sigmoid(Activation):
         return SIGMOID
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        d_sig = self.signal * (1 - self.signal)
+        d_sig = self.cache * (1 - self.cache)
 
         return d_sig * grad
 
@@ -109,7 +109,7 @@ class Softmax(Activation):
         # [:, None] to divide rows not columns
         soft = exp_x / exp_x.sum(axis=1)[:, None]
 
-        self.signal = soft
+        self.cache = soft
 
         return soft
 
@@ -117,12 +117,12 @@ class Softmax(Activation):
         return SOFTMAX
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        # diagonal = self.signal * np.identity(self.signal.size)
-        # d_softmax = diagonal - (self.signal.T @ self.signal)
+        # diagonal = self.cache * np.identity(self.cache.size)
+        # d_softmax = diagonal - (self.cache.T @ self.cache)
         # grad @ d_softmax
         # for every batch, optimized
 
-        return self.signal * (grad - (grad * self.signal).sum(axis=1)[:, None])
+        return self.cache * (grad - (grad * self.cache).sum(axis=1)[:, None])
 
 
 SOFTMAX_CE = 'softmax_ce'
@@ -141,7 +141,7 @@ RELU = 'relu'
 
 class ReLU(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        self.signal = x
+        self.cache = x
         activated = np.clip(x, 0, None)
 
         return activated
@@ -150,7 +150,7 @@ class ReLU(Activation):
         return RELU
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        d_rel = np.where(self.signal > 0, grad, 0)
+        d_rel = np.where(self.cache > 0, grad, 0)
 
         return d_rel
 
@@ -161,7 +161,7 @@ TANH = 'tanh'
 class TanH(Activation):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         sig = (2 / (np.exp(-2 * x) + 1)) - 1
-        self.signal = sig
+        self.cache = sig
 
         return sig
 
@@ -169,7 +169,7 @@ class TanH(Activation):
         return TANH
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        return 1 - (self.signal ** 2)
+        return 1 - (self.cache ** 2)
 
 
 ACTIVATIONS = {
