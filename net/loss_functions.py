@@ -26,7 +26,7 @@ class MSE(LossFunction):
         # mean error for batch input
         m_error = error.mean(axis=0)
 
-        return m_error
+        return m_error.mean()
 
     def backward(self) -> np.ndarray:
         delta = self.y - self.y_hat
@@ -37,7 +37,7 @@ class MSE(LossFunction):
 class CrossEntropy(LossFunction):
     def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
         EPSILON = 1e-12
-        stable_output = np.clip(output, EPSILON, 1.0 - EPSILON)
+        stable_output = np.clip(output, EPSILON, None)
 
         self.y = stable_output
         self.y_hat = label
