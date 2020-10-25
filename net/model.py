@@ -1,8 +1,13 @@
 from __future__ import annotations
+
+import pickle as pkl
 from abc import ABC, abstractmethod
-from typing import List, TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, List, Tuple
 
 import numpy as np
+
+from net.activations import get_activation_by_name
+from net.layers import get_layer_by_name
 
 if TYPE_CHECKING:
     from net.data_loader import DataLoader
@@ -19,6 +24,7 @@ class ModelLogger:
         self.failed = False
         self.weights = []
         self.biases = []
+        self.accuracies = []
 
     def log_val_error(self, error: np.ndarray) -> None:
         self.val_errors.append(error)
@@ -28,6 +34,9 @@ class ModelLogger:
 
     def log_train_error(self, error: np.ndarray) -> None:
         self.train_errors.append(error)
+
+    def log_accuracy(self, acc: float) -> None:
+        self.accuracies.append(acc)
 
     def fail(self) -> None:
         self.failed = True
@@ -48,6 +57,7 @@ class ModelLogger:
             'failed': self.failed,
             'weights': self.weights,
             'biases': self.biases,
+            'accuracies': self.accuracies,
         }
 
 
@@ -94,6 +104,7 @@ class Model:
 
         logger.log_weights_and_biases(weights, biases)
 
+    # TODO move to trainer
     def train(
         self,
         training_data_loader: DataLoader,
@@ -118,33 +129,41 @@ class Model:
         trainer.attach(self)
 
         val_error = self.validate(validation_data_loader, loss_function)
-        test_error = self.test(test_data_loader, loss_function)
+        test_error, acc = self.test(test_data_loader, loss_function)
         logger.log_test_error(test_error)
+        logger.log_accuracy(acc)
         logger.log_val_error(val_error)
+
+        total_batch_num = training_data_loader.get_batch_num()
+        total_batch_num_len = len(str(total_batch_num))
 
         epoch = 0
         # Training loop
         while (test_error > 0) if epsilon is None else (val_error > epsilon):
             epoch += 1
-            epoch_loses = []
+            print(f'Epoch: {epoch}')
+            batch = 0
             for data_batch in training_data_loader.load():
+                batch += 1
                 x, y_hat = self._stack_batch(data_batch)
 
                 y = self.compute(x)
                 loss = loss_function(y, y_hat)
                 trainer.train(loss_function)
 
-                epoch_loses.append(loss)
-            train_error = np.mean(epoch_loses)
-            epoch_loses.clear()
-
-            val_error = self.validate(validation_data_loader, loss_function)
-            test_error = self.test(test_data_loader, loss_function)
-            # Log model state
-            logger.log_train_error(train_error)
-            logger.log_val_error(val_error)
-            logger.log_test_error(test_error)
-            self._log_layers(logger)
+                val_error = self.validate(validation_data_loader, loss_function)
+                test_error, acc = self.test(test_data_loader, loss_function)
+                # Log model state
+                logger.log_train_error(loss)
+                logger.log_val_error(val_error)
+                logger.log_test_error(test_error)
+                logger.log_accuracy(acc)
+                self._log_layers(logger)
+                # TODO batch console logging
+                print(
+                    f'\rBatch: {batch:{total_batch_num_len}}/{total_batch_num}', end=''
+                )
+            print('')
 
             if max_epochs is not None and max_epochs <= epoch:
                 # Break if exceeded training epoch limit
@@ -166,7 +185,11 @@ class Model:
         # Mean error for all outputs
         m_error = error.mean()
 
-        return m_error
+        result_classes = y.argmax(axis=1)
+        labels_classes = y_hat.argmax(axis=1)
+        accuracy = (result_classes == labels_classes).mean()
+
+        return m_error, accuracy
 
     def validate(
         self, validation_data_loader: DataLoader, loss_function: LossFunction

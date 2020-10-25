@@ -1,6 +1,8 @@
-from typing import Iterator, List
-import numpy as np
+import math
 import random
+from typing import Iterator, List
+
+import numpy as np
 
 
 class DataLoader:
@@ -40,6 +42,12 @@ class DataLoader:
 
         for batch in self._batchify():
             yield batch
+
+    def get_batch_num(self) -> int:
+        batch_num = len(self.data) / self.batch_size
+        batch_num = math.ceil(batch_num)
+
+        return batch_num
 
 
 if __name__ == "__main__":
