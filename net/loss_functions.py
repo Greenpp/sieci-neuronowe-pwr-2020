@@ -5,7 +5,7 @@ import numpy as np
 
 class LossFunction(ABC):
     @abstractmethod
-    def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+    def __call__(self, output: np.ndarray, label: np.ndarray) -> float:
         pass
 
     @abstractmethod
@@ -18,7 +18,7 @@ class MSE(LossFunction):
     Mean square error loss function
     """
 
-    def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+    def __call__(self, output: np.ndarray, label: np.ndarray) -> float:
         self.y = label
         self.y_hat = output
 
@@ -38,7 +38,7 @@ class CrossEntropy(LossFunction):
     Cross-Entropy loss function
     """
 
-    def __call__(self, output: np.ndarray, label: np.ndarray) -> np.ndarray:
+    def __call__(self, output: np.ndarray, label: np.ndarray) -> float:
         # Prevent log of 0
         EPSILON = 1e-12
         stable_output = np.clip(output, EPSILON, None)
