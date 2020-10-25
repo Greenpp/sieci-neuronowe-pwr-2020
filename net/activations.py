@@ -18,9 +18,20 @@ class Activation(ABC):
 
 
 LINEAR = 'linear'
+UNIPOLAR = 'unipolar'
+BIPOLAR = 'bipolar'
+SIGMOID = 'sigmoid'
+SOFTMAX = 'softmax'
+SOFTMAX_CE = 'softmax_ce'
+RELU = 'relu'
+TANH = 'tanh'
 
 
 class Linear(Activation):
+    """
+    Linear pass
+    """
+
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return x
 
@@ -31,10 +42,51 @@ class Linear(Activation):
         return grad
 
 
-SIGMOID = 'sigmoid'
+class Unipolar(Activation):
+    """
+    Unipolar activation
+    """
+
+    def __init__(self, theta: float = 0):
+        self.theta = theta
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        activated = np.where(x > self.theta, 1, 0)
+
+        return activated
+
+    def __str__(self) -> str:
+        return UNIPOLAR
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        return grad
+
+
+class Bipolar(Activation):
+    """
+    Bipolar activation
+    """
+
+    def __init__(self, theta: float = 0):
+        self.theta = theta
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        activated = np.where(x > self.theta, 1, -1)
+
+        return activated
+
+    def __str__(self) -> str:
+        return BIPOLAR
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        return grad
 
 
 class Sigmoid(Activation):
+    """
+    Sigmoid activation
+    """
+
     def __call__(self, x: np.ndarray) -> np.ndarray:
         sig = 1 / (1 + np.exp(-x))
         self.cache = sig
@@ -50,58 +102,11 @@ class Sigmoid(Activation):
         return d_sig * grad
 
 
-UNIPOLAR = 'unipolar'
-
-
-class Unipolar(Activation):
-    """
-    Unipolar activation
-    """
-
-    def __init__(self, theta: float = 0):
-        self.theta = theta
-
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        activated = np.zeros_like(x)
-        activated[x > self.theta] = 1
-
-        return activated
-
-    def __str__(self) -> str:
-        return UNIPOLAR
-
-    def backward(self, grad: np.ndarray) -> np.ndarray:
-        return grad
-
-
-BIPOLAR = 'bipolar'
-
-
-class Bipolar(Activation):
-    """
-    Bipolar activation
-    """
-
-    def __init__(self, theta: float = 0):
-        self.theta = theta
-
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        activated = np.full_like(x, -1)
-        activated[x > self.theta] = 1
-
-        return activated
-
-    def __str__(self) -> str:
-        return BIPOLAR
-
-    def backward(self, grad: np.ndarray) -> np.ndarray:
-        return grad
-
-
-SOFTMAX = 'softmax'
-
-
 class Softmax(Activation):
+    """
+    Softmax activation
+    """
+
     def __call__(self, x: np.ndarray) -> np.ndarray:
         # Axis 1 for batch input
         stable_x = x - x.max(axis=1)[:, None]
@@ -125,10 +130,11 @@ class Softmax(Activation):
         return self.cache * (grad - (grad * self.cache).sum(axis=1)[:, None])
 
 
-SOFTMAX_CE = 'softmax_ce'
-
-
 class SoftmaxCE(Softmax):
+    """
+    Softmax activation for last layer before cross-entropy loss function
+    """
+
     def __str__(self) -> str:
         return SOFTMAX_CE
 
@@ -136,10 +142,11 @@ class SoftmaxCE(Softmax):
         return grad
 
 
-RELU = 'relu'
-
-
 class ReLU(Activation):
+    """
+    ReLU activation
+    """
+
     def __call__(self, x: np.ndarray) -> np.ndarray:
         self.cache = x
         activated = np.clip(x, 0, None)
@@ -155,10 +162,11 @@ class ReLU(Activation):
         return d_rel
 
 
-TANH = 'tanh'
-
-
 class TanH(Activation):
+    """
+    TanH activation
+    """
+
     def __call__(self, x: np.ndarray) -> np.ndarray:
         sig = (2 / (np.exp(-2 * x) + 1)) - 1
         self.cache = sig
