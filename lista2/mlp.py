@@ -11,7 +11,7 @@ import numpy as np
 from net.activations import get_activation_by_name
 from net.data_loader import DataLoader
 from net.layers import FCLayer
-from net.loss_functions import MSE, get_loss_by_name
+from net.loss_functions import get_loss_by_name
 from net.model import Model, ModelLogger, ModelModule
 from net.trainers import SGDTrainer
 
