@@ -290,3 +290,55 @@ class AdaGradTrainer(Trainer):
             bias_accumulator = params['b_grad_accumulator']
             adagrad_alpha = self.alpha / np.sqrt(bias_accumulator + 1e-9)
             layer.b_weights = layer.b_weights - adagrad_alpha * d_bias
+
+
+class AdaDeltaTrainer(Trainer):
+    def __init__(
+        self, alpha: float, loss_function: LossFunction, gamma: float = 0.9
+    ) -> None:
+        super().__init__(alpha, loss_function)
+        self.gamma = gamma
+
+    def _init_params(self) -> None:
+        for _, params in self.layers:
+            params['delta_w_running_avg'] = 0
+            params['delta_b_running_avg'] = 0
+
+            params['grad_w_running_avg'] = 0
+            params['grad_b_running_avg'] = 0
+
+    def _update_paramas(
+        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+    ) -> None:
+        params['delta_w_running_avg'] = self.gamma * params['delta_w_running_avg'] + (
+            1 - self.gamma
+        ) * (d_weights ** 2)
+
+        if layer.bias:
+            params['delta_b_running_avg'] = self.gamma * params[
+                'delta_b_running_avg'
+            ] + (1 - self.gamma) * (d_bias ** 2)
+
+    def _update_layer_weights(
+        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+    ) -> None:
+        update_gradient = (
+            np.sqrt(params['grad_w_running_avg'] + 1e-9)
+            / np.sqrt(params['delta_w_running_avg'] + 1e-9)
+        ) * d_weights
+        layer.weights = layer.weights - update_gradient
+
+        params['grad_w_running_avg'] = self.gamma * params['grad_w_running_avg'] + (
+            1 - self.gamma
+        ) * (update_gradient ** 2)
+
+        if layer.bias:
+            update_gradient = (
+                np.sqrt(params['grad_b_running_avg'] + 1e-9)
+                / np.sqrt(params['delta_b_running_avg'] + 1e-9)
+            ) * d_bias
+            layer.b_weights = layer.b_weights - update_gradient
+
+            params['grad_b_running_avg'] = self.gamma * params['grad_b_running_avg'] + (
+                1 - self.gamma
+            ) * (update_gradient ** 2)
