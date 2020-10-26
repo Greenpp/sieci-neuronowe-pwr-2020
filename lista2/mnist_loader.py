@@ -7,13 +7,13 @@ import numpy as np
 
 
 class MNISTLoader:
-    def __init__(self) -> None:
+    def __init__(self, data_shape: Tuple[int, int] = (1, 784)) -> None:
         self.training_data = None
         self.validation_data = None
         self.test_data = None
 
         self._load_from_gzip()
-        self._transform()
+        self._transform(data_shape)
 
     def _load_from_gzip(self):
         with gzip.open('./mnist.pkl.gz', 'rb') as f:
@@ -29,16 +29,16 @@ class MNISTLoader:
 
         return encoded
 
-    def _transform(self):
-        training_inputs = [np.reshape(d, (1, 784)) for d in self.training_data[0]]
+    def _transform(self, data_shape: Tuple[int, int]):
+        training_inputs = [np.reshape(d, data_shape) for d in self.training_data[0]]
         training_labels = [self._one_hot_encode(d) for d in self.training_data[1]]
         self.training_data = list(zip(training_inputs, training_labels))
 
-        validation_inputs = [np.reshape(d, (1, 784)) for d in self.validation_data[0]]
+        validation_inputs = [np.reshape(d, data_shape) for d in self.validation_data[0]]
         validation_labels = [self._one_hot_encode(d) for d in self.validation_data[1]]
         self.validation_data = list(zip(validation_inputs, validation_labels))
 
-        test_inputs = [np.reshape(d, (1, 784)) for d in self.test_data[0]]
+        test_inputs = [np.reshape(d, data_shape) for d in self.test_data[0]]
         test_labels = [self._one_hot_encode(d) for d in self.test_data[1]]
         self.test_data = list(zip(test_inputs, test_labels))
 
