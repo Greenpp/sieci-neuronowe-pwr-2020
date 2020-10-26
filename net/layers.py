@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from net.utils import col2im_indices, im2col_indices
 from typing import TYPE_CHECKING, Iterable, Tuple
 
 import numpy as np
@@ -19,7 +20,7 @@ class Layer(ABC):
         pass
 
     @abstractmethod
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         pass
 
     def _init_weights(
@@ -38,6 +39,7 @@ class Layer(ABC):
 
 
 FC = 'fc'
+CONV = 'conv'
 
 
 class FCLayer(Layer):
@@ -92,6 +94,100 @@ class FCLayer(Layer):
         acc_d_b = d_b.sum(axis=0)
 
         return acc_d_b, d_w, new_grad
+
+
+class ConvLayer(Layer):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        activation: Activation = None,
+        kernel_size: int = 3,
+        bias: bool = True,
+        stride: int = 1,
+        padding: int = 1,
+        weight_range: Tuple[float, float] = (-0.5, 0.5),
+    ) -> None:
+        kernel_shape = (out_channels, kernel_size, kernel_size)
+        self.weights = self._init_weights(kernel_shape, weight_range)
+        self.bias = bias
+        if bias:
+            self.b_weights = self._init_weights((out_channels, 1), weight_range)
+
+        self.activation = activation
+        self.stride = stride
+        self.padding = padding
+
+        self.in_ch = in_channels
+        self.out_ch = out_channels
+
+        self.kernel_size = kernel_size
+
+        self.input_signal = None
+        self.input_signal_col = None
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        batch_size, x_channels, x_height, x_width = x.shape
+
+        # New shape calculated
+        x_height_out = (
+            x_height - self.kernel_size + 2 * self.padding
+        ) / self.stride + 1
+        x_width_out = (x_width - self.kernel_size + 2 * self.padding) / self.stride + 1
+
+        if x_height_out % 10 != 0 or x_width_out % 10 != 0:
+            raise Exception('Wrong convolution shape')
+
+        x_height_out = int(x_height_out)
+        x_width_out = int(x_width_out)
+
+        # Input reshaped into columns with im2col
+        x_col = im2col_indices(
+            x, self.kernel_size, self.kernel_size, self.padding, self.stride
+        )
+
+        kernel_col = self.weights.reshape(self.out_ch, -1)
+
+        self.input_signal_col = x_col
+        self.input_signal = x
+
+        f_x = kernel_col @ x_col
+        if self.bias:
+            f_x = f_x + self.bias
+        # Reshape to initial form
+        f_x = f_x.reshape(self.out_ch, x_height_out, x_width_out, batch_size)
+        f_x = f_x.transpose(3, 0, 1, 2)
+
+        f_x = self.activation(f_x)
+
+        return f_x
+
+    def __str__(self) -> str:
+        return CONV
+
+    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        # TODO what is going on ...
+        d_a = self.activation.backward(grad)
+
+        d_b = np.sum(d_a, axis=(0, 2, 3))
+        d_b = d_b.reshape(self.out_ch, -1)
+
+        grad_col = d_a.transpose(1, 2, 3, 0).reshape(self.out_ch, -1)
+        d_w = grad_col @ self.input_signal_col.T
+        d_w = d_w.reshape(self.weights.shape)
+
+        w_col = self.weights.reshape(self.out_ch, -1)
+        new_grad_col = w_col.T @ grad_col
+        new_grad = col2im_indices(
+            new_grad_col,
+            self.input_signal.shape,
+            self.kernel_size,
+            self.kernel_size,
+            self.padding,
+            self.stride,
+        )
+
+        return d_b, d_w, new_grad
 
 
 LAYERS = {FC: FCLayer}
