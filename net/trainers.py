@@ -350,3 +350,65 @@ class AdaDeltaTrainer(Trainer):
             params['grad_b_running_avg'] = self.gamma * params['grad_b_running_avg'] + (
                 1 - self.gamma
             ) * (update_gradient ** 2)
+
+
+class AdamTrainer(Trainer):
+    def __init__(
+        self,
+        alpha: float,
+        loss_function: LossFunction,
+        beta1: float = 0.9,
+        beta2: float = 0.999,
+    ) -> None:
+        super().__init__(loss_function)
+        self.alpha = alpha
+        self.beta1 = beta1
+        self.beta2 = beta2
+
+    def _init_params(self) -> None:
+        for _, params in self.layers:
+            params['w_m_momentum'] = 0
+            params['w_v_momentum'] = 0
+
+            params['b_m_momentum'] = 0
+            params['b_v_momentum'] = 0
+
+            params['beta1_cor'] = 1
+            params['beta2_cor'] = 1
+
+    def _update_paramas(
+        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+    ) -> None:
+        params['w_m_momentum'] = (
+            self.beta1 * params['w_m_momentum'] + (1 - self.beta1) * d_weights
+        )
+        params['w_v_momentum'] = self.beta2 * params['w_v_momentum'] + (
+            1 - self.beta2
+        ) * (d_weights ** 2)
+
+        if layer.bias:
+            params['b_m_momentum'] = (
+                self.beta1 * params['b_m_momentum'] + (1 - self.beta1) * d_bias
+            )
+            params['b_v_momentum'] = self.beta2 * params['b_v_momentum'] + (
+                1 - self.beta2
+            ) * (d_bias ** 2)
+
+        params['beta1_cor'] *= self.beta1
+        params['beta2_cor'] *= self.beta2
+
+    def _update_layer_weights(
+        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+    ) -> None:
+        # Correction calculation
+        m_momentum = params['w_m_momentum'] / (1 - params['beta1_cor'])
+        v_momentum = params['w_v_momentum'] / (1 - params['beta2_cor'])
+
+        layer.weights = layer.weights - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
+
+        if layer.bias:
+            # Correction calculation
+            m_momentum = params['b_m_momentum'] / (1 - params['beta1_cor'])
+            v_momentum = params['b_v_momentum'] / (1 - params['beta2_cor'])
+
+            layer.b_weights = layer.b_weights - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
