@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+
+from numpy.core.fromnumeric import size
 from net.utils import col2im_indices, im2col_indices
 from typing import TYPE_CHECKING, Iterable, Tuple
 
@@ -40,6 +42,7 @@ class Layer(ABC):
 
 FC = 'fc'
 CONV = 'conv'
+MAXPOLL = 'maxpoll'
 
 
 class FCLayer(Layer):
@@ -190,7 +193,66 @@ class ConvLayer(Layer):
         return d_b, d_w, new_grad
 
 
-LAYERS = {FC: FCLayer}
+class MaxPollLayer(Layer):
+    def __init__(self, size: int = 2, stride: int = 2, padding: int = 0) -> None:
+        self.size = size
+        self.stride = stride
+        self.padding = padding
+
+        self.max_idx = None
+        self.input_signal = None
+        self.input_signal_col = None
+
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+
+        batch_size, channels, x_height, x_width = x.shape
+        out_h = (x_height - self.size + 2 * self.padding) / self.stride + 1
+        out_w = (x_width - self.size + 2 * self.padding) / self.stride + 1
+
+        x_reshaped = x.reshape(batch_size * channels, 1, x_height, x_width)
+
+        x_col = im2col_indices(
+            x_reshaped, self.size, self.size, self.padding, self.stride
+        )
+
+        max_idx = x_col.argmax(axis=0)
+
+        self.input_signal_col = x_col
+        self.input_signal = x
+        self.max_idx = max_idx
+
+        out = x_col[max_idx, range(max_idx.size)]
+        out = out.reshape(out_h, out_w, batch_size, channels)
+        out = out.transpose(2, 3, 0, 1)
+
+        return out
+
+    def __str__(self) -> str:
+        return MAXPOLL
+
+    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        batch_size, channels, x_height, x_width = self.input_signal.shape
+        new_grad_col = np.zeros_like(self.input_signal_col)
+
+        flat_grad = grad.transpose(2, 3, 0, 1).ravel()
+
+        new_grad_col[self.max_idx, range(self.max_idx.size)] = flat_grad
+
+        new_grad = col2im_indices(
+            new_grad_col,
+            (batch_size * channels, 1, x_height, x_width),
+            self.size,
+            self.size,
+            self.padding,
+            self.stride,
+        )
+
+        new_grad = new_grad.reshape(self.input_signal.shape)
+
+        return None, None, new_grad
+
+
+LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPollLayer}
 
 
 def get_layer_by_name(name: str) -> type:
