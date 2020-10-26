@@ -28,8 +28,16 @@ class Trainer(ABC):
         self.layers = [(l, dict()) for l in reversed(model.layers)]
 
     def _test(self, model: Model) -> Tuple[float, float]:
-        x, y = next(self.test_data_loader.load())
-        y_hat = model(x)
+        ys = []
+        y_hats = []
+        for x, y in self.test_data_loader.load():
+            ys.append(y)
+
+            y_hat = model(x)
+            y_hats.append(y_hat)
+
+        y = np.vstack(ys)
+        y_hat = np.vstack(y_hats)
 
         test_error = self.loss_function(y_hat, y)
 
