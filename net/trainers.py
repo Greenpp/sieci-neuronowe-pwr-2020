@@ -16,10 +16,8 @@ if TYPE_CHECKING:
 class Trainer(ABC):
     def __init__(
         self,
-        alpha: float,
         loss_function: LossFunction,
     ) -> None:
-        self.alpha = alpha
         self.loss_function = loss_function
 
         self.logger = TrainingLogger()
@@ -162,6 +160,10 @@ class Trainer(ABC):
 
 
 class SGDTrainer(Trainer):
+    def __init__(self, alpha: float, loss_function: LossFunction) -> None:
+        super().__init__(loss_function)
+        self.alpha = alpha
+
     def _update_layer_weights(
         self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
     ) -> None:
@@ -175,7 +177,8 @@ class MomentumTrainer(Trainer):
     def __init__(
         self, alpha: float, loss_function: LossFunction, beta: float = 0.9
     ) -> None:
-        super().__init__(alpha, loss_function)
+        super().__init__(loss_function)
+        self.alpha = alpha
         self.beta = beta
 
     def _init_params(self) -> None:
@@ -210,7 +213,8 @@ class NesterovTrainer(Trainer):
     def __init__(
         self, alpha: float, loss_function: LossFunction, beta: float = 0.9
     ) -> None:
-        super().__init__(alpha, loss_function)
+        super().__init__(loss_function)
+        self.alpha = alpha
         self.beta = beta
 
     def _init_params(self) -> None:
@@ -267,6 +271,10 @@ class NesterovTrainer(Trainer):
 
 
 class AdaGradTrainer(Trainer):
+    def __init__(self, alpha: float, loss_function: LossFunction) -> None:
+        super().__init__(loss_function)
+        self.alpha = alpha
+
     def _init_params(self) -> None:
         for _, params in self.layers:
             params['w_grad_accumulator'] = 0
