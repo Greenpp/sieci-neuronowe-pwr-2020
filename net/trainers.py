@@ -97,8 +97,9 @@ class Trainer(ABC):
                 grad = self.loss_function.backward()
                 for layer, params in self.layers:
                     d_bias, d_weights, grad = layer.backward(grad)
-                    self._update_paramas(layer, params, d_bias, d_weights)
-                    self._update_layer_weights(layer, params, d_bias, d_weights)
+                    if d_weights is not None:  # For poll and flatten layers
+                        self._update_paramas(layer, params, d_bias, d_weights)
+                        self._update_layer_weights(layer, params, d_bias, d_weights)
 
                 # Logging errors and accuracy
                 test_error, test_accuracy = self._test(model)
@@ -404,11 +405,16 @@ class AdamTrainer(Trainer):
         m_momentum = params['w_m_momentum'] / (1 - params['beta1_cor'])
         v_momentum = params['w_v_momentum'] / (1 - params['beta2_cor'])
 
-        layer.weights = layer.weights - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
+        layer.weights = (
+            layer.weights - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
+        )
 
         if layer.bias:
             # Correction calculation
             m_momentum = params['b_m_momentum'] / (1 - params['beta1_cor'])
             v_momentum = params['b_v_momentum'] / (1 - params['beta2_cor'])
 
-            layer.b_weights = layer.b_weights - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
+            layer.b_weights = (
+                layer.b_weights
+                - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
+            )
