@@ -168,7 +168,7 @@ class SGDTrainer(Trainer):
 
 class MomentumTrainer(Trainer):
     def __init__(
-        self, alpha: float, loss_function: LossFunction, beta: float = 0.5
+        self, alpha: float, loss_function: LossFunction, beta: float = 0.9
     ) -> None:
         super().__init__(alpha, loss_function)
         self.beta = beta
