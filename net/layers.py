@@ -43,6 +43,7 @@ class Layer(ABC):
 FC = 'fc'
 CONV = 'conv'
 MAXPOLL = 'maxpoll'
+FLATTEN = 'flatten'
 
 
 class FCLayer(Layer):
@@ -252,7 +253,24 @@ class MaxPollLayer(Layer):
         return None, None, new_grad
 
 
-LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPollLayer}
+class FlattenLayer(Layer):
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        self.input_shape = x.shape
+        batch_size = x.shape[0]
+
+        # TODO check if will work without ravel
+        return x.ravel().reshape(batch_size, -1)
+
+    def __str__(self) -> str:
+        return FLATTEN
+
+    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        new_grad = grad.reshape(self.input_shape)
+
+        return None, None, new_grad
+
+
+LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPollLayer, FLATTEN: FlattenLayer}
 
 
 def get_layer_by_name(name: str) -> type:
