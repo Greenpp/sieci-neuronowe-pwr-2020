@@ -97,7 +97,7 @@ class Trainer(ABC):
                 total_batches += 1
                 batch += 1
                 if verbose:
-                    self._print_left_batches(batch, epoch_batches, epoch_batches_len)
+                    self._print_left_batches_and_accuracy(batch, epoch_batches, epoch_batches_len, test_accuracy)
 
                 y_hat = model(x)
                 loss = self.loss_function(y_hat, y)
@@ -142,10 +142,13 @@ class Trainer(ABC):
     def _print_epoch(self, epoch: int) -> None:
         print(f'Epoch {epoch}')
 
-    def _print_left_batches(
-        self, batch: int, all_batches: int, format_len: int
+    def _print_left_batches_and_accuracy(
+        self, batch: int, all_batches: int, format_len: int, acc: float
     ) -> None:
-        print(f'\rBatch: {batch:{format_len}}/{all_batches}', end='')
+        print(
+            f'\rBatch: {batch:{format_len}}/{all_batches} | Accuracy: {round(acc * 100, 2):5}%',
+            end='',
+        )
 
     def get_logger(self) -> TrainingLogger:
         return self.logger
