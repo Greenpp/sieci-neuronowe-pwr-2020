@@ -112,7 +112,7 @@ class ConvLayer(Layer):
         padding: int = 1,
         weight_range: Tuple[float, float] = (-0.5, 0.5),
     ) -> None:
-        kernel_shape = (out_channels, kernel_size, kernel_size)
+        kernel_shape = (out_channels, in_channels, kernel_size, kernel_size)
         self.weights = self._init_weights(kernel_shape, weight_range)
         self.bias = bias
         if bias:
@@ -122,8 +122,7 @@ class ConvLayer(Layer):
         self.stride = stride
         self.padding = padding
 
-        self.in_ch = in_channels
-        self.out_ch = out_channels
+        self.filters = out_channels
 
         self.kernel_size = kernel_size
 
@@ -139,7 +138,7 @@ class ConvLayer(Layer):
         ) / self.stride + 1
         x_width_out = (x_width - self.kernel_size + 2 * self.padding) / self.stride + 1
 
-        if x_height_out % 10 != 0 or x_width_out % 10 != 0:
+        if not x_height_out.is_integer() or not x_width_out.is_integer():
             raise Exception('Wrong convolution shape')
 
         x_height_out = int(x_height_out)
@@ -150,7 +149,7 @@ class ConvLayer(Layer):
             x, self.kernel_size, self.kernel_size, self.padding, self.stride
         )
 
-        kernel_col = self.weights.reshape(self.out_ch, -1)
+        kernel_col = self.weights.reshape(self.filters, -1)
 
         self.input_signal_col = x_col
         self.input_signal = x
@@ -159,7 +158,7 @@ class ConvLayer(Layer):
         if self.bias:
             f_x = f_x + self.bias
         # Reshape to initial form
-        f_x = f_x.reshape(self.out_ch, x_height_out, x_width_out, batch_size)
+        f_x = f_x.reshape(self.filters, x_height_out, x_width_out, batch_size)
         f_x = f_x.transpose(3, 0, 1, 2)
 
         f_x = self.activation(f_x)
@@ -174,13 +173,13 @@ class ConvLayer(Layer):
         d_a = self.activation.backward(grad)
 
         d_b = np.sum(d_a, axis=(0, 2, 3))
-        d_b = d_b.reshape(self.out_ch, -1)
+        d_b = d_b.reshape(self.filters, -1)
 
-        grad_col = d_a.transpose(1, 2, 3, 0).reshape(self.out_ch, -1)
+        grad_col = d_a.transpose(1, 2, 3, 0).reshape(self.filters, -1)
         d_w = grad_col @ self.input_signal_col.T
         d_w = d_w.reshape(self.weights.shape)
 
-        w_col = self.weights.reshape(self.out_ch, -1)
+        w_col = self.weights.reshape(self.filters, -1)
         new_grad_col = w_col.T @ grad_col
         new_grad = col2im_indices(
             new_grad_col,
@@ -209,6 +208,12 @@ class MaxPollLayer(Layer):
         batch_size, channels, x_height, x_width = x.shape
         out_h = (x_height - self.size + 2 * self.padding) / self.stride + 1
         out_w = (x_width - self.size + 2 * self.padding) / self.stride + 1
+
+        if not out_h.is_integer() or not out_w.is_integer():
+            raise Exception('Wrong poll shape')
+
+        out_h = int(out_h)
+        out_w = int(out_w)
 
         x_reshaped = x.reshape(batch_size * channels, 1, x_height, x_width)
 
