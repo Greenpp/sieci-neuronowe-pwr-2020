@@ -7,6 +7,7 @@ if __name__ == '__main__' and __package__ is None:
 
 
 from net.model import ModelModule
+
 from lista1.adaline import ANDAdaline
 from lista1.perceptron import ANDPerceptron
 
@@ -16,24 +17,17 @@ def print_label(label: str) -> None:
 
 
 def test_model(model: ModelModule) -> None:
-    logger = model.train()
+    logger = model.train(fail_after_limit=False)
     logs = logger.get_logs()
 
     epochs = logs['epochs']
-    test_errors = logs['test_errors']
-    val_errors = logs['val_errors']
-    weights = logs['weights']
-    biases = logs['biases']
 
     print(f'Epochs: {epochs}')
-    print(f'Errors: {test_errors}')
 
 
 def adaline_test() -> None:
     print_label('adaline')
-    model = ANDAdaline(
-        theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01
-    )
+    model = ANDAdaline(theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01)
     test_model(model)
 
 

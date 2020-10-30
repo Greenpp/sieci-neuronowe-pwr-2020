@@ -8,12 +8,14 @@ if __name__ == '__main__' and __package__ is None:
 from typing import Tuple
 
 import numpy as np
-from net.activations import get_activation_by_name
+from net.activations import Bipolar, Unipolar
 from net.data_loader import DataLoader
 from net.layers import FCLayer
 from net.loss_functions import MSE
-from net.model import Model, ModelLogger, ModelModule
+from net.model import Model, ModelModule
 from net.trainers import SGDTrainer
+from net.training_logger import TrainingLogger
+from net.weights_initializers import NormalDistributionWI
 
 from lista1.data_generator import ANDGenerator
 
@@ -21,34 +23,39 @@ from lista1.data_generator import ANDGenerator
 class ANDPerceptron(ModelModule):
     def __init__(
         self,
+        weight_range: Tuple[float, float],
+        alpha: float,
         bipolar: bool,
         theta: float,
         bias: bool,
-        weight_range: Tuple[float, float],
-        alpha: float,
     ) -> None:
-        activation_name = 'bipolar' if bipolar else 'unipolar'
-        activation = get_activation_by_name(activation_name)(theta)
+        if bipolar:
+            activation = Bipolar(theta)
+        else:
+            activation = Unipolar(theta)
 
-        self.model = Model(FCLayer(2, 1, activation, bias, weight_range))
-        self.trainer = SGDTrainer(alpha)
+        self.model = Model(
+            FCLayer(
+                2, 1, weight_initializer=NormalDistributionWI(weight_range), bias=bias
+            ),
+            activation,
+        )
 
-        data = ANDGenerator(bipolar).get_augmented()
-        val_data = ANDGenerator(bipolar).get_all()
-        self.training_data_loader = DataLoader(data, batch_size=1)
-        self.validation_data_loader = DataLoader(val_data, batch_size=None)
+        tr_data = ANDGenerator(bipolar).get_augmented()
+        test_data = ANDGenerator(bipolar).get_all()
+        training_loader = DataLoader(tr_data, batch_size=1)
+        test_loader = DataLoader(test_data, batch_size=None)
+
+        loss = MSE()
+        self.trainer = SGDTrainer(alpha, loss)
+        self.trainer.set_data_loaders(training_loader, test_loader)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return self.model(x)
 
-    def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
-        logger = self.model.train(
-            self.training_data_loader,
-            self.validation_data_loader,
-            self.trainer,
-            MSE(),
-            max_epochs=1000,
-            fail_after_max_epochs=fail_after_max_epochs,
+    def train(self, fail_after_limit: bool) -> TrainingLogger:
+        self.trainer.train(
+            self.model, max_epochs=1000, fail_after_limit=fail_after_limit, epsilon=0
         )
 
-        return logger
+        return self.trainer.get_logger()

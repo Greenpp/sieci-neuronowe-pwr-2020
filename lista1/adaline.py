@@ -5,22 +5,25 @@ if __name__ == '__main__' and __package__ is None:
     path.append(dir(path[0]))
     __package__ = 'lista1'
 
-from net.loss_functions import MSE
-from net.data_loader import DataLoader
-from lista1.data_generator import ANDGenerator
-from net.trainers import SGDTrainer
 from typing import Tuple
 
 import numpy as np
-from net.activations import get_activation_by_name
-from net.layers import FCLayer, Layer
-from net.model import Model, ModelLogger, ModelModule
+from net.activations import Bipolar
+from net.data_loader import DataLoader
+from net.layers import FCLayer
+from net.loss_functions import MSE
+from net.model import Layer, Model, ModelModule
+from net.trainers import SGDTrainer
+from net.training_logger import TrainingLogger
+from net.weights_initializers import NormalDistributionWI
+
+from lista1.data_generator import ANDGenerator
 
 
 class Adaline(Model):
     def __init__(self, theta: float, *args: Layer) -> None:
         super().__init__(*args),
-        self.final_activation = get_activation_by_name('bipolar')(theta)
+        self.final_activation = Bipolar(theta)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         forward = self.compute(x)
@@ -36,32 +39,29 @@ class ANDAdaline(ModelModule):
         bias: bool,
         weight_range: Tuple[float, float],
         alpha: float,
-        epsilon: float = None,
     ) -> None:
-        self.epsilon = epsilon
-
-        activation = get_activation_by_name('linear')()
-
-        self.model = Adaline(theta, FCLayer(2, 1, activation, bias, weight_range))
-        self.trainer = SGDTrainer(alpha)
+        self.model = Adaline(
+            theta,
+            FCLayer(
+                2, 1, weight_initializer=NormalDistributionWI(weight_range), bias=bias
+            ),
+        )
 
         data = ANDGenerator(bipolar=True).get_augmented()
-        val_data = ANDGenerator(bipolar=True).get_all()
-        self.training_data_loader = DataLoader(data, batch_size=1)
-        self.validation_data_loader = DataLoader(val_data, batch_size=None)
+        test_data = ANDGenerator(bipolar=True).get_all()
+        training_loader = DataLoader(data, batch_size=1)
+        test_loader = DataLoader(test_data, batch_size=None)
+
+        loss = MSE()
+        self.trainer = SGDTrainer(alpha, loss)
+        self.trainer.set_data_loaders(training_loader, test_loader)
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return self.model(x)
 
-    def train(self, fail_after_max_epochs: bool = True) -> ModelLogger:
-        logger = self.model.train(
-            self.training_data_loader,
-            self.validation_data_loader,
-            self.trainer,
-            MSE(),
-            self.epsilon,
-            max_epochs=1000,
-            fail_after_max_epochs=fail_after_max_epochs,
+    def train(self, fail_after_limit: bool) -> TrainingLogger:
+        self.trainer.train(
+            self.model, 1000, epsilon=0, fail_after_limit=fail_after_limit
         )
 
-        return logger
+        return self.trainer.get_logger()
