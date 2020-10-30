@@ -1,84 +1,71 @@
-import os
-import pickle
-from datetime import datetime
-from typing import Any, List, Tuple, Union
-
-import numpy as np
-
-FIRST_FAILS_SKIP = 5
+from typing import List, Tuple
 
 
 class Experiment:
     def __init__(
         self,
         title: str,
-        repetitions: int,
-        model: type,
-        test_parameter: Tuple[str, Union[List, Tuple[Any, Any, Any]]],
-        results_dir: str = 'wyniki',
-        f_name: str = None,
-        fail_after_max_epochs: bool = True,
-        **kwargs,
+        f_name: str,
+        test_parameter: Tuple[str, List],
+        fail_after_limit: bool = False,
+        **kwargs
     ) -> None:
         self.title = title
-        self.model = model
-        self.repetitions = repetitions
-        self.fail_after_max_epochs = fail_after_max_epochs
+        self.f_name = f_name
+        self.test_param_name, self.test_param_values = test_parameter
+        self.fail_after_limit = fail_after_limit
+        self.custom_params = kwargs
 
-        f_name = f'{datetime.now():%Y%m%d%H%M%S}' if f_name is None else f_name
-        self.result_path = f'{os.getcwd()}/{results_dir}/{f_name}.pkl'
+        self.skip_after_first_fails = 5
+        self.first_failed = 0
 
-        self.results = {'title': title, 'results': dict()}
+    def run(self, model_class: type, reps: int, **kwargs) -> dict:
+        exp_log = dict()
+        val_keys = list(map(str, self.test_param_values))
+        max_val_len = max(map(len, val_keys))
+        reps_len = len(str(reps))
 
-        self.parameters = kwargs
-        self.test_param_name, test_param_values = test_parameter
-        self.results['var'] = self.test_param_name
-        if type(test_param_values) is tuple:
-            # Create list of tested values
-            test_param_values = self._unpack_range(test_param_values)
+        for val, val_key in zip(self.test_param_values, val_keys):
+            val_key = str(val)
+            exp_log[val_key] = []
 
-        # Max test value length for printing
-        self.max_test_val_len = max(map(lambda x: len(str(x)), test_param_values))
-        self.test_param_values = test_param_values
+            params = kwargs.copy()
+            test_param = {self.test_param_name: val}
+            params.update(test_param)
+            params.update(self.custom_params)
 
-    def run(self) -> None:
-        for test_val in self.test_param_values:
-            test_param = {self.test_param_name: test_val}
-            self.results['results'][test_val] = []
-            first_times_failed = 0
-            for i in range(self.repetitions):
+            for i in range(reps):
                 print(
-                    f'Tested value: {str(test_val):>{self.max_test_val_len}} | {i+1}/{self.repetitions}',
-                    end='\r',
+                    f'\rTested value: {val_key:{max_val_len}}: {i+1:{reps_len}}/{reps}',
+                    end='',
                 )
-                model = self.model(**self.parameters, **test_param)
-                logger = model.train(fail_after_max_epochs=self.fail_after_max_epochs)
+                model = model_class(**params)
+                training_logger = model.train(self.fail_after_limit)
 
-                self.results['results'][test_val].append(logger.get_logs())
-                # Skip if failed to train model FIRST_FAILS_SKIP times
-                if first_times_failed >= 0:
-                    if logger.get_logs()['failed']:
-                        first_times_failed += 1
-                        if first_times_failed > FIRST_FAILS_SKIP:
-                            break
-                    else:
-                        first_times_failed = -1
-            # Done need to override whole count
-            done_fill_size = len(f'{self.repetitions}/{self.repetitions}')
-            if first_times_failed > 0:
+                training_log = training_logger.get_logs()
+                exp_log[val_key].append(training_log)
+
+                if training_log['failed']:
+                    if self.first_failed >= 0:
+                        self.first_failed += 1
+                    if self.first_failed >= self.skip_after_first_fails:
+                        exp_log[val_key].clear()
+                        break
+                else:
+                    self.first_failed = -1
+            if self.first_failed == -1:
                 print(
-                    f'Tested value: {str(test_val):>{self.max_test_val_len}} | {"Skipped":<{done_fill_size}}'
+                    f'\rTested value: {val_key:{max_val_len}}: Done{" " * reps_len * 2}'
                 )
             else:
                 print(
-                    f'Tested value: {str(test_val):>{self.max_test_val_len}} | {"Done":<{done_fill_size}}'
+                    f'\rTested value: {val_key:{max_val_len}}: Skipped{" " * reps_len * 2}'
                 )
 
-        self._save_result()
+        exp_log = {
+            'title': self.title,
+            'test_param': self.test_param_name,
+            'results': exp_log,
+        }
 
-    def _unpack_range(self, param_range: Tuple) -> List:
-        return [round(v, 8) for v in np.arange(*param_range)]
-
-    def _save_result(self):
-        with open(self.result_path, 'wb') as f:
-            pickle.dump(self.results, f, protocol=pickle.HIGHEST_PROTOCOL)
+        return exp_log
