@@ -39,7 +39,9 @@ class ANDAdaline(ModelModule):
         bias: bool,
         weight_range: Tuple[float, float],
         alpha: float,
+        epsilon: float = None,
     ) -> None:
+        self.epsilon = 0 if epsilon is None else epsilon
         self.model = Adaline(
             theta,
             FCLayer(
@@ -61,7 +63,7 @@ class ANDAdaline(ModelModule):
 
     def train(self, fail_after_limit: bool) -> TrainingLogger:
         self.trainer.train(
-            self.model, 1000, epsilon=0, fail_after_limit=fail_after_limit
+            self.model, 1000, epsilon=self.epsilon, fail_after_limit=fail_after_limit
         )
 
         return self.trainer.get_logger()
