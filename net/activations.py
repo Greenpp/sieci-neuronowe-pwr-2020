@@ -1,20 +1,18 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+from typing import Tuple
 
 import numpy as np
 
+from net.model import Layer
 
-class Activation(ABC):
+
+class Activation(Layer):
     @abstractmethod
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         pass
 
-    @abstractmethod
-    def __str__(self) -> str:
-        pass
-
-    @abstractmethod
-    def backward(self, grad: np.ndarray) -> np.ndarray:
-        pass
+    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        return None, None, self.derivative(grad)
 
 
 LINEAR = 'linear'
@@ -25,21 +23,6 @@ SOFTMAX = 'softmax'
 SOFTMAX_CE = 'softmax_ce'
 RELU = 'relu'
 TANH = 'tanh'
-
-
-class Linear(Activation):
-    """
-    Linear pass
-    """
-
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        return x
-
-    def __str__(self) -> str:
-        return LINEAR
-
-    def backward(self, grad: np.ndarray) -> np.ndarray:
-        return grad
 
 
 class Unipolar(Activation):
@@ -58,7 +41,7 @@ class Unipolar(Activation):
     def __str__(self) -> str:
         return UNIPOLAR
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -78,7 +61,7 @@ class Bipolar(Activation):
     def __str__(self) -> str:
         return BIPOLAR
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -96,7 +79,7 @@ class Sigmoid(Activation):
     def __str__(self) -> str:
         return SIGMOID
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         d_sig = self.cache * (1 - self.cache)
 
         return d_sig * grad
@@ -121,7 +104,7 @@ class Softmax(Activation):
     def __str__(self) -> str:
         return SOFTMAX
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         # diagonal = self.cache * np.identity(self.cache.size)
         # d_softmax = diagonal - (self.cache.T @ self.cache)
         # grad @ d_softmax
@@ -138,7 +121,7 @@ class SoftmaxCE(Softmax):
     def __str__(self) -> str:
         return SOFTMAX_CE
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         return grad
 
 
@@ -156,7 +139,7 @@ class ReLU(Activation):
     def __str__(self) -> str:
         return RELU
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
         d_rel = np.where(self.cache > 0, grad, 0)
 
         return d_rel
@@ -176,12 +159,12 @@ class TanH(Activation):
     def __str__(self) -> str:
         return TANH
 
-    def backward(self, grad: np.ndarray) -> np.ndarray:
+    def derivative(self, grad: np.ndarray) -> np.ndarray:
+        # TODO Check
         return 1 - (self.cache ** 2)
 
 
 ACTIVATIONS = {
-    LINEAR: Linear,
     UNIPOLAR: Unipolar,
     BIPOLAR: Bipolar,
     SIGMOID: Sigmoid,

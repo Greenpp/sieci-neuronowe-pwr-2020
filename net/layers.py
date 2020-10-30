@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from net.model import Layer
 from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
@@ -13,18 +14,8 @@ if TYPE_CHECKING:
     from net.weights_initializers import WeightInitializer
 
 
-class Layer(ABC):
-    @abstractmethod
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        pass
-
-    @abstractmethod
-    def __str__(self) -> str:
-        pass
-
-    @abstractmethod
-    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        pass
+class TrainableLayer(Layer):
+    trainable = True
 
 
 FC = 'fc'
@@ -33,7 +24,7 @@ MAXPOLL = 'maxpoll'
 FLATTEN = 'flatten'
 
 
-class FCLayer(Layer):
+class FCLayer(TrainableLayer):
     """
     Fully connected layer
     """
@@ -42,7 +33,6 @@ class FCLayer(Layer):
         self,
         in_: int = 1,
         out: int = 1,
-        activation: Activation = None,
         bias: bool = True,
         weight_initializer: WeightInitializer = NormalDistributionWI((-0.5, 0.5)),
     ) -> None:
@@ -51,7 +41,6 @@ class FCLayer(Layer):
         if bias:
             self.b_weights = weight_initializer.get_weights((1, out))
 
-        self.activation = activation
         self.input_signal = None
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
@@ -64,35 +53,29 @@ class FCLayer(Layer):
         if self.bias:
             f_x = f_x + self.b_weights
 
-        f_x = self.activation(f_x)
-
         return f_x
 
     def __str__(self) -> str:
         return FC
 
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        # d_b = activation delta * grad
-        d_b = self.activation.backward(grad)
-
         # Weights delta equal to incoming gradint * activaton derivative * previous layer
-        d_w = self.input_signal.T @ d_b
+        d_w = self.input_signal.T @ grad
 
         # Gradient for next layer scaled with weights
-        new_grad = d_b @ self.weights.T
+        new_grad = grad @ self.weights.T
 
         # Accumulate bias delta for batch input
-        acc_d_b = d_b.sum(axis=0)
+        acc_d_b = grad.sum(axis=0)
 
         return acc_d_b, d_w, new_grad
 
 
-class ConvLayer(Layer):
+class ConvLayer(TrainableLayer):
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
-        activation: Activation = None,
         kernel_size: int = 3,
         bias: bool = True,
         stride: int = 1,
@@ -105,7 +88,6 @@ class ConvLayer(Layer):
         if bias:
             self.b_weights = weight_initializer.get_weights((out_channels, 1))
 
-        self.activation = activation
         self.stride = stride
         self.padding = padding
 
@@ -148,8 +130,6 @@ class ConvLayer(Layer):
         f_x = f_x.reshape(self.filters, x_height_out, x_width_out, batch_size)
         f_x = f_x.transpose(3, 0, 1, 2)
 
-        f_x = self.activation(f_x)
-
         return f_x
 
     def __str__(self) -> str:
@@ -157,12 +137,10 @@ class ConvLayer(Layer):
 
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         # TODO what is going on ...
-        d_a = self.activation.backward(grad)
-
-        d_b = np.sum(d_a, axis=(0, 2, 3))
+        d_b = np.sum(grad, axis=(0, 2, 3))
         d_b = d_b.reshape(self.filters, -1)
 
-        grad_col = d_a.transpose(1, 2, 3, 0).reshape(self.filters, -1)
+        grad_col = grad.transpose(1, 2, 3, 0).reshape(self.filters, -1)
         d_w = grad_col @ self.input_signal_col.T
         d_w = d_w.reshape(self.weights.shape)
 
@@ -180,7 +158,7 @@ class ConvLayer(Layer):
         return d_b, d_w, new_grad
 
 
-class MaxPollLayer(Layer):
+class MaxPoll(Layer):
     def __init__(self, size: int = 2, stride: int = 2, padding: int = 0) -> None:
         self.size = size
         self.stride = stride
@@ -245,7 +223,7 @@ class MaxPollLayer(Layer):
         return None, None, new_grad
 
 
-class FlattenLayer(Layer):
+class Flatten(Layer):
     def __call__(self, x: np.ndarray) -> np.ndarray:
         self.input_shape = x.shape
         batch_size = x.shape[0]
@@ -262,7 +240,7 @@ class FlattenLayer(Layer):
         return None, None, new_grad
 
 
-LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPollLayer, FLATTEN: FlattenLayer}
+LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPoll, FLATTEN: Flatten}
 
 
 def get_layer_by_name(name: str) -> type:

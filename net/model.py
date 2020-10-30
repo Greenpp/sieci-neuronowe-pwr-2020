@@ -1,13 +1,28 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
 
 if TYPE_CHECKING:
-    from net.layers import Layer
     from net.training_logger import TrainingLogger
+
+
+class Layer(ABC):
+    trainable = False
+
+    @abstractmethod
+    def __call__(self, x: np.ndarray) -> np.ndarray:
+        pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        pass
+
+    @abstractmethod
+    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        pass
 
 
 class Model:

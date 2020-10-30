@@ -8,7 +8,7 @@ import numpy as np
 from net.training_logger import TrainingLogger
 
 if TYPE_CHECKING:
-    from net.layers import Layer
+    from net.layers import TrainableLayer
     from net.loss_functions import LossFunction
     from net.model import Model
 
@@ -97,7 +97,9 @@ class Trainer(ABC):
                 total_batches += 1
                 batch += 1
                 if verbose:
-                    self._print_left_batches_and_accuracy(batch, epoch_batches, epoch_batches_len, test_accuracy)
+                    self._print_left_batches_and_accuracy(
+                        batch, epoch_batches, epoch_batches_len, test_accuracy
+                    )
 
                 y_hat = model(x)
                 loss = self.loss_function(y_hat, y)
@@ -105,7 +107,7 @@ class Trainer(ABC):
                 grad = self.loss_function.backward()
                 for layer, params in self.layers:
                     d_bias, d_weights, grad = layer.backward(grad)
-                    if d_weights is not None:  # For poll and flatten layers
+                    if layer.trainable:
                         self._update_paramas(layer, params, d_bias, d_weights)
                         self._update_layer_weights(layer, params, d_bias, d_weights)
 
@@ -154,7 +156,11 @@ class Trainer(ABC):
         return self.logger
 
     def _update_paramas(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         pass
 
@@ -166,7 +172,11 @@ class Trainer(ABC):
 
     @abstractmethod
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         pass
 
@@ -177,7 +187,11 @@ class SGDTrainer(Trainer):
         self.alpha = alpha
 
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         layer.weights = layer.weights - self.alpha * d_weights
 
@@ -199,7 +213,11 @@ class MomentumTrainer(Trainer):
             params['prev_b_grad'] = [0, 0]
 
     def _update_paramas(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         momentum_weight = params['prev_w_grad'].pop(0)
         update_gradient = self.beta * momentum_weight + (1 - self.beta) * d_weights
@@ -211,7 +229,11 @@ class MomentumTrainer(Trainer):
             params['prev_b_grad'].append(update_gradient)
 
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         update_gradient = params['prev_w_grad'][1]
         layer.weights = layer.weights - self.alpha * update_gradient
@@ -238,7 +260,11 @@ class NesterovTrainer(Trainer):
             params['b_pre_jump'] = layer.b_weights
 
     def _update_paramas(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         momentum_weight = params['prev_w_grad'].pop(0)
         update_gradient = self.beta * momentum_weight + (1 - self.beta) * d_weights
@@ -250,7 +276,11 @@ class NesterovTrainer(Trainer):
             params['prev_b_grad'].append(update_gradient)
 
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         update_gradient = self.alpha * params['prev_w_grad'][1]
         pre_jump_w = params['w_pre_jump']
@@ -293,14 +323,22 @@ class AdaGradTrainer(Trainer):
             params['b_grad_accumulator'] = 0
 
     def _update_paramas(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         params['w_grad_accumulator'] += d_weights ** 2
         if layer.bias:
             params['b_grad_accumulator'] += d_bias ** 2
 
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         weights_accumulator = params['w_grad_accumulator']
         adagrad_alpha = self.alpha / np.sqrt(weights_accumulator + 1e-9)
@@ -328,7 +366,11 @@ class AdaDeltaTrainer(Trainer):
             params['grad_b_running_avg'] = 0
 
     def _update_paramas(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         params['delta_w_running_avg'] = self.gamma * params['delta_w_running_avg'] + (
             1 - self.gamma
@@ -340,7 +382,11 @@ class AdaDeltaTrainer(Trainer):
             ] + (1 - self.gamma) * (d_bias ** 2)
 
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         update_gradient = (
             np.sqrt(params['grad_w_running_avg'] + 1e-9)
@@ -389,7 +435,11 @@ class AdamTrainer(Trainer):
             params['beta2_cor'] = 1
 
     def _update_paramas(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         params['w_m_momentum'] = (
             self.beta1 * params['w_m_momentum'] + (1 - self.beta1) * d_weights
@@ -410,7 +460,11 @@ class AdamTrainer(Trainer):
         params['beta2_cor'] *= self.beta2
 
     def _update_layer_weights(
-        self, layer: Layer, params: dict, d_bias: np.ndarray, d_weights: np.ndarray
+        self,
+        layer: TrainableLayer,
+        params: dict,
+        d_bias: np.ndarray,
+        d_weights: np.ndarray,
     ) -> None:
         # Correction calculation
         m_momentum = params['w_m_momentum'] / (1 - params['beta1_cor'])

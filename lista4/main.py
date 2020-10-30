@@ -10,10 +10,11 @@ from lista2.mnist_loader import MNISTLoader
 from matplotlib import pyplot as plt
 from net.activations import ReLU, SoftmaxCE
 from net.data_loader import DataLoader
-from net.layers import ConvLayer, FCLayer, FlattenLayer, MaxPollLayer
+from net.layers import ConvLayer, FCLayer, Flatten, MaxPoll
 from net.loss_functions import CrossEntropy
 from net.model import Model
 from net.trainers import AdamTrainer
+from net.weights_initializers import HeWI
 
 if __name__ == "__main__":
     data_loader = MNISTLoader(data_shape=(1, 1, 28, 28))
@@ -23,11 +24,12 @@ if __name__ == "__main__":
     test_loader = DataLoader(tes, 1000, False)
 
     model = Model(
-        ConvLayer(1, 28, ReLU()),
-        MaxPollLayer(),
-        FlattenLayer(),
-        FCLayer(14 * 14 * 28 , 128, ReLU()),
-        FCLayer(128, 10, SoftmaxCE()),
+        ConvLayer(1, 5, 5, padding=2, weight_initializer=HeWI(784)),
+        ReLU(),
+        MaxPoll(),
+        Flatten(),
+        FCLayer(14 * 14 * 5, 10, weight_initializer=HeWI(14 * 14 * 5)),
+        SoftmaxCE(),
     )
 
     loss = CrossEntropy()
