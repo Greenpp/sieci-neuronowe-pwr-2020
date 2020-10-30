@@ -22,7 +22,6 @@ if __name__ == "__main__":
     train_loader = DataLoader(tr)
     test_loader = DataLoader(tes, 1000, False)
 
-    # TODO fix convolution
     model = Model(
         ConvLayer(1, 28, ReLU()),
         MaxPollLayer(),
@@ -39,6 +38,6 @@ if __name__ == "__main__":
     logger = trainer.get_logger()
 
     acc = logger.get_logs()['accuracies']
-    print(f'{round(max(acc) * 100, 2)}%')
+    print(f'Best accuracy: {max(acc) * 100:.2f}%')
     plt.plot(acc)
     plt.show()
