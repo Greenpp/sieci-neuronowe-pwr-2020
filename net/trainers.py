@@ -146,7 +146,7 @@ class Trainer(ABC):
         self, batch: int, all_batches: int, format_len: int, acc: float
     ) -> None:
         print(
-            f'\rBatch: {batch:{format_len}}/{all_batches} | Accuracy: {round(acc * 100, 2):5}%',
+            f'\rBatch: {batch:{format_len}}/{all_batches} | Accuracy: {acc * 100:5.2f}%',
             end='',
         )
 
