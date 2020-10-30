@@ -13,13 +13,11 @@ import numpy as np
 
 if __name__ == "__main__":
     model = MNISTMLP(
-        layers_shapes=[(784, 128), (128, 10)],
-        activations=['relu', 'softmax_ce'],
-        weight_range=(-0.5, 0.5),
-        alpha=0.01,
-        loss='cross-entropy',
+        hidden_size=128,
         batch_size=32,
-        max_batches=200,
+        weights_range=(-0.2, 0.2),
+        alpha=0.01,
+        activation_name='relu',
     )
 
     logger = model.train(verbose=True)
