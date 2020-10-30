@@ -160,8 +160,9 @@ class TanH(Activation):
         return TANH
 
     def derivative(self, grad: np.ndarray) -> np.ndarray:
-        # TODO Check
-        return 1 - (self.cache ** 2)
+        d_tan = 1 - (self.cache ** 2)
+
+        return d_tan * grad
 
 
 ACTIVATIONS = {
