@@ -39,7 +39,7 @@ class TrainingLogger:
             'val_errors': self.val_errors,
             'test_errors': self.test_errors,
             'train_errors': self.train_errors,
-            'epochs': len(self.accuracies)
+            'batches': len(self.accuracies)
             - 1,  # first acc log is before training loop
             'failed': self.failed,
             'weights': self.weights,
