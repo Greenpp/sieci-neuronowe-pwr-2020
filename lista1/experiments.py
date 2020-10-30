@@ -14,64 +14,41 @@ from lista1.perceptron import ANDPerceptron
 
 
 def experiments():
-    REPS = 100
-
-    lab = Lab()
+    REPS = 10
 
     ## PERCEPTRON
+    perceptron_lab = Lab(
+        ANDPerceptron,
+        REPS,
+        '/lista1/wyniki/test',
+        bipolar=False,
+        theta=0,
+        bias=True,
+        weight_range=(-0.5, 0.5),
+        alpha=0.01,
+    )
+
     # Theta
     perceptron_theta_uni = Experiment(
-        title='Perceptron, wpływ theta, uni',
-        repetitions=REPS,
-        model=ANDPerceptron,
-        test_parameter=('theta', [-1.0, -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8, 1.0]),
+        title='Perceptron, uni, theta',
         f_name='per_theta_uni',
-        bipolar=False,
-        bias=False,
-        weight_range=(-0.2, 0.2),
-        alpha=0.01,
-    )
-    lab.add_experiment(perceptron_theta_uni)
-    perceptron_theta_bi = Experiment(
-        title='Perceptron, wpływ theta, bi',
-        repetitions=REPS,
-        model=ANDPerceptron,
         test_parameter=('theta', [-1.0, -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8, 1.0]),
-        f_name='per_theta_bi',
-        bipolar=True,
         bias=False,
-        weight_range=(-0.2, 0.2),
-        alpha=0.01,
     )
-    lab.add_experiment(perceptron_theta_bi)
+    perceptron_lab.add_experiment(perceptron_theta_uni)
+
+    perceptron_theta_bi = Experiment(
+        title='Perceptron, bi, theta',
+        f_name='per_theta_bi',
+        test_parameter=('theta', [-1.0, -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8, 1.0]),
+        bias=False,
+    )
+    perceptron_lab.add_experiment(perceptron_theta_bi)
 
     # Weight range
-    perceptron_weight_uni = Experiment(
-        title='Perceptron, wpływ wag, uni',
-        repetitions=REPS,
-        model=ANDPerceptron,
-        test_parameter=(
-            'weight_range',
-            [
-                (0.0, 0.0),
-                (-0.1, 0.1),
-                (-0.2, 0.2),
-                (-0.5, 0.5),
-                (-0.8, 0.8),
-                (-1.0, 1.0),
-            ],
-        ),
+    perceptron_w_uni = Experiment(
+        title='Perceptron, uni, w',
         f_name='per_w_uni',
-        bipolar=False,
-        bias=True,
-        theta=0,
-        alpha=0.01,
-    )
-    lab.add_experiment(perceptron_weight_uni)
-    perceptron_weight_bi = Experiment(
-        title='Perceptron, wpływ wag, bi',
-        repetitions=REPS,
-        model=ANDPerceptron,
         test_parameter=(
             'weight_range',
             [
@@ -83,46 +60,56 @@ def experiments():
                 (-1.0, 1.0),
             ],
         ),
-        f_name='per_w_bi',
-        bipolar=True,
-        bias=True,
-        theta=0,
-        alpha=0.01,
     )
-    lab.add_experiment(perceptron_weight_bi)
+    perceptron_lab.add_experiment(perceptron_w_uni)
+
+    perceptron_w_bi = Experiment(
+        title='Perceptron, bi, theta',
+        f_name='per_w_bi',
+        test_parameter=(
+            'weight_range',
+            [
+                (0.0, 0.0),
+                (-0.1, 0.1),
+                (-0.2, 0.2),
+                (-0.5, 0.5),
+                (-0.8, 0.8),
+                (-1.0, 1.0),
+            ],
+        ),
+    )
+    perceptron_lab.add_experiment(perceptron_w_bi)
 
     # Alpha
     perceptron_alpha_uni = Experiment(
-        title='Perceptron, wpływ alpha, uni',
-        repetitions=REPS,
-        model=ANDPerceptron,
-        test_parameter=('alpha', [0.0001, 0.001, 0.01, 0.1, 1.0]),
+        title='Perceptron, uni, alpha',
         f_name='per_alpha_uni',
-        bipolar=False,
-        bias=True,
-        weight_range=(-0.5, 0.5),
-        theta=0,
-    )
-    lab.add_experiment(perceptron_alpha_uni)
-    perceptron_alpha_bi = Experiment(
-        title='Perceptron, wpływ alpha, bi',
-        repetitions=REPS,
-        model=ANDPerceptron,
         test_parameter=('alpha', [0.0001, 0.001, 0.01, 0.1, 1.0]),
-        f_name='per_alpha_bi',
-        bipolar=True,
-        bias=True,
-        weight_range=(-0.5, 0.5),
-        theta=0,
     )
-    lab.add_experiment(perceptron_alpha_bi)
+    perceptron_lab.add_experiment(perceptron_alpha_uni)
+
+    perceptron_alpha_bi = Experiment(
+        title='Perceptron, bi, alpha',
+        f_name='per_alpha_bi',
+        test_parameter=('alpha', [0.0001, 0.001, 0.01, 0.1, 1.0]),
+    )
+    perceptron_lab.add_experiment(perceptron_alpha_bi)
 
     ## ADALINE
+    adaline_lab = Lab(
+        ANDAdaline,
+        REPS,
+        '/lista1/wyniki/test',
+        theta=0,
+        bias=True,
+        weight_range=(-0.5, 0.5),
+        alpha=0.01,
+    )
+
     # Weight range
-    adaline_weight = Experiment(
-        title='Adaline, wpływ wag',
-        repetitions=REPS,
-        model=ANDAdaline,
+    adaline_w = Experiment(
+        title='Adaline, w',
+        f_name='ada_w',
         test_parameter=(
             'weight_range',
             [
@@ -134,42 +121,28 @@ def experiments():
                 (-1.0, 1.0),
             ],
         ),
-        f_name='ada_w',
-        bias=True,
-        theta=0,
-        alpha=0.01,
     )
-    lab.add_experiment(adaline_weight)
+    adaline_lab.add_experiment(adaline_w)
 
     # Alpha
     adaline_alpha = Experiment(
-        title='Adaline, wpływ alpha',
-        repetitions=REPS,
-        model=ANDAdaline,
-        test_parameter=('alpha', [0.0001, 0.001, 0.01, 0.1, 1.0]),
+        title='Adaline, alpha',
         f_name='ada_alpha',
-        bias=True,
-        weight_range=(-0.5, 0.5),
-        theta=0,
+        test_parameter=('alpha', [0.0001, 0.001, 0.01, 0.1, 1.0]),
     )
-    lab.add_experiment(adaline_alpha)
+    adaline_lab.add_experiment(adaline_alpha)
 
     # Epsilon
     adaline_epsilon = Experiment(
         title='Adaline, epsilon',
-        repetitions=REPS,
-        model=ANDAdaline,
-        test_parameter=('epsilon', [0]),
         f_name='ada_epsilon',
-        bias=True,
-        weight_range=(-0.5, 0.5),
-        theta=0,
-        alpha=0.01,
-        fail_after_max_epochs=False,
+        test_parameter=('epsilon', [0]),
     )
-    lab.add_experiment(adaline_epsilon)
+    adaline_lab.add_experiment(adaline_epsilon)
 
-    lab.run()
+
+    perceptron_lab.run()
+    adaline_lab.run()
 
 
 if __name__ == "__main__":
