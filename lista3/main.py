@@ -6,6 +6,7 @@ if __name__ == '__main__' and __package__ is None:
     __package__ = 'lista3'
 
 
+from net.weights_initializers import HeWI
 from matplotlib import pyplot as plt
 
 from lista2.mnist_loader import MNISTLoader
@@ -22,7 +23,12 @@ tr, _, tes = loader.get_sets()
 train_loader = DataLoader(tr)
 test_loader = DataLoader(tes, None, False)
 
-model = Model(FCLayer(784, 128, ReLU()), FCLayer(128, 10, SoftmaxCE()))
+model = Model(
+    FCLayer(784, 128, weight_initializer=HeWI(784)),
+    ReLU(),
+    FCLayer(128, 10, weight_initializer=HeWI(128)),
+    SoftmaxCE(),
+)
 
 loss = CrossEntropy()
 trainer = AdamTrainer(0.01, loss)
