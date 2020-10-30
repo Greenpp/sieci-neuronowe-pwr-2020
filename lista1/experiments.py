@@ -20,7 +20,7 @@ def experiments():
     perceptron_lab = Lab(
         ANDPerceptron,
         REPS,
-        '/lista1/wyniki/test',
+        '/lista1/wyniki',
         bipolar=False,
         theta=0,
         bias=True,
@@ -99,7 +99,7 @@ def experiments():
     adaline_lab = Lab(
         ANDAdaline,
         REPS,
-        '/lista1/wyniki/test',
+        '/lista1/wyniki',
         theta=0,
         bias=True,
         weight_range=(-0.5, 0.5),
