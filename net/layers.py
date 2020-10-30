@@ -156,7 +156,7 @@ class ConvLayer(Layer):
 
         f_x = kernel_col @ x_col
         if self.bias:
-            f_x = f_x + self.bias
+            f_x = f_x + self.b_weights
         # Reshape to initial form
         f_x = f_x.reshape(self.filters, x_height_out, x_width_out, batch_size)
         f_x = f_x.transpose(3, 0, 1, 2)
