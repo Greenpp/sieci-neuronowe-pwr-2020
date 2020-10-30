@@ -41,10 +41,12 @@ class Trainer(ABC):
 
         test_error = self.loss_function(y_hat, y)
 
-        # TODO add case for non classification
-        result_classes = y_hat.argmax(axis=1)
-        label_classes = y.argmax(axis=1)
-        acc = (result_classes == label_classes).mean()
+        if y.shape[1] > 1:
+            result_classes = y_hat.argmax(axis=1)
+            label_classes = y.argmax(axis=1)
+            acc = (result_classes == label_classes).mean()
+        else:
+            acc = None
 
         return test_error, acc
 
@@ -64,7 +66,7 @@ class Trainer(ABC):
         max_epochs=None,
         max_batches=None,
         epsilon=None,
-        fail_after_max=False,
+        fail_after_limit=False,
         verbose=False,
     ) -> None:
         self._attach(model)
@@ -118,15 +120,15 @@ class Trainer(ABC):
                 self.logger.log_train_error(loss)
 
                 # End conditions
+                if epsilon is not None:
+                    if test_error <= epsilon:
+                        is_training = False
+                        break
                 if max_batches is not None:
                     if total_batches >= max_batches:
                         is_training = False
-                        if fail_after_max:
+                        if fail_after_limit:
                             self.logger.log_fail()
-                        break
-                elif epsilon is not None:
-                    if test_error <= epsilon:
-                        is_training = False
                         break
 
             if verbose:
@@ -136,7 +138,7 @@ class Trainer(ABC):
             if max_epochs is not None:
                 if epoch >= max_epochs:
                     is_training = False
-                    if fail_after_max:
+                    if fail_after_limit:
                         self.logger.log_fail()
 
         self._finish_training()
