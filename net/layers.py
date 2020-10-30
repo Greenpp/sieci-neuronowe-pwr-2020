@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-
-from numpy.core.fromnumeric import size
-from net.utils import col2im_indices, im2col_indices
-from typing import TYPE_CHECKING, Iterable, Tuple
+from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
 
+from net.utils import col2im_indices, im2col_indices
+from net.weights_initializers import NormalDistributionWI
+
 if TYPE_CHECKING:
     from net.activations import Activation
+    from net.weights_initializers import WeightInitializer
 
 
 class Layer(ABC):
@@ -24,20 +25,6 @@ class Layer(ABC):
     @abstractmethod
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         pass
-
-    def _init_weights(
-        self, shape: Iterable[int], range_: Tuple[float, float]
-    ) -> np.ndarray:
-        """
-        Creates random weights with <shape> in <range_> using normal distribution
-        """
-        # Random 0 - 1
-        weights = np.random.rand(*shape)
-        # Shift to range
-        min_, max_ = range_
-        size = max_ - min_
-
-        return weights * size + min_
 
 
 FC = 'fc'
@@ -57,12 +44,12 @@ class FCLayer(Layer):
         out: int = 1,
         activation: Activation = None,
         bias: bool = True,
-        weight_range: Tuple[float, float] = (-0.5, 0.5),
+        weight_initializer: WeightInitializer = NormalDistributionWI((-0.5, 0.5)),
     ) -> None:
-        self.weights = self._init_weights((in_, out), weight_range)
+        self.weights = weight_initializer.get_weights((in_, out))
         self.bias = bias
         if bias:
-            self.b_weights = self._init_weights((1, out), weight_range)
+            self.b_weights = weight_initializer.get_weights((1, out))
 
         self.activation = activation
         self.input_signal = None
@@ -110,13 +97,13 @@ class ConvLayer(Layer):
         bias: bool = True,
         stride: int = 1,
         padding: int = 1,
-        weight_range: Tuple[float, float] = (-0.5, 0.5),
+        weight_initializer: WeightInitializer = NormalDistributionWI((-0.5, 0.5)),
     ) -> None:
         kernel_shape = (out_channels, in_channels, kernel_size, kernel_size)
-        self.weights = self._init_weights(kernel_shape, weight_range)
+        self.weights = weight_initializer.get_weights(kernel_shape)
         self.bias = bias
         if bias:
-            self.b_weights = self._init_weights((out_channels, 1), weight_range)
+            self.b_weights = weight_initializer.get_weights((out_channels, 1))
 
         self.activation = activation
         self.stride = stride
