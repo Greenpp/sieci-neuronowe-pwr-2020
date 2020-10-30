@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from net.model import Layer
 from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
 
+from net.model import Layer
 from net.utils import col2im_indices, im2col_indices
 from net.weights_initializers import NormalDistributionWI
 
 if TYPE_CHECKING:
-    from net.activations import Activation
     from net.weights_initializers import WeightInitializer
 
 
