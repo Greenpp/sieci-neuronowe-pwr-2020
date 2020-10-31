@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Tuple
+from typing import Tuple, Type
 
 import numpy as np
 
@@ -176,7 +176,7 @@ ACTIVATIONS = {
 }
 
 
-def get_activation_by_name(name: str) -> type:
+def get_activation_by_name(name: str) -> Type[Activation]:
     return ACTIVATIONS[name]
 
 

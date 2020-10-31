@@ -1,8 +1,7 @@
 from abc import ABC
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Type
 
 import numpy as np
-
 
 NORAMAL = 'normal'
 XAVIER = 'xavier'
@@ -42,5 +41,5 @@ class HeWI(NormalDistributionWI):
 INITIALIZERS = {NORAMAL: NormalDistributionWI, XAVIER: XavierWI, HE: HeWI}
 
 
-def get_initializer_by_name(name: str) -> type:
+def get_initializer_by_name(name: str) -> Type[WeightInitializer]:
     return INITIALIZERS[name]

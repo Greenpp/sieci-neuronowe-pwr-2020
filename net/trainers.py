@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple, Type
 
 import numpy as np
 
@@ -509,5 +509,5 @@ TRAINERS = {
 }
 
 
-def get_trainer_by_name(name: str) -> type:
+def get_trainer_by_name(name: str) -> Type[Trainer]:
     return TRAINERS[name]

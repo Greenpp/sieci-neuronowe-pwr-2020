@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, Type
 
 import numpy as np
 
@@ -241,7 +241,7 @@ class Flatten(Layer):
 LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPoll, FLATTEN: Flatten}
 
 
-def get_layer_by_name(name: str) -> type:
+def get_layer_by_name(name: str) -> Type[Layer]:
     return LAYERS[name]
 
 
