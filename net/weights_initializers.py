@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import Iterable, Tuple
+
 import numpy as np
 
 

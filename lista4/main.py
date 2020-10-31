@@ -24,7 +24,7 @@ if __name__ == "__main__":
     test_loader = DataLoader(tes, 1000, False)
 
     model = Model(
-        ConvLayer(1, 5, 5, padding=2, weight_initializer=HeWI(784)),
+        ConvLayer(1, 5, 5, padding=2, weight_initializer=HeWI(5 * 5 * 5)),
         ReLU(),
         MaxPoll(),
         Flatten(),

@@ -5,7 +5,7 @@ if __name__ == '__main__' and __package__ is None:
     path.append(dir(path[0]))
     __package__ = 'lista1'
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 from net.activations import Bipolar
@@ -39,7 +39,7 @@ class ANDAdaline(ModelModule):
         bias: bool,
         weight_range: Tuple[float, float],
         alpha: float,
-        epsilon: float = None,
+        epsilon: Optional[float] = None,
     ) -> None:
         self.epsilon = 0 if epsilon is None else epsilon
         self.model = Adaline(

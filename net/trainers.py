@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Iterable, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 import numpy as np
 
 from net.training_logger import TrainingLogger
 
 if TYPE_CHECKING:
+    from net.data_loader import DataLoader
     from net.layers import TrainableLayer
     from net.loss_functions import LossFunction
     from net.model import Model
@@ -52,9 +53,9 @@ class Trainer(ABC):
 
     def set_data_loaders(
         self,
-        train_data_loader: Iterable,
-        test_data_loader: Iterable,
-        val_data_loader: Iterable = None,
+        train_data_loader: DataLoader,
+        test_data_loader: DataLoader,
+        val_data_loader: Optional[DataLoader] = None,
     ) -> None:
         self.train_data_loader = train_data_loader
         self.val_data_loader = val_data_loader
@@ -63,11 +64,11 @@ class Trainer(ABC):
     def train(
         self,
         model: Model,
-        max_epochs=None,
-        max_batches=None,
-        epsilon=None,
-        fail_after_limit=False,
-        verbose=False,
+        max_epochs: Optional[int] = None,
+        max_batches: Optional[int] = None,
+        epsilon: Optional[float] = None,
+        fail_after_limit: bool = False,
+        verbose: bool = False,
     ) -> None:
         self._attach(model)
         self._init_params()
@@ -103,6 +104,7 @@ class Trainer(ABC):
                         batch, epoch_batches, epoch_batches_len, test_accuracy
                     )
 
+                # TODO compute ?
                 y_hat = model(x)
                 loss = self.loss_function(y_hat, y)
 

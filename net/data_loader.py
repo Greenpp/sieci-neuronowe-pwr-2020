@@ -1,6 +1,6 @@
 import math
 import random
-from typing import Iterator, List, Tuple
+from typing import Iterator, List, Optional, Tuple
 
 import numpy as np
 
@@ -13,7 +13,7 @@ class DataLoader:
     def __init__(
         self,
         data: List,
-        batch_size: int = 32,
+        batch_size: Optional[int] = 32,
         random: bool = True,
     ) -> None:
         self.data = data

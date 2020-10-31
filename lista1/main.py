@@ -31,7 +31,7 @@ def adaline_test() -> None:
     test_model(model)
 
 
-def perceptron_unipolar_test():
+def perceptron_unipolar_test() -> None:
     print_label('perceptron unipolar')
     model = ANDPerceptron(
         bipolar=False, theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01
@@ -39,7 +39,7 @@ def perceptron_unipolar_test():
     test_model(model)
 
 
-def perceptron_bipolar_test():
+def perceptron_bipolar_test() -> None:
     print_label('perceptron bipolar')
     model = ANDPerceptron(
         bipolar=True, theta=0, bias=True, weight_range=(-0.5, 0.5), alpha=0.01

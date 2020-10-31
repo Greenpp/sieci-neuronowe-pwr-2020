@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 
 class Experiment:
@@ -8,7 +8,7 @@ class Experiment:
         f_name: str,
         test_parameter: Tuple[str, List],
         fail_after_limit: bool = False,
-        **kwargs
+        **kwargs: Any,
     ) -> None:
         self.title = title
         self.f_name = f_name
@@ -19,7 +19,7 @@ class Experiment:
         self.skip_after_first_fails = 5
         self.first_failed = 0
 
-    def run(self, model_class: type, reps: int, **kwargs) -> dict:
+    def run(self, model_class: type, reps: int, **kwargs: Any) -> dict:
         exp_log = dict()
         val_keys = list(map(str, self.test_param_values))
         max_val_len = max(map(len, val_keys))

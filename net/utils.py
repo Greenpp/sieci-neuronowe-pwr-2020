@@ -1,10 +1,17 @@
-import numpy as np
+from typing import Tuple
 
+import numpy as np
 
 # NOTE im2col functions from CS231n
 
 
-def get_im2col_indices(x_shape, field_height, field_width, padding=1, stride=1):
+def get_im2col_indices(
+    x_shape: Tuple,
+    field_height: int,
+    field_width: int,
+    padding: int = 1,
+    stride: int = 1,
+):
     N, C, H, W = x_shape
     assert (H + 2 * padding - field_height) % stride == 0
     assert (W + 2 * padding - field_height) % stride == 0
@@ -24,7 +31,13 @@ def get_im2col_indices(x_shape, field_height, field_width, padding=1, stride=1):
     return (k.astype(int), i.astype(int), j.astype(int))
 
 
-def im2col_indices(x, field_height, field_width, padding=1, stride=1):
+def im2col_indices(
+    x: np.ndarray,
+    field_height: int,
+    field_width: int,
+    padding: int = 1,
+    stride: int = 1,
+):
     p = padding
     x_padded = np.pad(x, ((0, 0), (0, 0), (p, p), (p, p)), mode='constant')
 
@@ -36,7 +49,14 @@ def im2col_indices(x, field_height, field_width, padding=1, stride=1):
     return cols
 
 
-def col2im_indices(cols, x_shape, field_height=3, field_width=3, padding=1, stride=1):
+def col2im_indices(
+    cols: np.ndarray,
+    x_shape: Tuple,
+    field_height: int = 3,
+    field_width: int = 3,
+    padding: int = 1,
+    stride: int = 1,
+):
     N, C, H, W = x_shape
     H_padded, W_padded = H + 2 * padding, W + 2 * padding
     x_padded = np.zeros((N, C, H_padded, W_padded), dtype=cols.dtype)

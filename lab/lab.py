@@ -1,12 +1,13 @@
 import os
 import pickle as pkl
+from typing import Any
 
 from lab.experiments import Experiment
 
 
 class Lab:
     def __init__(
-        self, model_class: type, reps: int, results_dir: str, **kwargs
+        self, model_class: type, reps: int, results_dir: str, **kwargs: Any
     ) -> None:
         self.model_class = model_class
         self.reps = reps
@@ -31,7 +32,7 @@ class Lab:
                 pkl.dump(log, f, pkl.HIGHEST_PROTOCOL)
         self._print_done()
 
-    def _print_title(self, title) -> None:
+    def _print_title(self, title: str) -> None:
         print(self.separator_size * '=')
         print(f'Testing: {title}')
         print(self.separator_size * '-')

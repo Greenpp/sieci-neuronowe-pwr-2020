@@ -13,7 +13,7 @@ from lista1.adaline import ANDAdaline
 from lista1.perceptron import ANDPerceptron
 
 
-def experiments():
+def experiments() -> None:
     REPS = 10
 
     ## PERCEPTRON
@@ -139,7 +139,6 @@ def experiments():
         test_parameter=('epsilon', [0]),
     )
     adaline_lab.add_experiment(adaline_epsilon)
-
 
     perceptron_lab.run()
     adaline_lab.run()

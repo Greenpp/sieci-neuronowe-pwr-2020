@@ -1,13 +1,13 @@
 import gzip
 import pickle
 import random
-from typing import List, Tuple
+from typing import Iterable, List, Tuple
 
 import numpy as np
 
 
 class MNISTLoader:
-    def __init__(self, data_shape: Tuple[int, int] = (1, 784)) -> None:
+    def __init__(self, data_shape: Iterable[int] = (1, 784)) -> None:
         self.training_data = None
         self.validation_data = None
         self.test_data = None
@@ -15,7 +15,7 @@ class MNISTLoader:
         self._load_from_gzip()
         self._transform(data_shape)
 
-    def _load_from_gzip(self):
+    def _load_from_gzip(self) -> None:
         with gzip.open('./mnist.pkl.gz', 'rb') as f:
             tr, v, te = pickle.load(f, encoding='latin1')
 
@@ -29,7 +29,7 @@ class MNISTLoader:
 
         return encoded
 
-    def _transform(self, data_shape: Tuple[int, int]):
+    def _transform(self, data_shape: Iterable[int]) -> None:
         training_inputs = [np.reshape(d, data_shape) for d in self.training_data[0]]
         training_labels = [self._one_hot_encode(d) for d in self.training_data[1]]
         self.training_data = list(zip(training_inputs, training_labels))

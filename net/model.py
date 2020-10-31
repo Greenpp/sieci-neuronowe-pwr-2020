@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 import numpy as np
 
@@ -21,7 +21,9 @@ class Layer(ABC):
         pass
 
     @abstractmethod
-    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def backward(
+        self, grad: np.ndarray
+    ) -> Tuple[Optional[np.ndarray], Optional[np.ndarray], np.ndarray]:
         pass
 
 

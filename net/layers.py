@@ -199,7 +199,7 @@ class MaxPoll(Layer):
     def __str__(self) -> str:
         return MAXPOLL
 
-    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def backward(self, grad: np.ndarray) -> Tuple[None, None, np.ndarray]:
         batch_size, channels, x_height, x_width = self.input_signal.shape
         new_grad_col = np.zeros_like(self.input_signal_col)
 
@@ -232,7 +232,7 @@ class Flatten(Layer):
     def __str__(self) -> str:
         return FLATTEN
 
-    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def backward(self, grad: np.ndarray) -> Tuple[None, None, np.ndarray]:
         new_grad = grad.reshape(self.input_shape)
 
         return None, None, new_grad

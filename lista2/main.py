@@ -6,10 +6,12 @@ if __name__ == '__main__' and __package__ is None:
     __package__ = 'lista2'
 
 
-from lista2.mnist_loader import MNISTLoader
-from .mlp import MNISTMLP
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
+
+from lista2.mnist_loader import MNISTLoader
+
+from .mlp import MNISTMLP
 
 if __name__ == "__main__":
     model = MNISTMLP(

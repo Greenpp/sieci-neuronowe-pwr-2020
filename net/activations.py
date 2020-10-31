@@ -11,7 +11,7 @@ class Activation(Layer):
     def derivative(self, grad: np.ndarray) -> np.ndarray:
         pass
 
-    def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def backward(self, grad: np.ndarray) -> Tuple[None, None, np.ndarray]:
         return None, None, self.derivative(grad)
 
 
