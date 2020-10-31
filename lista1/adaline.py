@@ -58,9 +58,6 @@ class ANDAdaline(ModelModule):
         self.trainer = SGDTrainer(alpha, loss)
         self.trainer.set_data_loaders(training_loader, test_loader)
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        return self.model(x)
-
     def train(self, fail_after_limit: bool) -> TrainingLogger:
         self.trainer.train(
             self.model, 1000, epsilon=self.epsilon, fail_after_limit=fail_after_limit

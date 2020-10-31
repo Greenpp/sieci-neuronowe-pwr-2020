@@ -50,9 +50,6 @@ class ANDPerceptron(ModelModule):
         self.trainer = SGDTrainer(alpha, loss)
         self.trainer.set_data_loaders(training_loader, test_loader)
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        return self.model(x)
-
     def train(self, fail_after_limit: bool) -> TrainingLogger:
         self.trainer.train(
             self.model, max_epochs=1000, fail_after_limit=fail_after_limit, epsilon=0

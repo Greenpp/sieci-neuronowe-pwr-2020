@@ -55,12 +55,11 @@ class ModelModule(ABC):
     def __init__(self) -> None:
         pass
 
-    @abstractmethod
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        pass
+        return self.model(x)
 
     @abstractmethod
-    def train(self, fail_after_max_epochs: bool = True) -> TrainingLogger:
+    def train(self) -> TrainingLogger:
         pass
 
 

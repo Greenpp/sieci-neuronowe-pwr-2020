@@ -49,9 +49,6 @@ class MNISTMLP(ModelModule):
         self.trainer = SGDTrainer(alpha, loss)
         self.trainer.set_data_loaders(training_loader, test_loader)
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        return self.model(x)
-
     def train(self, verbose: bool = False) -> TrainingLogger:
         self.trainer.train(self.model, max_batches=150, verbose=verbose)
 

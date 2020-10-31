@@ -13,7 +13,10 @@ from net.weights_initializers import HeWI, NormalDistributionWI, XavierWI
 # TODO set best params from list 2
 class OptimMNISTMLP(ModelModule):
     def __init__(
-        self, activation_name: str, optimizer_name: str, initializer_name: str
+        self,
+        activation_name: str,
+        optimizer_name: str,
+        initializer_name: str,
     ) -> None:
         tr_data, _, te_data = MNISTLoader().get_sets()
         training_loader = DataLoader(tr_data, batch_size=32)
@@ -44,9 +47,6 @@ class OptimMNISTMLP(ModelModule):
             FCLayer(hidden_size, 10, weight_initializer=initializer2),
             SoftmaxCE(),
         )
-
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        return self.model(x)
 
     def train(self, verbose: bool = False) -> TrainingLogger:
         self.trainer.train(self.model, max_batches=150, verbose=verbose)
