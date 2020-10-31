@@ -120,6 +120,7 @@ class Trainer(ABC):
                 self.logger.log_test_error(test_error)
                 self.logger.log_accuracy(test_accuracy)
                 self.logger.log_train_error(loss)
+                self.logger.log_batch()
 
                 # End conditions
                 if epsilon is not None:
@@ -142,6 +143,8 @@ class Trainer(ABC):
                     is_training = False
                     if fail_after_limit:
                         self.logger.log_fail()
+
+            self.logger.log_epoch()
 
         self._finish_training()
 
