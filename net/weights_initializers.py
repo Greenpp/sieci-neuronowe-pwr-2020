@@ -4,6 +4,11 @@ from typing import Iterable, Tuple
 import numpy as np
 
 
+NORAMAL = 'normal'
+XAVIER = 'xavier'
+HE = 'he'
+
+
 class WeightInitializer(ABC):
     def get_weights(self, shape: Iterable[int]):
         pass
@@ -32,3 +37,10 @@ class HeWI(NormalDistributionWI):
     def __init__(self, input_nodes) -> None:
         variance = np.sqrt(2 / input_nodes)
         self.w_range = (-variance, variance)
+
+
+INITIALIZERS = {NORAMAL: NormalDistributionWI, XAVIER: XavierWI, HE: HeWI}
+
+
+def get_initializer_by_name(name: str) -> type:
+    return INITIALIZERS[name]

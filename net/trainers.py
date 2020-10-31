@@ -14,6 +14,14 @@ if TYPE_CHECKING:
     from net.model import Model
 
 
+SGD = 'sgd'
+MOMENTUM = 'momentum'
+NESTEROV = 'nesterov'
+ADAGRAD = 'adagrad'
+ADADELTA = 'adadelta'
+ADAM = 'adam'
+
+
 class Trainer(ABC):
     def __init__(
         self,
@@ -489,3 +497,17 @@ class AdamTrainer(Trainer):
                 layer.b_weights
                 - (self.alpha / (np.sqrt(v_momentum) + 1e-8)) * m_momentum
             )
+
+
+TRAINERS = {
+    SGD: SGDTrainer,
+    MOMENTUM: MomentumTrainer,
+    NESTEROV: NesterovTrainer,
+    ADAGRAD: AdaGradTrainer,
+    ADADELTA: AdaDeltaTrainer,
+    ADAM: AdamTrainer,
+}
+
+
+def get_trainer_by_name(name: str) -> type:
+    return TRAINERS[name]
