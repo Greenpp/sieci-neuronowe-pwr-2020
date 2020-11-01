@@ -50,6 +50,6 @@ class MNISTMLP(ModelModule):
         self.trainer.set_data_loaders(training_loader, test_loader)
 
     def train(self, verbose: bool = False) -> TrainingLogger:
-        self.trainer.train(self.model, max_batches=150, verbose=verbose)
+        self.trainer.train(self.model, max_epochs=1, verbose=verbose)
 
         return self.trainer.get_logger()
