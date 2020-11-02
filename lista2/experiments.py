@@ -29,7 +29,7 @@ def experiments() -> None:
     # Hidden size
     h_size = Experiment(
         title='h_size',
-        f_name='h_size',
+        f_name='h_size_1024',
         test_parameter=(
             'hidden_size',
             [
@@ -40,11 +40,11 @@ def experiments() -> None:
             ],
         ),
     )
-    # lab.add_experiment(h_size)
+    lab.add_experiment(h_size)
     # Alpha
     alpha = Experiment(
         title='alpha',
-        f_name='alpha',
+        f_name='alpha_1024',
         test_parameter=(
             'alpha',
             [
@@ -56,11 +56,11 @@ def experiments() -> None:
             ],
         ),
     )
-    # lab.add_experiment(alpha)
+    lab.add_experiment(alpha)
     # Weight range
     w_range = Experiment(
         title='w_range',
-        f_name='w_range',
+        f_name='w_range_1024',
         test_parameter=(
             'weights_range',
             [
@@ -71,11 +71,11 @@ def experiments() -> None:
             ],
         ),
     )
-    # lab.add_experiment(w_range)
+    lab.add_experiment(w_range)
     # Batch
     batch_size = Experiment(
         title='batch_size',
-        f_name='batch_size',
+        f_name='batch_size_1024',
         test_parameter=(
             'batch_size',
             [
@@ -87,11 +87,11 @@ def experiments() -> None:
             ],
         ),
     )
-    # lab.add_experiment(batch_size)
+    lab.add_experiment(batch_size)
     # ReLU
-    relu = Experiment(
+    activation = Experiment(
         title='activation',
-        f_name='activation',
+        f_name='activation_1024',
         test_parameter=(
             'activation_name',
             [
@@ -100,7 +100,7 @@ def experiments() -> None:
             ],
         ),
     )
-    lab.add_experiment(relu)
+    lab.add_experiment(activation)
 
     lab.run()
 

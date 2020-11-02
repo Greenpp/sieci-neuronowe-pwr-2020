@@ -77,6 +77,7 @@ class Trainer(ABC):
         epsilon: Optional[float] = None,
         fail_after_limit: bool = False,
         verbose: bool = False,
+        test_every_nth_batch: int = 1,
     ) -> None:
         self._attach(model)
         self._init_params()
@@ -123,10 +124,11 @@ class Trainer(ABC):
                         self._update_layer_weights(layer, params, d_bias, d_weights)
 
                 # Logging errors and accuracy
-                test_error, test_accuracy = self._test(model)
-                self.logger.log_test_error(test_error)
-                self.logger.log_accuracy(test_accuracy)
-                self.logger.log_train_error(loss)
+                if batch % test_every_nth_batch == 0:
+                    test_error, test_accuracy = self._test(model)
+                    self.logger.log_test_error(test_error)
+                    self.logger.log_accuracy(test_accuracy)
+                    self.logger.log_train_error(loss)
                 self.logger.log_batch()
 
                 # End conditions
@@ -153,6 +155,9 @@ class Trainer(ABC):
 
             self.logger.log_epoch()
 
+        test_error, test_accuracy = self._test(model)
+        self.logger.log_test_error(test_error)
+        self.logger.log_accuracy(test_accuracy)
         self._finish_training()
 
     def _print_epoch(self, epoch: int) -> None:

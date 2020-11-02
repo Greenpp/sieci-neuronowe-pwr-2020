@@ -29,6 +29,8 @@ class MNISTMLP(ModelModule):
         alpha: float,
         activation_name: str,
     ) -> None:
+        self.test_every_nth_batch = 1024 // batch_size
+
         activation = get_activation_by_name(activation_name)()
         self.model = Model(
             FCLayer(
@@ -50,6 +52,11 @@ class MNISTMLP(ModelModule):
         self.trainer.set_data_loaders(training_loader, test_loader)
 
     def train(self, verbose: bool = False) -> TrainingLogger:
-        self.trainer.train(self.model, max_epochs=1, verbose=verbose)
+        self.trainer.train(
+            self.model,
+            max_epochs=1,
+            verbose=verbose,
+            test_every_nth_batch=self.test_every_nth_batch,
+        )
 
         return self.trainer.get_logger()
