@@ -13,8 +13,11 @@
 \usepackage{graphicx}          % images
 \graphicspath{ {./img/} }
 \usepackage{multirow}
+\usepackage{float}             % figures in place
+\usepackage{caption}		   % smaller margin after figure
 
 \renewcommand{\figurename}{Wykres}
+\setlength{\belowcaptionskip}{-20pt}
 
 \title{  Sieć wielowarstwowa\\Sieci Neuronowe 2020 }
 
@@ -22,8 +25,6 @@
   Jakub Ciszek \\
   238035\\
 }
-
-% TODO images
 
 \begin{document}
 
@@ -38,7 +39,7 @@ Cały kod wykorzystany w zadaniu znajduje się pod adresem: \url{https://github.
 \section{Opis badań}
 \subsection{Plan eksperymentów}
 
-Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 1 epoki, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową.
+Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 5 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową.
 Z powodów wydajnościowych testowanie modelu przeprowadzano co każde 1024 przykłady.\\
 Zgodnie z instrukcją zostały przeprowadzone następujące badania:
 \begin{itemize}
@@ -46,9 +47,9 @@ Zgodnie z instrukcją zostały przeprowadzone następujące badania:
 	\item Wpływ wielkości paczki na przebieg procesu uczenia
 	\item Wpływ zakresu inicjalizacji wag na przebieg procesu uczenia
 	\item Wpływ wartości współczynnika alpha na przebieg procesu uczenia
-	\item Wpływ użytej funkcji aktywacyjnej na przebieg procesu uczenia
-	      	      	      	      	      	      	      	      	      	      	      	      	      	
+	\item Wpływ użytej funkcji aktywacyjnej na przebieg procesu uczenia     
 \end{itemize}
+Podczas wizualizacji funkcji straty pominięto pierwsze 10 pomiarów dla lepszej czytelności.
 
 \subsection{Charakterystyka zbiorów danych}
 
@@ -65,7 +66,7 @@ W trakcie eksperymentów wykorzystano jedynie zbiory uczący i testowy.
 
 \subsection{Wpływ wielkości warstwy ukrytej na przebieg procesu uczenia}
 \subsubsection*{Założenia}
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Stałe dla eksperymentu 1}
 	\label{tabela-const-1}
 	\centering
@@ -87,25 +88,55 @@ Zmienną w tym eksperymencie była wielkość warstwy ukrytej. Ilość neuronów
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
 
 \subsubsection*{Wyniki}
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
-	\caption{Przebieg procesu uczenia w zależności od wielkości warstwy ukrytej}
-	\includegraphics[width=\textwidth]{per_theta.png}
+	\caption{Dokładność modelu w zależności od wielkości warstwy ukrytej}
+	\includegraphics[width=\textwidth]{hidden_acc.png}
+	\label{fig:res11}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od wielkości warstwy ukrytej}
+	\includegraphics[width=\textwidth]{hidden_acc_zoom.png}
+	\label{fig:res12}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla 16 neuronów}
+	\includegraphics[width=\textwidth]{hidden_err_16.png}
+	\label{fig:res13}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla 128 neuronów}
+	\includegraphics[width=\textwidth]{hidden_err_128.png}
+	\label{fig:res14}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla 512 neuronów}
+	\includegraphics[width=\textwidth]{hidden_err_512.png}
+	\label{fig:res15}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla 2048 neuronów}
+	\includegraphics[width=\textwidth]{hidden_err_2048.png}
 	\label{fig:res11}
 \end{figure}
 
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Średnia maksymalna dokładność w zależności od wielkości warstwy ukrytej}
 	\label{tabela-res-11}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Neurony & Dokładność \\
+		Neurony & Dokładność [\%] \\
 		\midrule
-		16      & -             \\
-		128     & -             \\
-		512     & -             \\
-		2048    & -             \\
+		16      & 94.48              \\
+		128     & 96.99              \\
+		512     & 97.24              \\
+		2048    & \textbf{97.54}     \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -117,7 +148,7 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res11} oraz tabeli~\ref{
 \newpage
 \subsection{Wpływ wielkości paczki na przebieg procesu uczenia}
 \subsubsection*{Założenia}
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Stałe dla eksperymentu 2}
 	\label{tabela-const-2}
 	\centering
@@ -139,26 +170,62 @@ Zmienną w tym eksperymencie była wielkość paczki. Ilość przykładów przyj
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
 
 \subsubsection*{Wyniki}
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
-	\caption{Przebieg procesu uczenia w zależności od wielkości paczki}
-	\includegraphics[width=\textwidth]{per_theta.png}
+	\caption{Dokładność modelu w zależności od wielkości paczki}
+	\includegraphics[width=\textwidth]{batch_acc.png}
 	\label{fig:res21}
 \end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od wielkości paczki}
+	\includegraphics[width=\textwidth]{batch_acc_zoom.png}
+	\label{fig:res22}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla paczki wielkości 1}
+	\includegraphics[width=\textwidth]{batch_err_1.png}
+	\label{fig:res23}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla paczki wielkości 8}
+	\includegraphics[width=\textwidth]{batch_err_8.png}
+	\label{fig:res24}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla paczki wielkości 32}
+	\includegraphics[width=\textwidth]{batch_err_32.png}
+	\label{fig:res25}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla paczki wielkości 128}
+	\includegraphics[width=\textwidth]{batch_err_128.png}
+	\label{fig:res26}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla paczki wielkości 1024}
+	\includegraphics[width=\textwidth]{batch_err_1024.png}
+	\label{fig:res27}
+\end{figure}
 
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Średnia maksymalna dokładność w zależności od wielkości paczki}
 	\label{tabela-res-21}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Przykłady & Dokładność \\
+		Przykłady & Dokładność [\%] \\
 		\midrule
-		1          & -             \\
-		8          & -             \\
-		32         & -             \\
-		128        & -             \\
-		1024       & -             \\
+		1          & 97.00              \\
+		8          & \textbf{97.04}     \\
+		32         & 96.99              \\
+		128        & 96.32              \\
+		1024       & 25.98              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -170,7 +237,7 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res21} oraz tabeli~\ref{
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na przebieg procesu uczenia}
 \subsubsection*{Założenia}
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Stałe dla eksperymentu 3}
 	\label{tabela-const-3}
 	\centering
@@ -192,25 +259,55 @@ Zmienną w tym eksperymencie był zakres inicjalizacji wag. Przedział inicjaliz
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
 
 \subsubsection*{Wyniki}
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
-	\caption{Przebieg procesu uczenia w zależności od zakresu inicjalizacji wag}
-	\includegraphics[width=\textwidth]{per_theta.png}
+	\caption{Dokładność modelu w zależności od zakresu inicjalizacji wag}
+	\includegraphics[width=\textwidth]{w_acc.png}
 	\label{fig:res31}
 \end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od zakresu inicjalizacji wag}
+	\includegraphics[width=\textwidth]{w_acc_zoom.png}
+	\label{fig:res32}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla wag inicjalizowanych z zakresu \($0.0 -- 0.0$\)}
+	\includegraphics[width=\textwidth]{w_err_0.png}
+	\label{fig:res33}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla wag inicjalizowanych z zakresu \($-0.1 -- 0.1$\)}
+	\includegraphics[width=\textwidth]{w_err_1.png}
+	\label{fig:res34}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla wag inicjalizowanych z zakresu \($-0.5 -- 0.5$\)}
+	\includegraphics[width=\textwidth]{w_err_5.png}
+	\label{fig:res35}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla wag inicjalizowanych z zakresu \($-2.0 -- 2.0$\)}
+	\includegraphics[width=\textwidth]{w_err_2.png}
+	\label{fig:res36}
+\end{figure}
 
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Średnia maksymalna dokładność w zależności od zakresu inicjalizacji wag}
 	\label{tabela-res-31}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Zakres            & Dokładność \\
+		Zakres            & Dokładność [\%] \\
 		\midrule
-		0.0               & -             \\
-		\($-0.1 -- 0.1$\) & -             \\
-		\($-0.5 -- 0.5$\) & -             \\
-		\($-2.0 -- 2.0$\) & -             \\
+		0.0               & 11.35              \\
+		\($-0.1 -- 0.1$\) & \textbf{97.84}     \\
+		\($-0.5 -- 0.5$\) & 96.99              \\
+		\($-2.0 -- 2.0$\) & 92.14              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -222,7 +319,7 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res31} oraz tabeli~\ref{
 \newpage
 \subsection{Wpływ wartości współczynnika alpha na przebieg procesu uczenia}
 \subsubsection*{Założenia}
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Stałe dla eksperymentu 4}
 	\label{tabela-const-4}
 	\centering
@@ -244,26 +341,63 @@ Zmienną w tym eksperymencie był współczynnik uczenia. Przyjmował wartości 
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
 
 \subsubsection*{Wyniki}
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
-	\caption{Przebieg procesu uczenia w zależności od współczynnika uczenia}
-	\includegraphics[width=\textwidth]{per_theta.png}
+	\caption{Dokładność modelu w zależności od współczynnika uczenia}
+	\includegraphics[width=\textwidth]{alpha_acc.png}
 	\label{fig:res41}
 \end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od współczynnika uczenia}
+	\includegraphics[width=\textwidth]{alpha_acc_zoom.png}
+	\label{fig:res42}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla parametru alpha o wartości 0.0001}
+	\includegraphics[width=\textwidth]{alpha_err_00001.png}
+	\label{fig:res43}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla parametru alpha o wartości 0.001}
+	\includegraphics[width=\textwidth]{alpha_err_0001.png}
+	\label{fig:res44}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla parametru alpha o wartości 0.01}
+	\includegraphics[width=\textwidth]{alpha_err_001.png}
+	\label{fig:res45}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla parametru alpha o wartości 0.1}
+	\includegraphics[width=\textwidth]{alpha_err_01.png}
+	\label{fig:res46}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla parametru alpha o wartości 1.0}
+	\includegraphics[width=\textwidth]{alpha_err_1.png}
+	\label{fig:res47}
+\end{figure}
 
-\begin{table}[!h]
+
+\begin{table}[H]
 	\caption{Średnia maksymalna dokładność w zależności od współczynnika uczenia}
 	\label{tabela-res-41}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Alpha  & Dokładność \\
+		Alpha  & Dokładność [\%] \\
 		\midrule
-		0.0001 & -             \\
-		0.0010 & -             \\
-		0.0100 & -             \\
-		0.1000 & -             \\
-		1.0000 & -             \\
+		0.0001 & 88.37              \\
+		0.0010 & 94.40              \\
+		0.0100 & \textbf{97.06}     \\
+		0.1000 & 23.84              \\
+		1.0000 & 11.45              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -275,7 +409,7 @@ Z otrzymanych wyników, widocznych na wykresie~\ref{fig:res41} oraz tabeli~\ref{
 \newpage
 \subsection{Wpływ użytej funkcji aktywacyjnej na przebieg procesu uczenia}
 \subsubsection*{Założenia}
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Stałe dla eksperymentu 5}
 	\label{tabela-const-5}
 	\centering
@@ -297,23 +431,41 @@ Zmienną w tym eksperymencie była funkcja aktywacji. Przetestowane zostały fun
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
 
 \subsubsection*{Wyniki}
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
-	\caption{Przebieg procesu uczenia w zależności od funkcji aktywacji}
-	\includegraphics[width=\textwidth]{per_theta.png}
+	\caption{Dokładność modelu w zależności od funkcji aktywacji}
+	\includegraphics[width=\textwidth]{activation_acc.png}
 	\label{fig:res51}
 \end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od funkcji aktywacji}
+	\includegraphics[width=\textwidth]{activation_acc_zoom.png}
+	\label{fig:res52}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji aktywacji Sigmoidalnej}
+	\includegraphics[width=\textwidth]{activation_err_sig.png}
+	\label{fig:res53}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji aktywacji ReLU}
+	\includegraphics[width=\textwidth]{activation_err_relu.png}
+	\label{fig:res54}
+\end{figure}
 
-\begin{table}[!h]
+\begin{table}[H]
 	\caption{Średnia maksymalna dokładność w zależności od funkcji aktywacji}
 	\label{tabela-res-51}
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Funkcja & Dokładność \\
+		Funkcja & Dokładność [\%] \\
 		\midrule
-		Sigmoid & -             \\
-		ReLU    & -             \\
+		Sigmoid & 96.39              \\
+		ReLU    & \textbf{96.94}     \\
 		\bottomrule
 	\end{tabular}
 \end{table}
