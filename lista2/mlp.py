@@ -54,7 +54,7 @@ class MNISTMLP(ModelModule):
     def train(self, verbose: bool = False) -> TrainingLogger:
         self.trainer.train(
             self.model,
-            max_epochs=1,
+            max_epochs=5,
             verbose=verbose,
             test_every_nth_batch=self.test_every_nth_batch,
         )
