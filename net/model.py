@@ -13,7 +13,7 @@ class Layer(ABC):
     trainable = False
 
     @abstractmethod
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         pass
 
     @abstractmethod
@@ -38,13 +38,13 @@ class Model:
     def __call__(self, x: np.ndarray) -> np.ndarray:
         return self.compute(x)
 
-    def compute(self, x: np.ndarray) -> np.ndarray:
+    def compute(self, x: np.ndarray, train: bool = False) -> np.ndarray:
         """
         Computes network output
         """
 
         for layer in self.layers:
-            x = layer(x)
+            x = layer(x, train)
 
         return x
 

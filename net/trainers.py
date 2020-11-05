@@ -113,7 +113,7 @@ class Trainer(ABC):
                         batch, epoch_batches, epoch_batches_len, test_accuracy
                     )
 
-                y_hat = model.compute(x)
+                y_hat = model.compute(x, train=True)
                 loss = self.loss_function(y_hat, y)
 
                 grad = self.loss_function.backward()

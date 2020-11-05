@@ -15,7 +15,6 @@ class Activation(Layer):
         return None, None, self.derivative(grad)
 
 
-LINEAR = 'linear'
 UNIPOLAR = 'unipolar'
 BIPOLAR = 'bipolar'
 SIGMOID = 'sigmoid'
@@ -33,7 +32,7 @@ class Unipolar(Activation):
     def __init__(self, theta: float = 0):
         self.theta = theta
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         activated = np.where(x > self.theta, 1, 0)
 
         return activated
@@ -53,7 +52,7 @@ class Bipolar(Activation):
     def __init__(self, theta: float = 0):
         self.theta = theta
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         activated = np.where(x > self.theta, 1, -1)
 
         return activated
@@ -70,7 +69,7 @@ class Sigmoid(Activation):
     Sigmoid activation
     """
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         sig = 1 / (1 + np.exp(-x))
         self.cache = sig
 
@@ -90,7 +89,7 @@ class Softmax(Activation):
     Softmax activation
     """
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         # Axis 1 for batch input
         stable_x = x - x.max(axis=1)[:, None]
         exp_x = np.exp(stable_x)
@@ -130,7 +129,7 @@ class ReLU(Activation):
     ReLU activation
     """
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         self.cache = x
         activated = np.clip(x, 0, None)
 
@@ -150,7 +149,7 @@ class TanH(Activation):
     TanH activation
     """
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         sig = (2 / (np.exp(-2 * x) + 1)) - 1
         self.cache = sig
 

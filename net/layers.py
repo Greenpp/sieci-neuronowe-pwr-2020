@@ -41,7 +41,7 @@ class FCLayer(TrainableLayer):
 
         self.input_signal = None
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         """
         Compute forward pass
         """
@@ -96,7 +96,7 @@ class ConvLayer(TrainableLayer):
         self.input_signal = None
         self.input_signal_col = None
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         batch_size, x_channels, x_height, x_width = x.shape
 
         # New shape calculated
@@ -166,7 +166,7 @@ class MaxPoll(Layer):
         self.input_signal = None
         self.input_signal_col = None
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
 
         batch_size, channels, x_height, x_width = x.shape
         out_h = (x_height - self.size + 2 * self.padding) / self.stride + 1
@@ -222,7 +222,7 @@ class MaxPoll(Layer):
 
 
 class Flatten(Layer):
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
         self.input_shape = x.shape
         batch_size = x.shape[0]
 
