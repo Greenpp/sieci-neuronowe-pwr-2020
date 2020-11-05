@@ -20,6 +20,7 @@ FC = 'fc'
 CONV = 'conv'
 MAXPOLL = 'maxpoll'
 FLATTEN = 'flatten'
+DROP = 'drop'
 
 
 class FCLayer(TrainableLayer):
@@ -238,7 +239,33 @@ class Flatten(Layer):
         return None, None, new_grad
 
 
-LAYERS = {FC: FCLayer, CONV: ConvLayer, MAXPOLL: MaxPoll, FLATTEN: Flatten}
+class Dropout(Layer):
+    def __init__(self, rate: float) -> None:
+        self.drop_rate = rate
+
+    def __call__(self, x: np.ndarray, train: bool) -> np.ndarray:
+        if train:
+            signal_shape = x.shape
+            self.mask = np.where(np.random.rand(*signal_shape) < self.drop_rate, 0, 1)
+            x = x * self.mask
+
+        return x
+
+    def __str__(self) -> str:
+        return DROP
+
+    def backward(self, grad: np.ndarray) -> Tuple[None, None, np.ndarray]:
+        new_grad = grad * self.mask
+        return None, None, new_grad
+
+
+LAYERS = {
+    FC: FCLayer,
+    CONV: ConvLayer,
+    MAXPOLL: MaxPoll,
+    FLATTEN: Flatten,
+    DROP: Dropout,
+}
 
 
 def get_layer_by_name(name: str) -> Type[Layer]:
