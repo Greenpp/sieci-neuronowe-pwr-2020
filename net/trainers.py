@@ -160,6 +160,82 @@ class Trainer(ABC):
         self.logger.log_accuracy(test_accuracy)
         self._finish_training()
 
+    def test_gradient(
+        self,
+        model: Model,
+        epsilon: float = 1e-7,
+    ) -> None:
+        self._attach(model)
+        self._init_params()
+
+        for x, y in self.test_data_loader.load():
+            pass
+
+        x = x[0:1, :]
+        y = y[0:1, :]
+
+        # Analytic gradients
+        y_hat_a = model.compute(x)
+        loss_a = self.loss_function(y_hat_a, y)
+
+        deltas = []
+
+        grad = self.loss_function.backward()
+        for layer, _ in self.layers:
+            d_bias, d_weights, grad = layer.backward(grad)
+            if layer.trainable:
+                delta = d_weights.reshape((-1, 1))
+                deltas.append(delta)
+                if layer.bias:
+                    delta_b = d_bias.reshape((-1, 1))
+                    deltas.append(delta_b)
+        grad_analytic = np.concatenate(deltas, axis=0)
+
+        # Numeric gradient
+
+        grads = []
+        for layer, _ in self.layers:
+            if layer.trainable:
+                weights = layer.weights
+                w_shape = weights.shape
+                weights = weights.reshape((-1, 1))
+                for i in range(weights.shape[0]):
+                    weights[i] = weights[i] + epsilon
+
+                    layer.weights = weights.reshape(w_shape)
+                    y_hat = model(x)
+                    loss_n = self.loss_function(y_hat, y)
+                    grad_n = (loss_n - loss_a) / epsilon
+                    grads.append(grad_n)
+                    weights[i] = weights[i] - epsilon
+                layer.weights = weights.reshape(w_shape)
+
+                if layer.bias:
+                    b_weights = layer.b_weights
+                    b_shape = b_weights.shape
+                    b_weights = b_weights.reshape((-1, 1))
+                    for i in range(b_weights.shape[0]):
+                        b_weights[i] = b_weights[i] + epsilon
+
+                        layer.b_weights = b_weights.reshape(b_shape)
+                        y_hat = model(x)
+                        loss_n = self.loss_function(y_hat, y)
+                        grad_n = (loss_n - loss_a) / epsilon
+                        grads.append(grad_n)
+                        b_weights[i] = b_weights[i] - epsilon
+                    layer.b_weights = b_weights.reshape(b_shape)
+        grads = np.array(grads)
+        grad_numeric = grads.reshape((-1, 1))
+
+
+        num = np.linalg.norm(grad_numeric - grad_analytic, ord=2)
+        den = np.linalg.norm(grad_numeric, ord=2) + np.linalg.norm(grad_analytic, ord=2)
+        diff = num / den
+        if diff < epsilon:
+            print(f'Correct gradient | Diff: {diff}')
+        else:
+            print(f'Wrong gradient | Diff: {diff}')
+
     def _print_epoch(self, epoch: int) -> None:
         print(f'Epoch {epoch}')
 
