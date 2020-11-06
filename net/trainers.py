@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from net.layers import TrainableLayer
     from net.loss_functions import LossFunction
     from net.model import Model
+    from net.regularizers import Regularizer
 
 
 SGD = 'sgd'
@@ -78,6 +79,7 @@ class Trainer(ABC):
         fail_after_limit: bool = False,
         verbose: bool = False,
         test_every_nth_batch: int = 1,
+        regularizer: Optional[Regularizer] = None,
     ) -> None:
         self._attach(model)
         self._init_params()
@@ -120,6 +122,10 @@ class Trainer(ABC):
                 for layer, params in self.layers:
                     d_bias, d_weights, grad = layer.backward(grad)
                     if layer.trainable:
+                        if regularizer is not None:
+                            d_bias, d_weights = regularizer.regularize(
+                                layer, d_bias, d_weights
+                            )
                         self._update_paramas(layer, params, d_bias, d_weights)
                         self._update_layer_weights(layer, params, d_bias, d_weights)
 
@@ -226,7 +232,6 @@ class Trainer(ABC):
                     layer.b_weights = b_weights.reshape(b_shape)
         grads = np.array(grads)
         grad_numeric = grads.reshape((-1, 1))
-
 
         num = np.linalg.norm(grad_numeric - grad_analytic, ord=2)
         den = np.linalg.norm(grad_numeric, ord=2) + np.linalg.norm(grad_analytic, ord=2)
