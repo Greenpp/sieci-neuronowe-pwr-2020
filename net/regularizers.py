@@ -5,6 +5,10 @@ import numpy as np
 
 from net.layers import TrainableLayer
 
+L1 = 'l1'
+L2 = 'l2'
+L12 = 'l12'
+
 
 class Regularizer(ABC):
     @abstractmethod
@@ -97,3 +101,14 @@ class L12Regularizer(Regularizer):
             )
 
         return d_bias, d_weights
+
+
+REGULARIZERS = {
+    L1: L1Regularizer,
+    L2: L2Regularizer,
+    L12: L12Regularizer,
+}
+
+
+def get_regularizer_by_name(name: str) -> type:
+    return REGULARIZERS[name]
