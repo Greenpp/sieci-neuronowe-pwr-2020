@@ -356,8 +356,9 @@ class NesterovTrainer(Trainer):
             params['prev_w_grad'] = [0, 0]
             params['prev_b_grad'] = [0, 0]
 
-            params['w_pre_jump'] = layer.weights
-            params['b_pre_jump'] = layer.b_weights
+            if layer.trainable:
+                params['w_pre_jump'] = layer.weights
+                params['b_pre_jump'] = layer.b_weights
 
     def _update_paramas(
         self,
@@ -406,10 +407,11 @@ class NesterovTrainer(Trainer):
     def _finish_training(self) -> None:
         # Exit training with pre jump weights
         for layer, params in self.layers:
-            layer.weights = params['w_pre_jump']
+            if layer.trainable:
+                layer.weights = params['w_pre_jump']
 
-            if layer.bias:
-                layer.b_weights = params['b_pre_jump']
+                if layer.bias:
+                    layer.b_weights = params['b_pre_jump']
 
 
 class AdaGradTrainer(Trainer):
