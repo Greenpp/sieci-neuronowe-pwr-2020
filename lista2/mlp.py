@@ -15,7 +15,7 @@ from net.loss_functions import CrossEntropy
 from net.model import Model, ModelModule
 from net.trainers import SGDTrainer
 from net.training_logger import TrainingLogger
-from net.weights_initializers import NormalDistributionWI
+from net.weights_initializers import RangeWI
 
 from .mnist_loader import MNISTLoader
 
@@ -34,11 +34,11 @@ class MNISTMLP(ModelModule):
         activation = get_activation_by_name(activation_name)()
         self.model = Model(
             FCLayer(
-                784, hidden_size, weight_initializer=NormalDistributionWI(weights_range)
+                784, hidden_size, weight_initializer=RangeWI(weights_range)
             ),
             activation,
             FCLayer(
-                hidden_size, 10, weight_initializer=NormalDistributionWI(weights_range)
+                hidden_size, 10, weight_initializer=RangeWI(weights_range)
             ),
             SoftmaxCE(),
         )

@@ -6,7 +6,7 @@ import numpy as np
 
 from net.model import Layer
 from net.utils import col2im_indices, im2col_indices
-from net.weights_initializers import NormalDistributionWI
+from net.weights_initializers import RangeWI
 
 if TYPE_CHECKING:
     from net.weights_initializers import WeightInitializer
@@ -33,7 +33,7 @@ class FCLayer(TrainableLayer):
         in_: int = 1,
         out: int = 1,
         bias: bool = True,
-        weight_initializer: WeightInitializer = NormalDistributionWI((-0.5, 0.5)),
+        weight_initializer: WeightInitializer = RangeWI((-0.5, 0.5)),
     ) -> None:
         self.weights = weight_initializer.get_weights((in_, out))
         self.bias = bias
@@ -79,7 +79,7 @@ class ConvLayer(TrainableLayer):
         bias: bool = True,
         stride: int = 1,
         padding: int = 1,
-        weight_initializer: WeightInitializer = NormalDistributionWI((-0.5, 0.5)),
+        weight_initializer: WeightInitializer = RangeWI((-0.5, 0.5)),
     ) -> None:
         kernel_shape = (out_channels, in_channels, kernel_size, kernel_size)
         self.weights = weight_initializer.get_weights(kernel_shape)

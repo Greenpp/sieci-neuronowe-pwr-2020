@@ -14,7 +14,7 @@ from net.model import Model, ModelModule
 from net.regularizers import get_regularizer_by_name
 from net.trainers import AdamTrainer, SGDTrainer
 from net.training_logger import TrainingLogger
-from net.weights_initializers import NormalDistributionWI
+from net.weights_initializers import RangeWI
 
 
 class RegularizedPerceptron(ModelModule):
@@ -26,13 +26,13 @@ class RegularizedPerceptron(ModelModule):
         self.regularizer = get_regularizer_by_name(regularization)(**kwargs)
 
         layers = [
-            FCLayer(784, 512, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(784, 512, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
-            FCLayer(512, 256, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(512, 256, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
-            FCLayer(256, 128, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(256, 128, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
-            FCLayer(128, 10, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(128, 10, weight_initializer=RangeWI((-0.1, 0.1))),
             SoftmaxCE(),
         ]
 
@@ -65,16 +65,16 @@ class DropPerceptron(ModelModule):
     ) -> None:
 
         layers = [
-            FCLayer(784, 512, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(784, 512, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
             Dropout(drop_rate),
-            FCLayer(512, 256, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(512, 256, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
             Dropout(drop_rate),
-            FCLayer(256, 128, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(256, 128, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
             Dropout(drop_rate),
-            FCLayer(128, 10, weight_initializer=NormalDistributionWI((-0.1, 0.1))),
+            FCLayer(128, 10, weight_initializer=RangeWI((-0.1, 0.1))),
             SoftmaxCE(),
         ]
 

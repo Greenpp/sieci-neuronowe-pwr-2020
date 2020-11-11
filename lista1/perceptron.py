@@ -15,7 +15,7 @@ from net.loss_functions import MSE
 from net.model import Model, ModelModule
 from net.trainers import SGDTrainer
 from net.training_logger import TrainingLogger
-from net.weights_initializers import NormalDistributionWI
+from net.weights_initializers import RangeWI
 
 from lista1.data_generator import ANDGenerator
 
@@ -36,7 +36,7 @@ class ANDPerceptron(ModelModule):
 
         self.model = Model(
             FCLayer(
-                2, 1, weight_initializer=NormalDistributionWI(weight_range), bias=bias
+                2, 1, weight_initializer=RangeWI(weight_range), bias=bias
             ),
             activation,
         )
