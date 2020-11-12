@@ -7,10 +7,9 @@ from net.loss_functions import CrossEntropy
 from net.model import Model, ModelModule
 from net.trainers import get_trainer_by_name
 from net.training_logger import TrainingLogger
-from net.weights_initializers import HeWI, NormalDistributionWI, XavierWI
+from net.weights_initializers import HeWI, RangeWI, XavierWI
 
 
-# TODO set best params from list 2
 class OptimMNISTMLP(ModelModule):
     def __init__(
         self,
@@ -28,7 +27,7 @@ class OptimMNISTMLP(ModelModule):
         )
         self.trainer.set_data_loaders(training_loader, test_loader)
 
-        hidden_size = 128
+        hidden_size = 512
         if initializer_name == 'he':
             initializer1 = HeWI(784)
             initializer2 = HeWI(hidden_size)
@@ -36,8 +35,8 @@ class OptimMNISTMLP(ModelModule):
             initializer1 = XavierWI(784, hidden_size)
             initializer2 = XavierWI(hidden_size, 10)
         else:
-            initializer1 = NormalDistributionWI((-0.5, 0.5))
-            initializer2 = NormalDistributionWI((-0.5, 0.5))
+            initializer1 = RangeWI((-0.1, 0.1))
+            initializer2 = RangeWI((-0.1, 0.1))
 
         activation = get_activation_by_name(activation_name)()
 
@@ -49,6 +48,6 @@ class OptimMNISTMLP(ModelModule):
         )
 
     def train(self, verbose: bool = False) -> TrainingLogger:
-        self.trainer.train(self.model, max_batches=150, verbose=verbose)
+        self.trainer.train(self.model, max_epochs=5, verbose=verbose, test_every_nth_batch=32)
 
         return self.trainer.get_logger()
