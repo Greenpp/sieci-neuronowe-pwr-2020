@@ -1,0 +1,170 @@
+\documentclass{article}
+\usepackage[final]{nips_2017}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}    % allow utf-8 input
+\usepackage[T1]{fontenc}       % use 8-bit T1 fonts
+\usepackage{hyperref}          % hyperlinks
+\usepackage{url}               % simple URL typesetting
+\usepackage{booktabs}          % professional-quality tables
+\usepackage{amsfonts}          % blackboard math symbols
+\usepackage{nicefrac}          % compact symbols for 1/2, etc.
+\usepackage{microtype}         % microtypography
+\usepackage[section]{placeins} % figures kept in sections
+\usepackage{graphicx}          % images
+\graphicspath{ {./img/} }
+\usepackage{multirow}
+\usepackage{float}             % figures in place
+\usepackage{caption}		   % smaller margin after figure
+
+\renewcommand{\figurename}{Wykres}
+\setlength{\belowcaptionskip}{-20pt}
+
+\title{  Optymalizacja uczenia\\Sieci Neuronowe 2020 }
+
+\author{
+  Jakub Ciszek \\
+  238035\\
+}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
+Cały kod wykorzystany w zadaniu znajduje się pod adresem: \url{https://github.com/Greenpp/sieci-neuronowe-pwr-2020}
+
+\section{Opis badań}
+\subsection{Plan eksperymentów}
+
+Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 10 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową. Warstwa ukryta składała się z 512 neuronów, a początkowy współczynnik uczenia wynosił 0.01.
+Z powodów wydajnościowych testowanie modelu przeprowadzano co każde 32 paczki, z których każda składała się z 32 przykładów.\\
+Zgodnie z instrukcją zostały przeprowadzone następujące badania:
+\begin{itemize}
+	\item Wpływ optymalizatorów na przebieg procesu uczenia
+	\item Wpływ inicjalizacji wag na przebieg procesu uczenia 
+\end{itemize}
+Podczas wizualizacji funkcji straty pominięto pierwsze 10 pomiarów dla lepszej czytelności.
+
+\subsection{Charakterystyka zbiorów danych}
+
+Danymi użytymi w zadaniu jest zbiór ręcznie pisanych cyfr \(0-9\) - MNIST. Na zbiór składa się 70,000 obrazów wielkości 28x28 pikseli, co po przekształceniu odpowiadało 784 elementowemu wektorowi wejściowemu i 10 klasom na wyjściu. Użyta w zadaniu wersja została podzielona na 3 zbiory:
+\begin{itemize}
+	\item Uczący - 50,000 przykładów.
+	\item Walidujący - 10,000 przykładów.
+	\item Testowy - 10,000 przykładów.
+\end{itemize}
+W trakcie eksperymentów wykorzystano jedynie zbiory uczący i testowy.
+
+\newpage
+\section{Eksperymenty}
+
+\subsection{Wpływ optymalizatorów na przebieg procesu uczenia}
+\subsubsection*{Założenia}
+\begin{table}[H]
+	\caption{Stałe dla eksperymentu 1}
+	\label{tabela-const-1}
+	\centering
+	\begin{tabular}{lr}
+		\toprule
+		Parametr          & Wartość         \\
+		\midrule
+		Inicjalizacja wag & \($-0.1 -- 0.1$\) \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Zmienną w tym eksperymencie był użyty optymalizator uczenia. Użyto metod ze zbioru \(\{$SGD, Momentum, Nesterov, AdaGrad, AdaDelta, Adam$\}\)
+\subsubsection*{Przebieg}
+
+Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badania wykonano dla funkcji aktywacji Sigmoid oraz ReLU.
+
+\subsubsection*{Wyniki}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w zależności od użytego optymalizatora}
+	\includegraphics[width=\textwidth]{hidden_acc.png}
+	\label{fig:res11}
+\end{figure}
+
+\begin{table}[H]
+	\caption{Średnia maksymalna dokładność w zależności od użytego optymalizatora}
+	\label{tabela-res-11}
+	\centering
+	\begin{tabular}{rrr}
+		\toprule
+		Optymalizator & Dokładność [\%] \\
+		\midrule
+		SGD           & --                 \\
+		Momentum      & --                 \\
+		Nesterov      & --                 \\
+		AdaGrad       & --                 \\
+		AdaDelta      & --                 \\
+		Adam          & --                 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection*{Wnioski}
+
+TODO
+
+\newpage
+\subsection{Wpływ inicjalizacji wag na przebieg procesu uczenia}
+\subsubsection*{Założenia}
+\begin{table}[H]
+	\caption{Stałe dla eksperymentu 2}
+	\label{tabela-const-2}
+	\centering
+	\begin{tabular}{lr}
+		\toprule
+		Parametr      & Wartość \\
+		\midrule
+		Optymalizator & SGD       \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Zmienną w tym eksperymencie był sposób inicjalizacji wag. Użyto metod ze zbioru \(\{$Zakres, Xavier, He$\}\)
+\subsubsection*{Przebieg}
+
+Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badania wykonano dla funkcji aktywacji Sigmoid oraz ReLU.
+
+\subsubsection*{Wyniki}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w zależności od sposóbu inicjalizacji wag}
+	\includegraphics[width=\textwidth]{hidden_acc.png}
+	\label{fig:res21}
+\end{figure}
+
+\begin{table}[H]
+	\caption{Średnia maksymalna dokładność w zależności od sposóbu inicjalizacji wag}
+	\label{tabela-res-21}
+	\centering
+	\begin{tabular}{rrr}
+		\toprule
+		Inicjalizacja     & Dokładność [\%] \\
+		\midrule
+		\($-0.1 -- 0.1$\) & --                 \\
+		Xavier            & --                 \\
+		He                & --                 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection*{Wnioski}
+
+TODO
+
+
+\newpage
+\section{Wnioski}
+
+\begin{itemize}
+	\item TODO
+\end{itemize}
+
+\end{document}
