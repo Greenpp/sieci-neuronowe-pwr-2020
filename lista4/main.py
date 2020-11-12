@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from lista4.conv import ConvMNIST
 
 if __name__ == "__main__":
-    model = ConvMNIST(kernel_size=4)
+    model = ConvMNIST(kernel_size=3)
     logger = model.train(verbose=True)
 
     acc = logger.get_logs()['accuracies']

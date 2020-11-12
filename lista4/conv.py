@@ -20,27 +20,39 @@ class ConvMNIST(ModelModule):
         self.trainer = AdamTrainer(0.01, loss)
         self.trainer.set_data_loaders(train_loader, test_loader)
 
-        out_channels = 1
+        out_channels = 32
 
         # TODO calculate poll and padding from kernel size
+        padding = (kernel_size - 1) // 2
 
         self.model = Model(
             ConvLayer(
                 1,
                 out_channels,
                 kernel_size,
+                padding=padding,
                 weight_initializer=HeWI(kernel_size * kernel_size * out_channels),
             ),
             ReLU(),
             MaxPoll(),
             Flatten(),
-            FCLayer(14 * 14 * out_channels, 128),
+            FCLayer(
+                14 * 14 * out_channels,
+                128,
+                weight_initializer=HeWI(14 * 14 * out_channels),
+            ),
             ReLU(),
-            FCLayer(128, 10),
+            FCLayer(
+                128,
+                10,
+                weight_initializer=HeWI(128),
+            ),
             SoftmaxCE(),
         )
 
     def train(self, verbose: bool = False) -> TrainingLogger:
-        self.trainer.train(self.model, max_batches=150, verbose=verbose)
+        self.trainer.train(
+            self.model, max_epochs=5, verbose=verbose, test_every_nth_batch=32
+        )
 
         return self.trainer.get_logger()
