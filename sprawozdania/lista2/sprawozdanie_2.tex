@@ -143,8 +143,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res11},~\ref{fig:res12} oraz tabeli~\ref{tabela-res-11}, wynika że większa ilość neuronów w warstwie ukrytej poprawia dokładność modelu, większa ilość parametrów pozwala na lepsze dopasowanie do danych. Uzyskane wyniki dla wielkości 128, 512 i 2048 są do siebie zbliżone, widać jednak spadek dla mniejszej warstwy (16 neuronów). Najlepszą dokładność uzyskał model z warstwą wielkości 2048, jednak na wykresach~\ref{fig:res16} i~\ref{fig:res15} można zauważyć, że błąd treningowy dla dla tych wielkości spada prawie do 0 co może świadczyć o zbytnim dopasowaniu do danych treningowych i predyspozycji do przeuczenia. W przeprowadzonych eksperymentach błąd testowy nie wzrastał w końcowych etapach uczenia, co wyklucza przeuczenie przy założonej ilości epok. Na wykresie~\ref{fig:res13} można natomiast zauważyć, że błędy treningowy i testowy dla małej warstwy ukrytej są na bardzo podobnym poziomie, w przeciwieństwie do pozostałych wielkości, gdzie błąd treningowy jest trochę niższy od testowego. Dodatkową obserwacją jest krótszy czas obliczeń przy uczeniu mniejszych modeli, spowodowany mniejszą ilością parametrów do zaktualizowania oraz przemnożenia podczas ewaluacji.
-TODO
+Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res11},~\ref{fig:res12} oraz tabeli~\ref{tabela-res-11}, wynika że większa ilość neuronów w warstwie ukrytej poprawia dokładność modelu, większa ilość parametrów pozwala na lepsze dopasowanie do danych w krótszym czasie. Można zauważyć jak wraz ze zmniejszaniem się liczby neuronów spada nie tylko dokładność modelu ale i szybkość uczenia. Taka strategia jednak grozi przeuczeniem przy większej ilości epok. Błąd, widoczny na wykresach~\ref{fig:res13},~\ref{fig:res14},~\ref{fig:res15} i~\ref{fig:res16}, otrzymywany z mniejszych modeli jest stabilniejszy z powodu mniejszej ilości parametrów. Dodatkową obserwacją jest krótszy czas obliczeń przy uczeniu mniejszych modeli, spowodowany mniejszą ilością parametrów do zaktualizowania oraz obliczenia podczas ewaluacji.
 
 \newpage
 \subsection{Wpływ wielkości paczki na przebieg procesu uczenia}
@@ -233,9 +232,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res21},~\ref{fig:res22} oraz tabeli~\ref{tabela-res-21}, wynika że małe wielkości paczki skutkują lepszą dokładnością modelu. Używanie za dużej paczki, jak widać w przypadku wielkości 1024, uniemożliwia wyuczenie. Po przeprowadzeniu dodatkowych badań okazało się jednak, że te wyniki są spowodowane przyjętym współczynnikiem uczenia, dla odpowiednio dobranych wartości alpha, mniejszych dla większych wielkości paczki, wyniki dla odpowiednio dobranych współczynników uczenia były zbliżone dla wszystkich rozmiarów. Zaletą mniejszych paczek, widoczną na wykresach~\ref{fig:res23},~\ref{fig:res24},~\ref{fig:res25},~\ref{fig:res26} i~\ref{fig:res27} jest wprowadzanie szumów do błędu treningowego, co przeciwdziała dążeniu do minimów lokalnych.
-Dodatkową obserwacją jest krótszy czas obliczeń dla większych paczek spowodowany mniejszą ilością przeprowadzonych propagacji dla takiego samego zbioru uczącego.
-TODO
+Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res21},~\ref{fig:res22} oraz tabeli~\ref{tabela-res-21}, wynika że małe wielkości paczki skutkują lepszą dokładnością modelu. Spowodowane jest to większą ilością aktualizacji na przestrzeni tej samej ilości przykładów. Zaletą mniejszych paczek, widoczną na wykresach~\ref{fig:res23},~\ref{fig:res24},~\ref{fig:res25},~\ref{fig:res26} i~\ref{fig:res27} jest wprowadzanie szumów do błędu treningowego, co przeciwdziała dążeniu do minimów lokalnych i poprawia generalizację. Dodatkową obserwacją jest krótszy czas obliczeń dla większych paczek spowodowany mniejszą ilością przeprowadzonych propagacji dla takiego samego zbioru uczącego.
 
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na przebieg procesu uczenia}
@@ -317,8 +314,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res31},~\ref{fig:res32} oraz tabeli~\ref{tabela-res-31}, wynika że mniejsze zakresy inicjalizacji wag dają lepsze wyniki. Wyjątkiem jest inicjalizacja na 0, która skutkuje jednakowymi wartościami parametrów oraz ich aktualizacji co przekłada się na brak możliwości dopasowania do danych. Duże wartości powodują wolniejsze zbieganie oraz niższa dokładność końcową.
-TODO
+Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res31},~\ref{fig:res32} oraz tabeli~\ref{tabela-res-31}, wynika że mniejsze zakresy inicjalizacji wag dają lepsze wyniki. Wyjątkiem jest inicjalizacja na 0, która skutkuje jednakowymi wartościami parametrów oraz ich aktualizacji co przekłada się na brak możliwości dopasowania do danych.
 
 \newpage
 \subsection{Wpływ wartości współczynnika alpha na przebieg procesu uczenia}
@@ -408,8 +404,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res41},~\ref{fig:res42} oraz tabeli~\ref{tabela-res-41}, wynika że duże wartości współczynnika alpha uniemożliwiają wyuczenie, jest to najprawdopodobniej spowodowane przeskakiwaniem wszelkich minimów przy tak dużych aktualizacjach parametrów. Bardzo małe wartości alpha nałożone od samego początku uczenia skutkują natomiast bardzo powolnymi poprawami wyników i prawdopodobnie utykaniem w minimach lokalnych co przekłada się na niższą końcową dokładność modelu. Na wykresach~\ref{fig:res43},~\ref{fig:res44} i~\ref{fig:res45} widać, że mniejsze wartości alpha wygładzają błąd treningowy.
-TODO
+Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res41},~\ref{fig:res42} oraz tabeli~\ref{tabela-res-41}, wynika że duże wartości współczynnika alpha przyspieszają uczenie. Zbyt duża wartość alpha powinna jednak uniemożliwić uzyskanie podobnej dokładności modelu z powodu zbyt dużych kroków i przeskakiwania  minimów. Bardzo małe wartości alpha powodują wolne uczenie się modelu oraz możliwe utykanie w minimach lokalnych. Na wykresach~\ref{fig:res43},~\ref{fig:res44} i~\ref{fig:res45} widać, że mniejsze wartości alpha stabilizują błąd treningowy, natomiast przy wartości 1.0 na wykresie~\ref{fig:res45} można zauważyć wzrastający błąd testowy, co może oznaczać przeuczenie modelu.
 
 \newpage
 \subsection{Wpływ użytej funkcji aktywacyjnej na przebieg procesu uczenia}
@@ -477,21 +472,17 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res51},~\ref{fig:res52} oraz tabeli~\ref{tabela-res-51}, wynika że funkcja ReLU daje lepsze wyniki. Używanie funkcji ReLU jest mniej kosztowne obliczeniowo, co dodatkowo przyspiesza trening.
-TODO
-
+Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res51},~\ref{fig:res52} oraz tabeli~\ref{tabela-res-51}, wynika że funkcja ReLU daje znacząco lepsze wyniki niż Sigmoid. Używanie funkcji ReLU jest mniej kosztowne obliczeniowo, co dodatkowo przyspiesza trening. Na wykresach~\ref{fig:res53} i~\ref{fig:res54} można zauważyć, że funkcja ReLU powoduje bardziej niestabilny błąd, co może prowadzić do polepszenia efektów uczenia.
 
 \newpage
 \section{Wnioski}
 
 \begin{itemize}
 	\item Wielowarstwowe sieci neuronowe pozwalają na modelowanie nieliniowych funkcji.
-	\item Powtarzającym się motywem była korelacja niższego błędu treningowego niż testowy dla lepszych konfiguracji hiperparametrów. Może to oznaczać po prostu lepsze dopasowanie do danych oraz to, że MNIST jest na tyle prostym zbiorem danych, że prawie zerowy błąd na zborze uczącym nie implikuje przeuczenia, lecz dobra generalizację.
+	\item Powtarzającym się motywem jest korelacja niestabilnej funkcji błędu z lepszymi efektami uczenia. Może to być spowodowane faktem, że takie błędy wprowadzają większą różnorodność podczas uczenia i wpływają pozytywnie na generalizację.
 	\item Przy połączeniu wszystkich najlepszych hiperparametrów otrzymanych z eksperymentów, model uzyskuje dokładność \($>98\%$\).
-	\item Hiperparametry wpływają na siebie nawzajem, podczas badań najbardziej wyraźny był wpływ współczynnika uczenia na możliwość używania większych wielkości paczki.
 	\item Odpowiednie ustawienie hiperparametrów może znacząco przyspieszyć proces uczenia.
 	\item Architektura sieci ma duży wpływ na jej możliwości i wydajność.
-	\item TODO
 \end{itemize}
 
 \end{document}
