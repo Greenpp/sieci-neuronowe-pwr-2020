@@ -60,12 +60,13 @@ class FCLayer(TrainableLayer):
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         # Weights delta equal to incoming gradint * activaton derivative * previous layer
         d_w = self.input_signal.T @ grad
+        d_w = d_w / grad.shape[0]
 
         # Gradient for next layer scaled with weights
         new_grad = grad @ self.weights.T
 
         # Accumulate bias delta for batch input
-        acc_d_b = grad.sum(axis=0)
+        acc_d_b = grad.mean(axis=0)
 
         return acc_d_b, d_w, new_grad
 
@@ -136,11 +137,12 @@ class ConvLayer(TrainableLayer):
 
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         # TODO what is going on ...
-        d_b = np.sum(grad, axis=(0, 2, 3))
+        d_b = np.mean(grad, axis=(0, 2, 3))
         d_b = d_b.reshape(self.filters, -1)
 
         grad_col = grad.transpose(1, 2, 3, 0).reshape(self.filters, -1)
         d_w = grad_col @ self.input_signal_col.T
+        d_w = d_w / grad.shape[0]
         d_w = d_w.reshape(self.weights.shape)
 
         w_col = self.weights.reshape(self.filters, -1)
