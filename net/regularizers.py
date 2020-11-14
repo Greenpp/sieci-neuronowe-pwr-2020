@@ -22,7 +22,7 @@ class Regularizer(ABC):
 
 
 class L1Regularizer(Regularizer):
-    def __init__(self, lambda_: float = 1e-2) -> None:
+    def __init__(self, lambda_: float = 1e-4) -> None:
         self.lambda_ = lambda_
 
     def regularize(
@@ -47,7 +47,7 @@ class L1Regularizer(Regularizer):
 
 
 class L2Regularizer(Regularizer):
-    def __init__(self, lambda_: float = 1e-2) -> None:
+    def __init__(self, lambda_: float = 1e-4) -> None:
         self.lambda_ = lambda_
 
     def regularize(
@@ -66,8 +66,8 @@ class L2Regularizer(Regularizer):
 class L12Regularizer(Regularizer):
     def __init__(
         self,
-        lambda1: float = 1e-2,
-        lambda2: float = 1e-2,
+        lambda1: float = 1e-4,
+        lambda2: float = 1e-4,
     ) -> None:
         self.lambda1 = lambda1
         self.lambda2 = lambda2
