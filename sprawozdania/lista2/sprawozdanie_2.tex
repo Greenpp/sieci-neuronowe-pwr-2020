@@ -133,10 +133,10 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 		\toprule
 		Neurony & Dokładność [\%] \\
 		\midrule
-		16      & 94.48              \\
-		128     & 96.99              \\
-		512     & 97.24              \\
-		2048    & \textbf{97.54}     \\
+		16      & 88.80              \\
+		128     & 92.00              \\
+		512     & 92.97              \\
+		2048    & \textbf{94.04}     \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -144,6 +144,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \subsubsection*{Wnioski}
 
 Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res11},~\ref{fig:res12} oraz tabeli~\ref{tabela-res-11}, wynika że większa ilość neuronów w warstwie ukrytej poprawia dokładność modelu, większa ilość parametrów pozwala na lepsze dopasowanie do danych. Uzyskane wyniki dla wielkości 128, 512 i 2048 są do siebie zbliżone, widać jednak spadek dla mniejszej warstwy (16 neuronów). Najlepszą dokładność uzyskał model z warstwą wielkości 2048, jednak na wykresach~\ref{fig:res16} i~\ref{fig:res15} można zauważyć, że błąd treningowy dla dla tych wielkości spada prawie do 0 co może świadczyć o zbytnim dopasowaniu do danych treningowych i predyspozycji do przeuczenia. W przeprowadzonych eksperymentach błąd testowy nie wzrastał w końcowych etapach uczenia, co wyklucza przeuczenie przy założonej ilości epok. Na wykresie~\ref{fig:res13} można natomiast zauważyć, że błędy treningowy i testowy dla małej warstwy ukrytej są na bardzo podobnym poziomie, w przeciwieństwie do pozostałych wielkości, gdzie błąd treningowy jest trochę niższy od testowego. Dodatkową obserwacją jest krótszy czas obliczeń przy uczeniu mniejszych modeli, spowodowany mniejszą ilością parametrów do zaktualizowania oraz przemnożenia podczas ewaluacji.
+TODO
 
 \newpage
 \subsection{Wpływ wielkości paczki na przebieg procesu uczenia}
@@ -221,11 +222,11 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 		\toprule
 		Przykłady & Dokładność [\%] \\
 		\midrule
-		1          & 97.00              \\
-		8          & \textbf{97.04}     \\
-		32         & 96.99              \\
-		128        & 96.32              \\
-		1024       & 25.98              \\
+		1          & \textbf{97.07}     \\
+		8          & 94.85              \\
+		32         & 91.83              \\
+		128        & 87.29              \\
+		1024       & 68.31              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -234,6 +235,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res21},~\ref{fig:res22} oraz tabeli~\ref{tabela-res-21}, wynika że małe wielkości paczki skutkują lepszą dokładnością modelu. Używanie za dużej paczki, jak widać w przypadku wielkości 1024, uniemożliwia wyuczenie. Po przeprowadzeniu dodatkowych badań okazało się jednak, że te wyniki są spowodowane przyjętym współczynnikiem uczenia, dla odpowiednio dobranych wartości alpha, mniejszych dla większych wielkości paczki, wyniki dla odpowiednio dobranych współczynników uczenia były zbliżone dla wszystkich rozmiarów. Zaletą mniejszych paczek, widoczną na wykresach~\ref{fig:res23},~\ref{fig:res24},~\ref{fig:res25},~\ref{fig:res26} i~\ref{fig:res27} jest wprowadzanie szumów do błędu treningowego, co przeciwdziała dążeniu do minimów lokalnych.
 Dodatkową obserwacją jest krótszy czas obliczeń dla większych paczek spowodowany mniejszą ilością przeprowadzonych propagacji dla takiego samego zbioru uczącego.
+TODO
 
 \newpage
 \subsection{Wpływ zakresu inicjalizacji wag na przebieg procesu uczenia}
@@ -306,9 +308,9 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 		Zakres            & Dokładność [\%] \\
 		\midrule
 		0.0               & 11.35              \\
-		\($-0.1 -- 0.1$\) & \textbf{97.84}     \\
-		\($-0.5 -- 0.5$\) & 96.99              \\
-		\($-2.0 -- 2.0$\) & 92.14              \\
+		\($-0.1 -- 0.1$\) & \textbf{92.76}     \\
+		\($-0.5 -- 0.5$\) & 91.94              \\
+		\($-2.0 -- 2.0$\) & 88.68              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -316,6 +318,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \subsubsection*{Wnioski}
 
 Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res31},~\ref{fig:res32} oraz tabeli~\ref{tabela-res-31}, wynika że mniejsze zakresy inicjalizacji wag dają lepsze wyniki. Wyjątkiem jest inicjalizacja na 0, która skutkuje jednakowymi wartościami parametrów oraz ich aktualizacji co przekłada się na brak możliwości dopasowania do danych. Duże wartości powodują wolniejsze zbieganie oraz niższa dokładność końcową.
+TODO
 
 \newpage
 \subsection{Wpływ wartości współczynnika alpha na przebieg procesu uczenia}
@@ -394,11 +397,11 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 		\toprule
 		Alpha  & Dokładność [\%] \\
 		\midrule
-		0.0001 & 88.37              \\
-		0.0010 & 94.40              \\
-		0.0100 & \textbf{97.06}     \\
-		0.1000 & 23.84              \\
-		1.0000 & 11.45              \\
+		0.0001 & 45.54              \\
+		0.0010 & 81.77              \\
+		0.0100 & 92.06              \\
+		0.1000 & \textbf{96.18}     \\
+		1.0000 & 95.98              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -406,6 +409,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \subsubsection*{Wnioski}
 
 Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res41},~\ref{fig:res42} oraz tabeli~\ref{tabela-res-41}, wynika że duże wartości współczynnika alpha uniemożliwiają wyuczenie, jest to najprawdopodobniej spowodowane przeskakiwaniem wszelkich minimów przy tak dużych aktualizacjach parametrów. Bardzo małe wartości alpha nałożone od samego początku uczenia skutkują natomiast bardzo powolnymi poprawami wyników i prawdopodobnie utykaniem w minimach lokalnych co przekłada się na niższą końcową dokładność modelu. Na wykresach~\ref{fig:res43},~\ref{fig:res44} i~\ref{fig:res45} widać, że mniejsze wartości alpha wygładzają błąd treningowy.
+TODO
 
 \newpage
 \subsection{Wpływ użytej funkcji aktywacyjnej na przebieg procesu uczenia}
@@ -465,8 +469,8 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 		\toprule
 		Funkcja & Dokładność [\%] \\
 		\midrule
-		Sigmoid & 96.39              \\
-		ReLU    & \textbf{96.94}     \\
+		Sigmoid & 89.03              \\
+		ReLU    & \textbf{92.04}     \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -474,6 +478,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \subsubsection*{Wnioski}
 
 Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res51},~\ref{fig:res52} oraz tabeli~\ref{tabela-res-51}, wynika że funkcja ReLU daje lepsze wyniki. Używanie funkcji ReLU jest mniej kosztowne obliczeniowo, co dodatkowo przyspiesza trening.
+TODO
 
 
 \newpage
@@ -486,6 +491,7 @@ Z otrzymanych wyników, widocznych na wykresach~\ref{fig:res51},~\ref{fig:res52}
 	\item Hiperparametry wpływają na siebie nawzajem, podczas badań najbardziej wyraźny był wpływ współczynnika uczenia na możliwość używania większych wielkości paczki.
 	\item Odpowiednie ustawienie hiperparametrów może znacząco przyspieszyć proces uczenia.
 	\item Architektura sieci ma duży wpływ na jej możliwości i wydajność.
+	\item TODO
 \end{itemize}
 
 \end{document}
