@@ -22,7 +22,7 @@ class Regularizer(ABC):
 
 
 class L1Regularizer(Regularizer):
-    def __init__(self, lambda_: float = 0.01) -> None:
+    def __init__(self, lambda_: float = 1e-2) -> None:
         self.lambda_ = lambda_
 
     def regularize(
@@ -31,23 +31,23 @@ class L1Regularizer(Regularizer):
         d_bias: np.ndarray,
         d_weights: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        d_weights = d_weights + self.lambda_ * np.where(
+        d_weights = d_weights + np.where(
             layer.weights >= 0,
-            1.0,
-            -1.0,
+            self.lambda_,
+            -self.lambda_,
         )
         if layer.bias:
-            d_bias = d_bias + self.lambda_ * np.where(
+            d_bias = d_bias + np.where(
                 layer.b_weights >= 0,
-                1.0,
-                -1.0,
+                self.lambda_,
+                -self.lambda_,
             )
 
         return d_bias, d_weights
 
 
 class L2Regularizer(Regularizer):
-    def __init__(self, lambda_: float = 0.01) -> None:
+    def __init__(self, lambda_: float = 1e-2) -> None:
         self.lambda_ = lambda_
 
     def regularize(
@@ -56,9 +56,9 @@ class L2Regularizer(Regularizer):
         d_bias: np.ndarray,
         d_weights: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        d_weights = d_weights + 2 * self.lambda_ * layer.weights
+        d_weights = d_weights + (self.lambda_ * layer.weights)
         if layer.bias:
-            d_bias = d_bias + 2 * self.lambda_ * layer.b_weights
+            d_bias = d_bias + (self.lambda_ * layer.b_weights)
 
         return d_bias, d_weights
 
@@ -66,8 +66,8 @@ class L2Regularizer(Regularizer):
 class L12Regularizer(Regularizer):
     def __init__(
         self,
-        lambda1: float = 0.01,
-        lambda2: float = 0.01,
+        lambda1: float = 1e-2,
+        lambda2: float = 1e-2,
     ) -> None:
         self.lambda1 = lambda1
         self.lambda2 = lambda2
@@ -80,24 +80,22 @@ class L12Regularizer(Regularizer):
     ) -> Tuple[np.ndarray, np.ndarray]:
         d_weights = (
             d_weights
-            + self.lambda1
-            * np.where(
+            + np.where(
                 layer.weights >= 0,
-                1.0,
-                -1.0,
+                self.lambda1,
+                -self.lambda1,
             )
-            + 2 * self.lambda2 * layer.weights
+            + (self.lambda2 * layer.weights)
         )
         if layer.bias:
             d_bias = (
                 d_bias
-                + self.lambda1
-                * np.where(
+                + np.where(
                     layer.b_weights >= 0,
-                    1.0,
-                    -1.0,
+                    self.lambda1,
+                    -self.lambda1,
                 )
-                + 2 * self.lambda2 * layer.b_weights
+                + (self.lambda2 * layer.b_weights)
             )
 
         return d_bias, d_weights
