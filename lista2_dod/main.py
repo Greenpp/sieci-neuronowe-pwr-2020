@@ -10,8 +10,8 @@ from matplotlib import pyplot as plt
 from lista2_dod.reg_mlp import DropPerceptron, RegularizedPerceptron
 
 if __name__ == "__main__":
-    # model = DropPerceptron(0.7)
-    model = RegularizedPerceptron('l12', lambda1=.025, lambda2=.025)
+    # model = DropPerceptron(0.8)
+    model = RegularizedPerceptron('l2')
     logger = model.train(True)
 
     logs = logger.get_logs()
