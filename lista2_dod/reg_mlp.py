@@ -28,11 +28,7 @@ class RegularizedPerceptron(ModelModule):
         layers = [
             FCLayer(784, 512, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
-            FCLayer(512, 256, weight_initializer=RangeWI((-0.1, 0.1))),
-            ReLU(),
-            FCLayer(256, 128, weight_initializer=RangeWI((-0.1, 0.1))),
-            ReLU(),
-            FCLayer(128, 10, weight_initializer=RangeWI((-0.1, 0.1))),
+            FCLayer(512, 10, weight_initializer=RangeWI((-0.1, 0.1))),
             SoftmaxCE(),
         ]
 
@@ -43,7 +39,7 @@ class RegularizedPerceptron(ModelModule):
         test_loader = DataLoader(te_data, batch_size=None, random=False)
 
         loss = CrossEntropy()
-        self.trainer = SGDTrainer(0.001, loss)
+        self.trainer = AdamTrainer(0.01, loss)
         self.trainer.set_data_loaders(training_loader, test_loader)
 
     def train(self, verbose: bool = False) -> TrainingLogger:
@@ -68,13 +64,7 @@ class DropPerceptron(ModelModule):
             FCLayer(784, 512, weight_initializer=RangeWI((-0.1, 0.1))),
             ReLU(),
             Dropout(drop_rate),
-            FCLayer(512, 256, weight_initializer=RangeWI((-0.1, 0.1))),
-            ReLU(),
-            Dropout(drop_rate),
-            FCLayer(256, 128, weight_initializer=RangeWI((-0.1, 0.1))),
-            ReLU(),
-            Dropout(drop_rate),
-            FCLayer(128, 10, weight_initializer=RangeWI((-0.1, 0.1))),
+            FCLayer(512, 10, weight_initializer=RangeWI((-0.1, 0.1))),
             SoftmaxCE(),
         ]
 
@@ -85,7 +75,7 @@ class DropPerceptron(ModelModule):
         test_loader = DataLoader(te_data, batch_size=None, random=False)
 
         loss = CrossEntropy()
-        self.trainer = AdamTrainer(0.001, loss)
+        self.trainer = AdamTrainer(0.01, loss)
         self.trainer.set_data_loaders(training_loader, test_loader)
 
     def train(self, verbose: bool = False) -> TrainingLogger:
