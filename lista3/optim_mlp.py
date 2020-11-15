@@ -16,6 +16,7 @@ class OptimMNISTMLP(ModelModule):
         activation_name: str,
         optimizer_name: str,
         initializer_name: str,
+        alpha: float,
     ) -> None:
         tr_data, _, te_data = MNISTLoader().get_sets()
         training_loader = DataLoader(tr_data, batch_size=32)
@@ -23,7 +24,7 @@ class OptimMNISTMLP(ModelModule):
 
         loss = CrossEntropy()
         self.trainer = get_trainer_by_name(optimizer_name)(
-            alpha=0.01, loss_function=loss
+            alpha=alpha, loss_function=loss
         )
         self.trainer.set_data_loaders(training_loader, test_loader)
 

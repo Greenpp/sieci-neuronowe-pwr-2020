@@ -21,6 +21,7 @@ if __name__ == "__main__":
         activation_name='relu',
         optimizer_name='sgd',
         initializer_name='range',
+        alpha=0.01,
     )
 
     # Base
@@ -34,6 +35,7 @@ if __name__ == "__main__":
                 'sigmoid',
             ],
         ),
+        alpha=0.1,
     )
     lab.add_experiment(base)
 
@@ -44,6 +46,7 @@ if __name__ == "__main__":
         test_parameter=(
             'optimizer_name',
             [
+                'sgd',
                 'momentum',
                 'nesterov',
                 'adagrad',
@@ -60,6 +63,7 @@ if __name__ == "__main__":
         test_parameter=(
             'optimizer_name',
             [
+                'sgd',
                 'momentum',
                 'nesterov',
                 'adagrad',
@@ -82,6 +86,7 @@ if __name__ == "__main__":
                 'he',
             ],
         ),
+        optimizer_name='adagrad',
     )
     lab.add_experiment(init_relu)
 
@@ -96,6 +101,7 @@ if __name__ == "__main__":
             ],
         ),
         activation_name='sigmoid',
+        optimizer_name='adam',
     )
     lab.add_experiment(init_sig)
 
