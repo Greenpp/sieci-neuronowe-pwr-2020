@@ -39,7 +39,7 @@ Cały kod wykorzystany w zadaniu znajduje się pod adresem: \url{https://github.
 \section{Opis badań}
 \subsection{Plan eksperymentów}
 
-Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 10 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową. Warstwa ukryta składała się z 512 neuronów, a początkowy współczynnik uczenia wynosił 0.01.
+Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 5 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową. Warstwa ukryta składała się z 512 neuronów, a początkowy współczynnik uczenia wynosił 0.01.
 Z powodów wydajnościowych testowanie modelu przeprowadzano co każde 32 paczki, z których każda składała się z 32 przykładów.\\
 Zgodnie z instrukcją zostały przeprowadzone następujące badania:
 \begin{itemize}
@@ -84,9 +84,111 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \subsubsection*{Wyniki}
 \begin{figure}[H]
 	\centering
-	\caption{Dokładność modelu w zależności od użytego optymalizatora}
-	\includegraphics[width=\textwidth]{hidden_acc.png}
-	\label{fig:res11}
+	\caption{Dokładność modelu w zależności od użytego optymalizatora dla funkcji ReLU}
+	\includegraphics[width=\textwidth]{opt_relu_acc.png}
+	\label{fig:res101}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od użytego optymalizatora dla funkcji ReLU}
+	\includegraphics[width=\textwidth]{opt_relu_acc_zoom.png}
+	\label{fig:res102}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Momentum}
+	\includegraphics[width=\textwidth]{relu_mom_err.png}
+	\label{fig:res103}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Nesterov}
+	\includegraphics[width=\textwidth]{relu_nes_err.png}
+	\label{fig:res104}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora AdaGrad}
+	\includegraphics[width=\textwidth]{relu_grad_err.png}
+	\label{fig:res105}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora AdaDelta}
+	\includegraphics[width=\textwidth]{relu_delta_err.png}
+	\label{fig:res106}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Adam}
+	\includegraphics[width=\textwidth]{relu_adam_err.png}
+	\label{fig:res107}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora SGD}
+	\includegraphics[width=\textwidth]{relu_sgd_err.png}
+	\label{fig:res108}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU z listy 2}
+	\includegraphics[width=\textwidth]{relu_2_err.png}
+	\label{fig:res109}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w zależności od użytego optymalizatora dla funkcji Sigmoid}
+	\includegraphics[width=\textwidth]{opt_sig_acc.png}
+	\label{fig:res110}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od użytego optymalizatora dla funkcji Sigmoid}
+	\includegraphics[width=\textwidth]{opt_sig_acc_zoom.png}
+	\label{fig:res111}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Momentum}
+	\includegraphics[width=\textwidth]{sig_mom_err.png}
+	\label{fig:res112}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Nesterov}
+	\includegraphics[width=\textwidth]{sig_nes_err.png}
+	\label{fig:res113}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora AdaGrad}
+	\includegraphics[width=\textwidth]{sig_grad_err.png}
+	\label{fig:res114}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora AdaDelta}
+	\includegraphics[width=\textwidth]{sig_delta_err.png}
+	\label{fig:res115}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Adam}
+	\includegraphics[width=\textwidth]{sig_adam_err.png}
+	\label{fig:res116}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora SGD}
+	\includegraphics[width=\textwidth]{sig_sgd_err.png}
+	\label{fig:res117}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid z listy 2}
+	\includegraphics[width=\textwidth]{sig_2_err.png}
+	\label{fig:res118}
 \end{figure}
 
 \begin{table}[H]
@@ -95,14 +197,16 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Optymalizator & Dokładność [\%] \\
+		\multirow{2}{*}{Optymalizator} & \multicolumn{2}{c}{Dokładność [\%]} \\
+		         & ReLU           & Sigmoid        \\
 		\midrule
-		SGD           & --                 \\
-		Momentum      & --                 \\
-		Nesterov      & --                 \\
-		AdaGrad       & --                 \\
-		AdaDelta      & --                 \\
-		Adam          & --                 \\
+		Momentum & 93.92          & 89.91          \\
+		Nesterov & 93.91          & 89.81          \\
+		AdaGrad  & \textbf{97.72} & 94.62          \\
+		AdaDelta & 95.28          & 92.21          \\
+		Adam     & 93.86          & \textbf{97.15} \\
+		SGD      & 93.86          & 89.89          \\
+		Lista 2  & 97.70          & 93.29          \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -135,9 +239,63 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \subsubsection*{Wyniki}
 \begin{figure}[H]
 	\centering
-	\caption{Dokładność modelu w zależności od sposóbu inicjalizacji wag}
-	\includegraphics[width=\textwidth]{hidden_acc.png}
-	\label{fig:res21}
+	\caption{Dokładność modelu w zależności od sposóbu inicjalizacji wag dla funkcji ReLU}
+	\includegraphics[width=\textwidth]{relu_init_acc.png}
+	\label{fig:res201}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od sposóbu inicjalizacji wag dla funkcji ReLU}
+	\includegraphics[width=\textwidth]{relu_init_acc_zoom.png}
+	\label{fig:res202}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji z zakresu}
+	\includegraphics[width=\textwidth]{relu_init_zak.png}
+	\label{fig:res203}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji Xaviera}
+	\includegraphics[width=\textwidth]{relu_init_xav.png}
+	\label{fig:res204}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji He}
+	\includegraphics[width=\textwidth]{relu_init_he.png}
+	\label{fig:res205}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w zależności od sposóbu inicjalizacji wag dla funkcji Sigmoid}
+	\includegraphics[width=\textwidth]{sig_init_acc.png}
+	\label{fig:res206}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od sposóbu inicjalizacji wag dla funkcji Sigmoid}
+	\includegraphics[width=\textwidth]{sig_init_acc_zoom.png}
+	\label{fig:res207}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji z zakresu}
+	\includegraphics[width=\textwidth]{sig_init_zak.png}
+	\label{fig:res208}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji Xaviera}
+	\includegraphics[width=\textwidth]{sig_init_xav.png}
+	\label{fig:res209}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji He}
+	\includegraphics[width=\textwidth]{sig_init_he.png}
+	\label{fig:res210}
 \end{figure}
 
 \begin{table}[H]
@@ -146,11 +304,12 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Inicjalizacja     & Dokładność [\%] \\
+		\multirow{2}{*}{Inicjalizacja} & \multicolumn{2}{c}{Dokładność [\%]} \\
+		       & ReLU           & Sigmoid        \\
 		\midrule
-		\($-0.1 -- 0.1$\) & --                 \\
-		Xavier            & --                 \\
-		He                & --                 \\
+		Zakres & 97.70          & 93.29          \\
+		Xavier & 97.71          & \textbf{97.18} \\
+		He     & \textbf{97.73} & 97.16          \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -164,7 +323,7 @@ TODO
 \section{Wnioski}
 
 \begin{itemize}
-	\item TODO
+	\item % TODO
 \end{itemize}
 
 \end{document}
