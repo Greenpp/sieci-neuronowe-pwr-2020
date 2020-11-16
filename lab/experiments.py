@@ -1,4 +1,6 @@
-from typing import Any, List, Tuple
+from typing import Any, Generator, List, Tuple
+
+from lab.utils import get_data, save_to_pkl
 
 
 class Experiment:
@@ -19,14 +21,16 @@ class Experiment:
         self.skip_after_first_fails = 5
         self.first_failed = 0
 
-    def run(self, model_class: type, reps: int, **kwargs: Any) -> dict:
-        exp_log = dict()
+    def run(
+        self, model_class: type, reps: int, tmp_dir: str, **kwargs: Any
+    ) -> Generator:
         val_keys = list(map(str, self.test_param_values))
         max_val_len = max(map(len, val_keys))
         reps_len = len(str(reps))
 
         for val, val_key in zip(self.test_param_values, val_keys):
             val_key = str(val)
+            exp_log = dict()
             exp_log[val_key] = []
 
             params = kwargs.copy()
@@ -34,6 +38,7 @@ class Experiment:
             params.update(test_param)
             params.update(self.custom_params)
 
+            tmp_files = []
             for i in range(reps):
                 print(
                     f'\rTested value: {val_key:{max_val_len}}: {i+1:{reps_len}}/{reps}',
@@ -53,6 +58,14 @@ class Experiment:
                         break
                 else:
                     self.first_failed = -1
+
+                tmp_f_name = f'{val_key}_{i}'
+                save_to_pkl(tmp_f_name, tmp_dir, training_log)
+                tmp_files.append(tmp_f_name)
+
+            data = get_data(tmp_files, tmp_dir)
+            exp_log[val_key] = data
+
             if self.first_failed == -1:
                 print(
                     f'\rTested value: {val_key:{max_val_len}}: Done{" " * reps_len * 2}'
@@ -62,10 +75,10 @@ class Experiment:
                     f'\rTested value: {val_key:{max_val_len}}: Skipped{" " * reps_len * 2}'
                 )
 
-        exp_log = {
-            'title': self.title,
-            'test_param': self.test_param_name,
-            'results': exp_log,
-        }
+            exp_log = {
+                'title': self.title,
+                'test_param': self.test_param_name,
+                'results': exp_log,
+            }
 
-        return exp_log
+            yield exp_log
