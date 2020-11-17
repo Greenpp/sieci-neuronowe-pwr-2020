@@ -150,37 +150,37 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Momentum}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i optymalizatora Momentum}
 	\includegraphics[width=\textwidth]{sig_mom_err.png}
 	\label{fig:res112}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Nesterov}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i optymalizatora Nesterov}
 	\includegraphics[width=\textwidth]{sig_nes_err.png}
 	\label{fig:res113}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora AdaGrad}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i optymalizatora AdaGrad}
 	\includegraphics[width=\textwidth]{sig_grad_err.png}
 	\label{fig:res114}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora AdaDelta}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i optymalizatora AdaDelta}
 	\includegraphics[width=\textwidth]{sig_delta_err.png}
 	\label{fig:res115}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora Adam}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i optymalizatora Adam}
 	\includegraphics[width=\textwidth]{sig_adam_err.png}
 	\label{fig:res116}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i optymalizatora SGD}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i optymalizatora SGD}
 	\includegraphics[width=\textwidth]{sig_sgd_err.png}
 	\label{fig:res117}
 \end{figure}
@@ -212,8 +212,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \end{table}
 
 \subsubsection*{Wnioski}
-
-TODO
+Na przedstawionych wykresach~\ref{fig:res101},~\ref{fig:res102} oraz tabeli~\ref{tabela-res-11} można zauważyć, że najlepszym wyborem przy użyciu funkcji ReLU był optymalizator AdaGrad, kolejne miejsce osiągnął Adam. Patrząc dodatkowo na wykresy~\ref{fig:res110} i~\ref{fig:res111}, widać, że dla funkcji Sigmoid sytuacja jest odwrotna, najlepszy wynik otrzymują modele uczone metodą Adam, a AdaGrad jest na drugim miejscu. Powodem prowadzenia tych metod może być widoczna na wykresach~\ref{fig:res103} -~\ref{fig:res109} i~\ref{fig:res112} -~\ref{fig:res118} większa niestabilność błędu treningowego dla tych metod, co może oznaczać lepszą eksplorację minimów lokalnych. Porównując jednak funkcje błędu metod Adam i AdaGrad widać, że w przypadku optymalizatora Adam błąd testowy w pewnym momencie zaczyna rosnąć, co może wskazywać przeuczenie. Nie jest to jednak problemem na zbiorze MNIST. W porównaniu z modelem otrzymanym w poprzednim zadaniu konfiguracja z funkcją ReLU przy użyciu metody AdaGrad daje bardzo zbliżone wyniki, jednak AdaGrad ma przewagę w początkowym etapie uczenia gdzie szybciej osiąga wysoką dokładność, na co wpływa dynamiczny współczynnik dla każdej z wag. W przypadku modelu z funkcją Sigmoidalną, poprzedni model znajduje się dopiero na 3 miejscu, spowodowane jest to najprawdopodobniej dobraniem w poprzednim zadaniu hiperparametrów dla najlepszego wyniku z funkcją ReLU. 
 
 \newpage
 \subsection{Wpływ inicjalizacji wag na przebieg procesu uczenia}
@@ -231,7 +230,7 @@ TODO
 	\end{tabular}
 \end{table}
 
-Zmienną w tym eksperymencie był sposób inicjalizacji wag. Użyto metod ze zbioru \(\{$Zakres, Xavier, He$\}\)
+Zmienną w tym eksperymencie był sposób inicjalizacji wag. Użyto metod ze zbioru \(\{$Zakres, Xavier, He$\}\). Zakres, z którego losowane były wagi to \($-0.1 -- 0.1$\).
 \subsubsection*{Przebieg}
 
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy. Badania wykonano dla funkcji aktywacji Sigmoid oraz ReLU.
@@ -281,19 +280,19 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji z zakresu}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i inicjalizacji z zakresu}
 	\includegraphics[width=\textwidth]{sig_init_zak.png}
 	\label{fig:res208}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji Xaviera}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i inicjalizacji Xaviera}
 	\includegraphics[width=\textwidth]{sig_init_xav.png}
 	\label{fig:res209}
 \end{figure}
 \begin{figure}[H]
 	\centering
-	\caption{Zachowanie funkcji błędu dla funkcji ReLU i inicjalizacji He}
+	\caption{Zachowanie funkcji błędu dla funkcji Sigmoid i inicjalizacji He}
 	\includegraphics[width=\textwidth]{sig_init_he.png}
 	\label{fig:res210}
 \end{figure}
@@ -316,14 +315,18 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-TODO
+Na przedstawionych wykresach~\ref{fig:res201},~\ref{fig:res202} oraz tabeli~\ref{tabela-res-21} można zauważyć, że dla funkcji ReLU rodzaj inicjalizacji nie miał dużego wpływu. Pomimo różnicy 2 rzędów wielkości pomiędzy inicjalizacjami He (0.0025) i Xaviera (0.0015) a z zakresu (0.1) funkcja ReLU wydaje się być obojętna na wariację wag po przekroczeniu pewnej granicy. Dodając jednak wykresy~\ref{fig:res206} i~\ref{fig:res207} widać, że dla funkcji Sigmoidalnej sytuacja wygląda inaczej. W tym przypadku inicjalizacja He oraz Xaviera dają dużo lepsze wyniki od zakresu. Może to być spowodowane tym, że Sigmoid może operować bez nasycenia tylko w małym przedziale, w przeciwieństwie do ReLU która nie jest ograniczona dla wartości dodatnich. Ponadto na wykresach~\ref{fig:res203}-~\ref{fig:res205} i~\ref{fig:res208}-~\ref{fig:res210} zachowanie funkcji błędu testowego jest znacznie stabilniejsze dla funkcji ReLU, gdzie dla Sigmoida wykazuje symptomy przeuczenia. Jest to jednak najprawdopodobniej wina użytej funkcji, a nie inicjalizacji wag.
 
 
 \newpage
 \section{Wnioski}
 
 \begin{itemize}
-	\item % TODO
+	\item Użycie odpowiedniej metody uczenia może przyspieszyć cały proces, a nawet dać lepsze wyniki.
+	\item Różne metody dają różne wyniki dla takiego samego początkowego współczynnika uczenia, większość otrzymanych wyników można poprawić dostrajając hiperparametry dla danej metody.
+	\item Inicjalizacja wag powinna być przeprowadzana pod użytą funkcję aktywacji.
+	\item Dobranie wag w taki sposób aby funkcja aktywacji mogła pracować poza swoimi zakresami nasycenia daje dużo lepsze wyniki.
+	\item Różnica pomiędzy inicjalizacjami Xaviera i He nie jest widoczna na małych sieciach.
 \end{itemize}
 
 \end{document}
