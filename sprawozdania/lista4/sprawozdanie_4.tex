@@ -39,7 +39,8 @@ Cały kod wykorzystany w zadaniu znajduje się pod adresem: \url{https://github.
 \section{Opis badań}
 \subsection{Plan eksperymentów}
 
-Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 10 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową. Użyta sieć składała się z warstwy konwolucyjnej, max pool, oraz w pełni połączonej ze 128 neuronami. Wagi były inicjalizowane metodą He, a uczenie przebiegało przy pomocy metody Adam. Jako funkcję aktywacji przyjęto ReLU.
+Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 5 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową. Użyta sieć składała się z warstwy konwolucyjnej, max pool, oraz w pełni połączonej ze 128 neuronami. Wagi były inicjalizowane metodą He, a uczenie przebiegało przy pomocy metody Adam. Jako funkcję aktywacji przyjęto ReLU.
+TODO model MLP
 Z powodów wydajnościowych testowanie modelu przeprowadzano co każde 32 paczki, z których każda składała się z 32 przykładów.\\
 Zgodnie z instrukcją zostały przeprowadzone następujące badania:
 \begin{itemize}
@@ -64,7 +65,7 @@ W trakcie eksperymentów wykorzystano jedynie zbiory uczący i testowy.
 \subsection{Wpływ wielkości filtra na przebieg procesu uczenia}
 \subsubsection*{Założenia}
 
-Zmienną w tym eksperymencie była wielkość filtra, przyjmowała wartości ze zbioru \(\{$2, 3, 4, 5$\}\)
+Zmienną w tym eksperymencie była wielkość filtra, przyjmowała wartości ze zbioru \(\{$3, 5, 7$\}\)
 \subsubsection*{Przebieg}
 
 Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
@@ -73,8 +74,32 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \begin{figure}[H]
 	\centering
 	\caption{Dokładność modelu w zależności od wielkości filtra}
-	\includegraphics[width=\textwidth]{hidden_acc.png}
+	\includegraphics[width=\textwidth]{kernel_acc.png}
 	\label{fig:res11}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Dokładność modelu w końcowym etapie uczenia w zależności od wielkości filtra}
+	\includegraphics[width=\textwidth]{kernel_acc_zoom.png}
+	\label{fig:res12}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla filtra wielkości 3}
+	\includegraphics[width=\textwidth]{kernel_err_3.png}
+	\label{fig:res13}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla filtra wielkości 5}
+	\includegraphics[width=\textwidth]{kernel_err_5.png}
+	\label{fig:res14}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla filtra wielkości 7}
+	\includegraphics[width=\textwidth]{kernel_err_7.png}
+	\label{fig:res15}
 \end{figure}
 
 \begin{table}[H]
@@ -85,10 +110,9 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 		\toprule
 		Wielkość filtra & Dokładność [\%] \\
 		\midrule
-		2                 & --                 \\
-		3                 & --                 \\
-		4                 & --                 \\
-		5                 & --                 \\
+		3                 & \textbf{98.25}     \\
+		5                 & 98.16              \\
+		7                 & 97.88              \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -108,7 +132,7 @@ TODO
 		\toprule
 		Parametr          & Wartość \\
 		\midrule
-		Wielkość filtra & --        \\
+		Wielkość filtra & 3         \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -121,8 +145,26 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \begin{figure}[H]
 	\centering
 	\caption{Porównanie dokładności modeli}
-	\includegraphics[width=\textwidth]{hidden_acc.png}
+	\includegraphics[width=\textwidth]{con_mlp_acc.png}
 	\label{fig:res21}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Porównanie dokładności modeli w końcowym etapie uczenia}
+	\includegraphics[width=\textwidth]{con_mlp_acc_zoom.png}
+	\label{fig:res22}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla modelu MLP}
+	\includegraphics[width=\textwidth]{mlp_err.png}
+	\label{fig:res23}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\caption{Zachowanie funkcji błędu dla modelu konwolucyjnego}
+	\includegraphics[width=\textwidth]{con_err.png}
+	\label{fig:res24}
 \end{figure}
 
 \begin{table}[H]
@@ -131,10 +173,10 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Przykłady & Dokładność [\%] \\
+		Przykłady   & Dokładność [\%] \\
 		\midrule
-		MLP        & --                 \\
-		Konwolucja & --                 \\
+		MLP          & 97.70              \\
+		Konwolucyjna & \textbf{98.25}     \\
 		\bottomrule
 	\end{tabular}
 \end{table}
