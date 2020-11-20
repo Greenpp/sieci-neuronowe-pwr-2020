@@ -14,6 +14,7 @@ model = OptimMNISTMLP(
     activation_name='relu',
     optimizer_name='adam',
     initializer_name='he',
+    alpha=0.001,
 )
 logger = model.train(verbose=True)
 
