@@ -40,7 +40,6 @@ Cały kod wykorzystany w zadaniu znajduje się pod adresem: \url{https://github.
 \subsection{Plan eksperymentów}
 
 Wszystkie eksperymenty zostały przeprowadzone 10 razy. Losowość przy inicjalizacji wag oraz generacji danych nie została narzucona żadnym ziarnem. Podczas badań przyjęto górną granicę 5 epok, po przekroczeniu której, uczenie zostawało przerywane. Ze względu na charakter zadania (klasyfikacja) na ostatniej warstwie użyto funkcji Softmax, a za funkcję straty przyjęto Entropię krzyżową. Użyta sieć składała się z warstwy konwolucyjnej, max pool, oraz w pełni połączonej ze 128 neuronami. Wagi były inicjalizowane metodą He, a uczenie przebiegało przy pomocy metody Adam. Jako funkcję aktywacji przyjęto ReLU.
-TODO model MLP
 Z powodów wydajnościowych testowanie modelu przeprowadzano co każde 32 paczki, z których każda składała się z 32 przykładów.\\
 Zgodnie z instrukcją zostały przeprowadzone następujące badania:
 \begin{itemize}
