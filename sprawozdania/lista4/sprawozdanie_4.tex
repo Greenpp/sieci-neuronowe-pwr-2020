@@ -119,7 +119,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 
 \subsubsection*{Wnioski}
 
-TODO
+Na przedstawionych wykresach~\ref{fig:res11},~\ref{fig:res12} oraz tabeli~\ref{tabela-res-11} widać, że wielkość filtra nie ma znacznego wpływu na osiągnięty wynik. Powodem takich rezultatów może być mały rozmiar istotnych cech wyuczanych przez filtry, co mogło by powodować zbieranie dodatkowych nieistotnych wartości przez większe filtry i nieznaczne obniżenie ich skuteczności. Niestety wartości wyuczonych filtrów nie zostały zapisane podczas eksperymentów, co uniemożliwia sprawdzenie tej hipotezy. Biorąc pod uwagę zachowanie funkcji błędu widoczne na wykresach~\ref{fig:res13},~\ref{fig:res14} oraz~\ref{fig:res15}, można jednak przypuścić, że za gorsze wyniki modeli z większymi filtrami odpowiada ich liczba parametrów, co przekłada się na większe przeuczenie niż w przypadku filtra 3x3.
 
 \newpage
 \subsection{Porównanie z MLP}
@@ -139,7 +139,7 @@ TODO
 
 \subsubsection*{Przebieg}
 
-Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badanych wartości oraz wyuczony, uzyskane wyniki zostały zapisane w postaci pliku .plk do dalszej analizy.
+Porównano wyniki sieci konwolucyjnej z wielkością filtra dającą najlepsze wyniki (3x3) z siecią MLP która uzyskała najlepsze wyniki w poprzednim zadaniu tj. warstwa ukryta złożona z 512 neuronów, funkcja aktywacji ReLU, inicjalizacja wag He oraz optymalizator AdaGrad z początkowym współczynnikiem uczenia 0.01.
 
 \subsubsection*{Wyniki}
 \begin{figure}[H]
@@ -173,7 +173,7 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 	\centering
 	\begin{tabular}{rrr}
 		\toprule
-		Przykłady   & Dokładność [\%] \\
+		Sieć        & Dokładność [\%] \\
 		\midrule
 		MLP          & 97.73              \\
 		Konwolucyjna & \textbf{98.25}     \\
@@ -182,14 +182,16 @@ Podczas eksperymentu model został zainicjalizowany 10 razy dla każdej z badany
 \end{table}
 
 \subsubsection*{Wnioski}
-
-TODO
+Na przedstawionych wykresach~\ref{fig:res21},~\ref{fig:res22} oraz tabeli~\ref{tabela-res-21} widać, że model z warstwą konwolucyjną osiąga lepsze rezultaty od zwykłej sieci MLP. Wpływ na to na pewno ma zdolność konwolucji do wydobywania lokalnych zależności między wartościami, co jest charakterystyczną cechą obrazów. Warstwa konwolucyjna służy jako wstępna ekstrakcja cech przed siecią MLP, co poprawia jej możliwości. Wyraźnie widoczna jest też przewaga sieci splotowej w szybkości osiągnięcia poziomu dokładności bliskiego do ostatecznego. Patrząc jednak na zachowanie funkcji błędu widoczne na wykresach~\ref{fig:res23} i~\ref{fig:res24} można zaobserwować wyraźną tendencję do przeuczenia w przypadku zastosowania konwolucji, w przeciwieństwie do MLP przy którym błąd testowy spada przez cały okres uczenia. Jest to zrozumiałe, jeśli model osiąga dobrą generalizację po zdecydowanie mniejszej ilości przykładów niż MLP to dalsze uczenie go powoduje zbytnie dopasowanie.
 
 \newpage
 \section{Wnioski}
 
 \begin{itemize}
-	\item TODO
+	\item Konwolucja idealnie nadaje się do ekstrakcji cech z obrazów, ponieważ wyłapuje lokalne zależności.
+	\item Odpowiednia ekstrakcja cech z danych może poprawić skuteczność modelu.
+	\item Używanie mniejszych filtrów, wydobywających drobniejsze cechy, może być skuteczniejszym podejściem niż nakładanie dużych i przy tym bardziej kosztownych konwolucji.
+	\item Odpowiedni dobór modelu do typu danych skutkuje poprawą wyników.
 \end{itemize}
 
 \end{document}
