@@ -114,20 +114,30 @@ class ConvLayer(TrainableLayer):
         x_width_out = int(x_width_out)
 
         # Input reshaped into columns with im2col
+        # (F_size x filter_locations * batch)
+        # F_size = F_h * F_w * in_channels
+        # Columns - filter_locations
         x_col = im2col_indices(
             x, self.kernel_size, self.kernel_size, self.padding, self.stride
         )
 
+        # Kernel preparation for convolution in columns
+        # (F_num x channels_in x F_h x F_w) -> (F_num x F_size)
         kernel_col = self.weights.reshape(self.filters, -1)
 
+        # Cache
         self.input_signal_col = x_col
         self.input_signal = x
 
+        # (F_num x F_size) @ (F_size x filter_locations * batch) -> 
+        # (F_num x filter_locations * batch)
         f_x = kernel_col @ x_col
         if self.bias:
             f_x = f_x + self.b_weights
-        # Reshape to initial form
+        # Reshape to initial form 
+        # (F_num x filter_locations * batch) -> (F_num x out_h x out_w x batch)
         f_x = f_x.reshape(self.filters, x_height_out, x_width_out, batch_size)
+        # (F_num x out_h x out_w x batch) -> (batch x F_num x out_h x out_w)
         f_x = f_x.transpose(3, 0, 1, 2)
 
         return f_x
@@ -136,17 +146,36 @@ class ConvLayer(TrainableLayer):
         return CONV
 
     def backward(self, grad: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        # TODO what is going on ...
+        # grad (batch x F_num x out_h x out_w)
+        # Mean over batches for bias
         d_b = np.mean(grad, axis=(0, 2, 3))
         d_b = d_b.reshape(self.filters, -1)
 
+        # grad (batch x F_num x out_h x out_w)
+        # (batch x F_num x out_h x out_w) -> (F_num x filter_locations * batch)
         grad_col = grad.transpose(1, 2, 3, 0).reshape(self.filters, -1)
+
+        # (F_num x filter_locations * batch) @ (batch * filter_locations x F_size)
+        # F_num x F_size
         d_w = grad_col @ self.input_signal_col.T
+
+        # Mean over batch
         d_w = d_w / grad.shape[0]
+
+        # Reshape to weights 
+        # (F_num x F_size) -> (F_num x channels_in x F_h x F_w)
         d_w = d_w.reshape(self.weights.shape)
 
+        # (F_num x channels_in x F_h x F_w) -> (F_num x F_size)
         w_col = self.weights.reshape(self.filters, -1)
+
+        # (F_size x F_num) @ (F_num x filter_locations * batch)
+        # (F_size x filter_locations * batch)
+        # Same as after im2col
         new_grad_col = w_col.T @ grad_col
+
+        # Reverse im2col
+        # (F_size x filter_locations * batch) -> (batch x in_channels x in_h x in_w)
         new_grad = col2im_indices(
             new_grad_col,
             self.input_signal.shape,
@@ -181,20 +210,34 @@ class MaxPoll(Layer):
         out_h = int(out_h)
         out_w = int(out_w)
 
+        # Stretch channels on separate columns
         x_reshaped = x.reshape(batch_size * channels, 1, x_height, x_width)
+        
 
+        # Transform into columns
+        # (P_size x filter_locations * batch * in_channels)
+        # P_size = P_h * P_w
+        # Columns - poll_locations
         x_col = im2col_indices(
             x_reshaped, self.size, self.size, self.padding, self.stride
         )
 
+        # Find max values idx
         max_idx = x_col.argmax(axis=0)
 
+        # Cache
         self.input_signal_col = x_col
         self.input_signal = x
         self.max_idx = max_idx
 
+        # Select only max values
+        # max_id on pos n | n (0, max_id_num)
         out = x_col[max_idx, range(max_idx.size)]
+
+        # Reshape back
         out = out.reshape(out_h, out_w, batch_size, channels)
+
+        # (batch, channels, out_h, out_w)
         out = out.transpose(2, 3, 0, 1)
 
         return out
@@ -204,12 +247,18 @@ class MaxPoll(Layer):
 
     def backward(self, grad: np.ndarray) -> Tuple[None, None, np.ndarray]:
         batch_size, channels, x_height, x_width = self.input_signal.shape
+        
+        # (P_size x filter_locations * batch * in_channels)
         new_grad_col = np.zeros_like(self.input_signal_col)
 
+        # grad (batch x channels x out_h x out_w)
+        # (out_h x out_w x batch x channels) -> flat
         flat_grad = grad.transpose(2, 3, 0, 1).ravel()
 
+        # Replace selected in forward values with gradient
         new_grad_col[self.max_idx, range(self.max_idx.size)] = flat_grad
 
+        # Transform columns into matrix
         new_grad = col2im_indices(
             new_grad_col,
             (batch_size * channels, 1, x_height, x_width),
@@ -219,6 +268,7 @@ class MaxPoll(Layer):
             self.stride,
         )
 
+        # Extract channels stretched in input_signal_col
         new_grad = new_grad.reshape(self.input_signal.shape)
 
         return None, None, new_grad
@@ -229,7 +279,6 @@ class Flatten(Layer):
         self.input_shape = x.shape
         batch_size = x.shape[0]
 
-        # TODO check if will work without ravel
         return x.ravel().reshape(batch_size, -1)
 
     def __str__(self) -> str:
